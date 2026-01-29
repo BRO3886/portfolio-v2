@@ -186,6 +186,50 @@ const articleJsonLd = {
       }, { passive: true });
 
       checkScroll();
+
+      // blog_bounce: fire on page leave if user never reached 25% scroll
+      var bounceFired = false;
+      function fireBounce() {
+        if (bounceFired) return;
+        if (fired[25]) return;
+        bounceFired = true;
+        if (window.posthog) {
+          posthog.capture('blog_bounce', {
+            blog_title: document.title,
+            blog_url: window.location.pathname,
+          });
+        }
+      }
+      document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') fireBounce();
+      });
+      window.addEventListener('pagehide', fireBounce);
+    })();
+  </script>
+
+  <script is:inline>
+    (function () {
+      var startTime = Date.now();
+      var sent = false;
+
+      function sendTimeOnPage() {
+        if (sent) return;
+        sent = true;
+        var seconds = Math.round((Date.now() - startTime) / 1000);
+        if (seconds < 2) return;
+        if (window.posthog) {
+          posthog.capture('blog_time_on_page', {
+            seconds_spent: seconds,
+            blog_title: document.title,
+            blog_url: window.location.pathname,
+          });
+        }
+      }
+
+      document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') sendTimeOnPage();
+      });
+      window.addEventListener('pagehide', sendTimeOnPage);
     })();
   </script>
 </BaseLayout>

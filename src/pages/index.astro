@@ -72,7 +72,7 @@ const personJsonLd = {
             });
 
             return (
-              <a href={`/blog/${slug}`} class="group block p-5 -mx-5 rounded-xl hover:bg-surface transition-colors">
+              <a href={`/blog/${slug}`} class="group block p-5 -mx-5 rounded-xl hover:bg-surface transition-colors" data-ph-post={title}>
                 <div class="flex items-start justify-between gap-4 mb-1.5">
                   <h3 class="text-lg font-semibold text-text-primary group-hover:text-primary transition-colors">
                     {title}
@@ -426,6 +426,22 @@ const personJsonLd = {
           copying = false;
         });
       });
+    })();
+  </script>
+
+  <script is:inline>
+    (function () {
+      var links = document.querySelectorAll('[data-ph-post]');
+      for (var i = 0; i < links.length; i++) {
+        links[i].addEventListener('click', function () {
+          if (window.posthog) {
+            posthog.capture('blog_post_click', {
+              post_title: this.getAttribute('data-ph-post'),
+              source: 'homepage',
+            });
+          }
+        });
+      }
     })();
   </script>
 

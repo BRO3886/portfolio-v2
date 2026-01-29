@@ -32,7 +32,7 @@ const sortedPosts = allBlogPosts.sort((a, b) => {
           });
 
           return (
-            <a href={`/blog/${slug}`} class="group block pb-8 border-b border-border last:border-b-0">
+            <a href={`/blog/${slug}`} class="group block pb-8 border-b border-border last:border-b-0" data-ph-post={title}>
               <div class="flex items-start justify-between gap-4 mb-1.5">
                 <h2 class="text-xl font-semibold text-text-primary group-hover:text-primary transition-colors">
                   {title}
@@ -59,4 +59,20 @@ const sortedPosts = allBlogPosts.sort((a, b) => {
       </div>
     )}
   </div>
+
+  <script is:inline>
+    (function () {
+      var links = document.querySelectorAll('[data-ph-post]');
+      for (var i = 0; i < links.length; i++) {
+        links[i].addEventListener('click', function () {
+          if (window.posthog) {
+            posthog.capture('blog_post_click', {
+              post_title: this.getAttribute('data-ph-post'),
+              source: 'blog_index',
+            });
+          }
+        });
+      }
+    })();
+  </script>
 </BaseLayout>
