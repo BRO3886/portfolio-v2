@@ -139,13 +139,6 @@ export const projects: ProjectEntry[] = [
     highlight: "Hackathon Winner",
   },
   {
-    name: "covid-twitter-telegram-bot",
-    description:
-      "Telegram bot that scraped Twitter for COVID-19 resource leads in real-time during India's second wave.",
-    url: "https://github.com/BRO3886/covid-twitter-telegram-bot",
-    tech: ["Go", "Twitter API", "Telegram"],
-  },
-  {
     name: "genlookup",
     description:
       "Chrome extension for instant LLM-powered explanations. Select any text, right-click, and get a contextual breakdown.",
