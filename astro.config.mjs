@@ -11,6 +11,9 @@ export default defineConfig({
   adapter: cloudflare({
     mode: 'directory',
   }),
+  build: {
+    inlineStylesheets: 'always',
+  },
   markdown: {
     shikiConfig: {
       themes: {
