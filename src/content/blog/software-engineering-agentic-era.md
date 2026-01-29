@@ -6,6 +6,8 @@ tags: ["ai", "software engineering", "opinion"]
 author: "Siddhartha Varma"
 ---
 
+![header image](/images/seae/featured.webp)
+
 # When Prompting Becomes Programming
 
 Prompt in, app out. The code fails, but too many builders cannot tell you why.
@@ -14,6 +16,11 @@ My feed is full of "vibe coders" shipping apps with prompts, accepting whatever 
 
 In two years, we've jumped from awkward tab completions from Copilot to it raising PRs directly on GitHub. This feels like developers' Excel moment: coding agents remove the tedium of typing, but fundamentals still matter, just like we still teach math without calculators.
 
+  <figure>                                                                                                                                                               
+    <img src="/images/seae/twt.webp" alt="andrej karpathy's tweet" />                                                                                                    
+    <figcaption>Andrej Karpathy's very popular tweet</figcaption>                                                                                                                     
+  </figure>
+
 We've had many shifts — from punch cards to high-level languages — but this one changes the relationship, not just the medium. More and more, prompting is treated as programming. That's the difference, and it's why I'm concerned about where we're headed.
 
 ## Tesla vs Mumbai Traffic
@@ -21,6 +28,11 @@ We've had many shifts — from punch cards to high-level languages — but this 
 A good chunk of people believe AI agents like Claude Code, Codex, and Copilot are like Tesla Autopilot — smooth and predictable, hands-off coding. You just prompt and magic happens.
 
 On the other hand, my experience has been more like navigating rush hour traffic in Mumbai. It's so chaotic. A Tesla would just give up, and you, a driver well-versed with Mumbai traffic, would want to grab the wheel to avoid crashing into someone.
+
+  <figure>                                                                                                                                                               
+    <img src="/images/seae/congestion.webp" alt="congestion in mumbai traffic" />                                                                                                    
+    <figcaption>a chaotic congestion in Mumbai, modified with nano 🍌</figcaption>                                                                                                                     
+  </figure>
 
 Vibe coders just prompt their way through their problems, riding on AI confidence and ✨ vibes ✨. They feel fast, they look productive, they feel productive.
 
@@ -42,7 +54,12 @@ The other thing that has been a bother is a fake dopamine rush from vibe coding.
 
 I don't think this speed is real. Yes, speed matters when you're building software in a highly competitive and ever-changing landscape, but at what cost?
 
-When you're moving fast, prompting your way through the problems, you're not actually understanding what you're building. You're not learning the patterns. You don't form mental models. You're not developing the intuition to understand where things might break, and they will, and when they do, you're stuck — because you can't debug what you don't understand.
+When you're moving fast, prompting your way through the problems, you're not actually understanding what you're building. You're not learning the patterns. You don't form mental models. You're not developing the intuition to understand where things might break, and they will, and when they do, you're stuck — **because you can't debug what you don't understand**.
+
+  <figure>                                                                                                                                                               
+    <img src="/images/seae/bobthebuilder.png" alt="bob the confused builder" />                                                                                                    
+    <figcaption>bob the confused builder</figcaption>                                                                                                                     
+  </figure>
 
 That fake speed you get from vibe coding? It disappears the moment something goes wrong. Suddenly you're slower than everyone else because you have to reverse figure out what's happening. I've faced this too. I spent a day debugging Claude generated cross-timezone slot booking flow with google calendar conflict mitigation, finally gave up and started handrolling the implementation.
 
@@ -97,6 +114,11 @@ This isn't about replacing developers. It's about separating the engineers who u
 The Agentic Era doesn't scare me. It excites me, because I think it's going to make the difference between good and great engineers more obvious than ever.
 
 The question isn't whether AI will change how we build software — it already has. The question is whether you'll use it as a crutch or as a catalyst for becoming a better engineer.
+
+  <figure>                                                                                                                                                               
+    <img src="/images/seae/architect.png" alt="You're the architect, not the builder" />                                                                                                    
+    <figcaption>Humans set the blueprint. AI follows it.</figcaption>                                                                                                                     
+  </figure>
 
 ---
 

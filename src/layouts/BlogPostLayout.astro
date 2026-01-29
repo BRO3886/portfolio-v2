@@ -267,10 +267,16 @@ const articleJsonLd = {
     font-size: 0.875rem;
   }
 
-  .prose ul,
+  .prose ul {
+    margin: 1.25rem 0;
+    padding-left: 1.5rem;
+    list-style-type: disc;
+  }
+
   .prose ol {
     margin: 1.25rem 0;
     padding-left: 1.5rem;
+    list-style-type: decimal;
   }
 
   .prose li {
@@ -291,7 +297,36 @@ const articleJsonLd = {
 
   .prose img {
     border-radius: 0.5rem;
-    margin: 2rem 0;
+    margin: 2rem auto;
+    max-width: 75%;
+    max-height: 28rem;
+    object-fit: contain;
+  }
+
+  .prose figure {
+    margin: 2.5rem 0;
+    text-align: center;
+  }
+
+  .prose figure img {
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 2px 16px -4px rgb(0 0 0 / 0.12);
+  }
+
+  :root[data-theme="dark"] .prose figure img {
+    box-shadow: 0 2px 20px -4px rgb(0 0 0 / 0.5);
+  }
+
+  .prose figcaption {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 450;
+    letter-spacing: 0.01em;
+    color: var(--color-text-tertiary);
+    margin-top: 0.75rem;
+    font-style: italic;
   }
 
   .prose hr {
