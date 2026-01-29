@@ -105,6 +105,62 @@ export const workExperience: WorkEntry[] = [
   },
 ];
 
+export interface ProjectEntry {
+  name: string;
+  description: string;
+  url: string;
+  tech: string[];
+  stars?: number;
+  highlight?: string;
+}
+
+export const projects: ProjectEntry[] = [
+  {
+    name: "gtasks",
+    description:
+      "A full-featured CLI client for Google Tasks. Manage task lists, create and complete tasks, all from the terminal.",
+    url: "https://github.com/BRO3886/gtasks",
+    tech: ["Go", "Google API", "CLI"],
+    stars: 126,
+  },
+  {
+    name: "mcp-memory-custom",
+    description:
+      "An MCP server that gives AI agents persistent memory with configurable storage locations. Works with Claude and other MCP-compatible clients.",
+    url: "https://github.com/BRO3886/mcp-memory-custom",
+    tech: ["JavaScript", "MCP", "AI Tooling"],
+  },
+  {
+    name: "QwikScan",
+    description:
+      "Document scanner app built with Flutter and BLoC. Won first place at Apptitude 2020 hackathon by ACM VIT.",
+    url: "https://github.com/BRO3886/qwikscan",
+    tech: ["Dart", "Flutter", "BLoC"],
+    highlight: "Hackathon Winner",
+  },
+  {
+    name: "covid-twitter-telegram-bot",
+    description:
+      "Telegram bot that scraped Twitter for COVID-19 resource leads in real-time during India's second wave.",
+    url: "https://github.com/BRO3886/covid-twitter-telegram-bot",
+    tech: ["Go", "Twitter API", "Telegram"],
+  },
+  {
+    name: "genlookup",
+    description:
+      "Chrome extension for instant LLM-powered explanations. Select any text, right-click, and get a contextual breakdown.",
+    url: "https://github.com/BRO3886/genlookup",
+    tech: ["JavaScript", "Chrome Extension", "LLM"],
+  },
+  {
+    name: "portfolio-v2",
+    description:
+      "This site. Static Astro build with dual-theme system, editorial blog layout, and Cloudflare edge deployment.",
+    url: "https://github.com/BRO3886/portfolio-v2",
+    tech: ["Astro", "TypeScript", "Cloudflare"],
+  },
+];
+
 export interface SocialLink {
   name: string;
   url: string;

@@ -115,10 +115,12 @@ portfolio-v2/
 - Dark mode set as default theme
 - First real blog post imported ("Software Engineering in the Agentic Era")
 - CopyButton component extracted for reusable clipboard functionality
+- Reading time indicator on blog posts (word count / 200 WPM)
+- Projects showcase section with 6 real GitHub projects in 2-column grid
 
 ### Architectural Decisions
 - **SSG + Edge**: Astro 5.x static build deployed to Cloudflare Pages with `build.inlineStylesheets: 'always'` for render-blocking CSS elimination
-- **Content management**: `src/lib/content.ts` for typed work experience (`WorkEntry` with multi-role support) and social links; Markdown content collections for blog
+- **Content management**: `src/lib/content.ts` for typed work experience (`WorkEntry` with multi-role support), project entries (`ProjectEntry` with tech tags, stars, highlights), and social links; Markdown content collections for blog
 - **Theme system**: Dual light (paper) / dark (charcoal) via `[data-theme="dark"]` on `<html>`, dark default, localStorage persistence, FOUC prevention script
 - **Fonts**: Source Sans 3 (sans, UI), Lora (serif, blog prose), JetBrains Mono (code) — variable fonts with preloading
 - **SEO**: Full Open Graph/Twitter meta, canonical URLs, JSON-LD structured data (Person on homepage, Article on posts)
@@ -128,6 +130,7 @@ portfolio-v2/
 - CSS custom properties in `theme.css` for all colors — no hardcoded values
 - Shiki dual-theme via `:root:not([data-theme="dark"])` / `:root[data-theme="dark"]` selectors
 - Work timeline: left-edge accent line, dot markers, bordered cards with hover lift, staggered fade-in
+- Project grid: 2-column responsive grid, bordered cards with hover lift + translateY, monospace project names, amber star count + highlight badges, staggered fade-in (60ms delays)
 - `CopyButton.astro` component: `variant="ghost"|"primary"`, icon slot, label/copiedLabel props
 - Blog post header: center-aligned editorial layout, copy-markdown button, description subtitle
 - Layout: `max-w-3xl mx-auto px-6` for content pages
@@ -136,7 +139,6 @@ portfolio-v2/
 ### Next Steps
 - Write more real blog content (currently one post)
 - Add detailed work experience descriptions
-- Consider adding project showcase section with real projects
 
 <!-- CONTEXT_END -->
 

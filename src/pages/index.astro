@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CopyButton from '../components/CopyButton.astro';
-import { workExperience } from '../lib/content';
+import { workExperience, projects } from '../lib/content';
 
 const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
@@ -100,6 +100,60 @@ const personJsonLd = {
       </section>
     )}
 
+    <!-- Projects -->
+    <section class="mb-20">
+      <div class="flex items-baseline justify-between mb-8">
+        <h2 class="text-2xl font-bold">Projects</h2>
+        <a
+          href="https://github.com/BRO3886"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm text-primary hover:text-primary-hover transition-colors"
+        >
+          GitHub &rarr;
+        </a>
+      </div>
+      <div class="project-grid">
+        {projects.map((project, i) => (
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="project-card group"
+            style={`--delay: ${i * 60}ms`}
+          >
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h3 class="text-base font-bold text-text-primary group-hover:text-accent transition-colors font-mono">
+                {project.name}
+              </h3>
+              <div class="flex items-center gap-2 flex-shrink-0">
+                {project.highlight && (
+                  <span class="project-highlight">{project.highlight}</span>
+                )}
+                {project.stars && project.stars > 0 && (
+                  <span class="project-stars">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    {project.stars}
+                  </span>
+                )}
+                <svg class="project-arrow" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+              </div>
+            </div>
+            <p class="text-sm text-text-secondary leading-relaxed mb-3">
+              {project.description}
+            </p>
+            <div class="flex flex-wrap gap-1.5 mt-auto">
+              {project.tech.map((t) => (
+                <span class="px-2 py-0.5 text-xs text-text-tertiary bg-surface rounded">
+                  {t}
+                </span>
+              ))}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
     <!-- Work Experience -->
     <section id="work">
       <h2 class="text-2xl font-bold mb-10">Work Experience</h2>
@@ -152,6 +206,87 @@ const personJsonLd = {
     </section>
 
     <style>
+      /* Projects */
+      .project-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+
+      @media (max-width: 640px) {
+        .project-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .project-card {
+        display: flex;
+        flex-direction: column;
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--color-border);
+        background: var(--color-background);
+        text-decoration: none;
+        transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+        animation: project-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation-delay: var(--delay);
+      }
+
+      .project-card:hover {
+        border-color: var(--color-border-hover);
+        background: var(--color-surface);
+        box-shadow: 0 2px 12px -2px rgb(0 0 0 / 0.06);
+        transform: translateY(-2px);
+      }
+
+      [data-theme="dark"] .project-card:hover {
+        box-shadow: 0 2px 16px -2px rgb(0 0 0 / 0.3);
+      }
+
+      @keyframes project-fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .project-stars {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        font-family: var(--font-mono);
+        color: var(--color-accent);
+      }
+
+      .project-highlight {
+        font-size: 0.625rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-accent);
+        background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+        padding: 0.15rem 0.5rem;
+        border-radius: 9999px;
+        white-space: nowrap;
+      }
+
+      .project-arrow {
+        color: var(--color-text-disabled);
+        transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+        flex-shrink: 0;
+      }
+
+      .project-card:hover .project-arrow {
+        color: var(--color-accent);
+        transform: translate(2px, -2px);
+      }
+
+      /* Work Experience */
       .work-timeline {
         position: relative;
         padding-left: 2rem;
