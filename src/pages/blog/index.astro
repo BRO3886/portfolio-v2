@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const allBlogPosts = await getCollection('blog', ({ data }) => {
+  return !data.draft;
+});
+
+const sortedPosts = allBlogPosts.sort((a, b) => {
+  return b.data.pubDate.getTime() - a.data.pubDate.getTime();
+});
+---
+
+<BaseLayout title="Blog" description="Articles and thoughts on web development, technology, and more">
+  <div class="max-w-4xl mx-auto px-6 py-16">
+    <h1 class="text-3xl md:text-4xl font-bold mb-2">Blog</h1>
+    <p class="text-text-secondary mb-12">
+      Articles and thoughts on web development, technology, and more.
+    </p>
+
+    {sortedPosts.length === 0 ? (
+      <p class="text-text-secondary">No blog posts yet. Check back soon!</p>
+    ) : (
+      <div class="space-y-8">
+        {sortedPosts.map((post) => {
+          const { title, description, pubDate, tags } = post.data;
+          const slug = post.data.slug || post.id.replace(/\.md$/, '');
+          const formattedDate = pubDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          });
+
+          return (
+            <a href={`/blog/${slug}`} class="group block pb-8 border-b border-border last:border-b-0">
+              <div class="flex items-start justify-between gap-4 mb-1.5">
+                <h2 class="text-xl font-semibold text-text-primary group-hover:text-primary transition-colors">
+                  {title}
+                </h2>
+                <time datetime={pubDate.toISOString()} class="text-xs text-text-tertiary whitespace-nowrap mt-1.5">
+                  {formattedDate}
+                </time>
+              </div>
+              <p class="text-sm text-text-secondary leading-relaxed mb-3 line-clamp-2">
+                {description}
+              </p>
+              {tags && tags.length > 0 && (
+                <div class="flex flex-wrap gap-1.5">
+                  {tags.map((tag) => (
+                    <span class="px-2 py-0.5 text-xs text-text-tertiary bg-surface rounded">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </a>
+          );
+        })}
+      </div>
+    )}
+  </div>
+</BaseLayout>

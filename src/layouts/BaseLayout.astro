@@ -1,0 +1,187 @@
+---
+import '../styles/theme.css';
+import { socialLinks } from '../lib/content';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogType?: string;
+  ogImage?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+  jsonLd?: Record<string, unknown>;
+}
+
+const {
+  title,
+  description = 'Portfolio website of Siddhartha Varma',
+  ogType = 'website',
+  ogImage,
+  publishedTime,
+  modifiedTime,
+  author,
+  jsonLd,
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const currentPath = Astro.url.pathname;
+const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonicalURL.href} />
+
+    <!-- Font Preloading -->
+    <link rel="preload" href="/fonts/SourceSans3/SourceSans3-VariableFont_wght.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="/fonts/Lora/Lora-VariableFont_wght.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="/fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf" as="font" type="font/ttf" crossorigin />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:site_name" content="Siddhartha Varma" />
+    {resolvedOgImage && <meta property="og:image" content={resolvedOgImage} />}
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {author && <meta property="article:author" content={author} />}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content={resolvedOgImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+
+    <!-- JSON-LD Structured Data -->
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    )}
+
+    <!-- Prevent FOUC: apply saved theme before render -->
+    <script is:inline>
+      (function() {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen flex flex-col bg-background text-text-primary">
+    <header class="border-b border-border">
+      <nav class="max-w-4xl mx-auto px-6 py-5 flex items-center justify-between">
+        <a href="/" class="text-lg font-semibold tracking-tight text-text-primary hover:text-primary transition-colors">
+          Siddhartha Varma
+        </a>
+        <div class="flex items-center gap-6 text-sm">
+          <a
+            href="/"
+            class:list={[
+              'transition-colors',
+              currentPath === '/' ? 'text-text-primary font-medium' : 'text-text-secondary hover:text-text-primary',
+            ]}
+          >
+            Home
+          </a>
+          <a
+            href="/blog"
+            class:list={[
+              'transition-colors',
+              currentPath.startsWith('/blog') ? 'text-text-primary font-medium' : 'text-text-secondary hover:text-text-primary',
+            ]}
+          >
+            Blog
+          </a>
+          <button
+            id="theme-toggle"
+            type="button"
+            aria-label="Toggle theme"
+            class="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface transition-colors"
+          >
+            <!-- Sun icon (shown in dark mode) -->
+            <svg class="hidden dark-icon w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <!-- Moon icon (shown in light mode) -->
+            <svg class="hidden light-icon w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <footer class="border-t border-border mt-auto">
+      <div class="max-w-3xl mx-auto px-6 py-8">
+        <div class="flex items-center justify-center gap-4 mb-4">
+          {socialLinks.map((link) => (
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={link.name}
+              class="text-text-tertiary hover:text-text-primary transition-colors"
+            >
+              <Fragment set:html={link.icon} />
+            </a>
+          ))}
+        </div>
+        <p class="text-text-tertiary text-sm text-center">
+          &copy; {new Date().getFullYear()} Siddhartha Varma
+        </p>
+      </div>
+    </footer>
+
+    <script is:inline>
+      (function() {
+        function updateIcons() {
+          var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          var darkIcons = document.querySelectorAll('.dark-icon');
+          var lightIcons = document.querySelectorAll('.light-icon');
+          darkIcons.forEach(function(el) { el.style.display = isDark ? 'block' : 'none'; });
+          lightIcons.forEach(function(el) { el.style.display = isDark ? 'none' : 'block'; });
+        }
+
+        updateIcons();
+
+        var toggle = document.getElementById('theme-toggle');
+        if (toggle) {
+          toggle.addEventListener('click', function() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+              document.documentElement.removeAttribute('data-theme');
+              localStorage.setItem('theme', 'light');
+            } else {
+              document.documentElement.setAttribute('data-theme', 'dark');
+              localStorage.setItem('theme', 'dark');
+            }
+            updateIcons();
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

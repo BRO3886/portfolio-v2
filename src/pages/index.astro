@@ -1,0 +1,296 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CopyButton from '../components/CopyButton.astro';
+import { workExperience } from '../lib/content';
+
+const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 3);
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Siddhartha Varma',
+  url: 'https://sidv.dev',
+  jobTitle: 'Software Engineer',
+  sameAs: [
+    'https://github.com/BRO3886',
+    'https://linkedin.com/in/siddharthav22/',
+    'https://twitter.com/sidv_22',
+  ],
+};
+---
+
+<BaseLayout
+  title="Siddhartha Varma - Portfolio"
+  description="Portfolio website showcasing my projects and technical writing"
+  jsonLd={personJsonLd}
+>
+  <div class="max-w-4xl mx-auto px-6 py-16 md:py-24">
+    <!-- Hero -->
+    <section class="mb-20">
+      <h1 class="text-4xl md:text-5xl font-bold mb-8 leading-[1.15]">
+        Engineer who designs with taste. I build reliable systems and clean human interfaces.
+      </h1>
+      <p class="text-lg text-text-secondary leading-relaxed mb-8">
+        Backend first. Product minded. Currently exploring AI-native tooling and Machine Learning.
+      </p>
+      <div class="flex gap-3">
+        <CopyButton id="copy-email" label="Get in Touch" copiedLabel="Email Copied" variant="primary">
+          <svg slot="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+          </svg>
+        </CopyButton>
+        <a
+          href="/blog"
+          class="px-5 py-2.5 border border-border text-text-secondary rounded-lg text-sm font-medium hover:text-text-primary hover:border-border-hover transition-all"
+        >
+          Blog
+        </a>
+      </div>
+    </section>
+
+    <!-- Recent Posts -->
+    {recentPosts.length > 0 && (
+      <section class="mb-20">
+        <div class="flex items-baseline justify-between mb-8">
+          <h2 class="text-2xl font-bold">Recent Posts</h2>
+          <a href="/blog" class="text-sm text-primary hover:text-primary-hover transition-colors">
+            View all &rarr;
+          </a>
+        </div>
+        <div class="space-y-6">
+          {recentPosts.map((post) => {
+            const { title, description, pubDate, tags } = post.data;
+            const slug = post.data.slug || post.id.replace(/\.md$/, '');
+            const formattedDate = pubDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+
+            return (
+              <a href={`/blog/${slug}`} class="group block p-5 -mx-5 rounded-xl hover:bg-surface transition-colors">
+                <div class="flex items-start justify-between gap-4 mb-1.5">
+                  <h3 class="text-lg font-semibold text-text-primary group-hover:text-primary transition-colors">
+                    {title}
+                  </h3>
+                  <time datetime={pubDate.toISOString()} class="text-sm text-text-tertiary whitespace-nowrap mt-1">
+                    {formattedDate}
+                  </time>
+                </div>
+                <p class="text-base text-text-secondary leading-relaxed mb-2.5 line-clamp-2">
+                  {description}
+                </p>
+                {tags && tags.length > 0 && (
+                  <div class="flex flex-wrap gap-1.5">
+                    {tags.map((tag) => (
+                      <span class="px-2 py-0.5 text-xs text-text-tertiary bg-surface rounded">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <!-- Work Experience -->
+    <section id="work">
+      <h2 class="text-2xl font-bold mb-10">Work Experience</h2>
+      <div class="work-timeline">
+        {workExperience.map((entry, i) => (
+          <a
+            href={entry.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="work-entry group"
+            style={`--delay: ${i * 80}ms`}
+          >
+            <div class="work-entry-marker" aria-hidden="true">
+              <span class="work-dot" />
+            </div>
+            <div class="work-entry-content">
+              <span class="work-duration font-mono">{entry.duration}</span>
+              <div class="work-card">
+                <div class="flex items-baseline gap-2 flex-wrap mb-1">
+                  <h3 class="text-lg font-bold text-text-primary group-hover:text-accent transition-colors">
+                    {entry.company}
+                  </h3>
+                  <svg class="work-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                </div>
+                <div class="work-roles">
+                  {entry.roles.map((role, ri) => (
+                    <div class:list={["work-role", { "mt-3 pt-3 work-role-border": ri > 0 }]}>
+                      <div class="flex items-baseline justify-between gap-3">
+                        <p class="text-sm text-accent font-medium">{role.title}</p>
+                        <span class="text-xs font-mono text-text-tertiary whitespace-nowrap">{role.duration}</span>
+                      </div>
+                      {role.description && (
+                        <p class="text-[0.94rem] text-text-secondary leading-relaxed mt-1.5">
+                          {role.description}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {entry.description && (
+                  <p class="text-[0.94rem] text-text-secondary leading-relaxed mt-2.5">
+                    {entry.description}
+                  </p>
+                )}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <style>
+      .work-timeline {
+        position: relative;
+        padding-left: 2rem;
+      }
+
+      .work-timeline::before {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 8px;
+        bottom: 8px;
+        width: 1px;
+        background: linear-gradient(
+          to bottom,
+          var(--color-accent),
+          var(--color-border) 50%,
+          transparent
+        );
+      }
+
+      .work-entry {
+        display: block;
+        position: relative;
+        padding-bottom: 2rem;
+        text-decoration: none;
+        animation: work-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation-delay: var(--delay);
+      }
+
+      .work-entry:last-child {
+        padding-bottom: 0;
+      }
+
+      @keyframes work-fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .work-entry-marker {
+        position: absolute;
+        left: -2rem;
+        top: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 11px;
+        height: 11px;
+      }
+
+      .work-dot {
+        display: block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--color-border);
+        border: 1.5px solid var(--color-background);
+        box-shadow: 0 0 0 1.5px var(--color-border);
+        transition: all 200ms ease;
+      }
+
+      .work-entry:hover .work-dot {
+        background: var(--color-accent);
+        box-shadow: 0 0 0 2px var(--color-accent), 0 0 8px color-mix(in srgb, var(--color-accent) 30%, transparent);
+        transform: scale(1.3);
+      }
+
+      .work-entry-content {
+        min-height: 2rem;
+      }
+
+      .work-duration {
+        display: inline-block;
+        font-size: 0.75rem;
+        letter-spacing: 0.03em;
+        color: var(--color-text-tertiary);
+        margin-bottom: 0.5rem;
+      }
+
+      .work-card {
+        padding: 1rem 1.25rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--color-border);
+        background: var(--color-background);
+        transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .work-entry:hover .work-card {
+        border-color: var(--color-border-hover);
+        background: var(--color-surface);
+        box-shadow: 0 2px 12px -2px rgb(0 0 0 / 0.06);
+        transform: translateX(4px);
+      }
+
+      [data-theme="dark"] .work-entry:hover .work-card {
+        box-shadow: 0 2px 16px -2px rgb(0 0 0 / 0.3);
+      }
+
+      .work-role-border {
+        border-top: 1px dashed var(--color-border);
+      }
+
+      .work-arrow {
+        color: var(--color-text-disabled);
+        transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
+        flex-shrink: 0;
+      }
+
+      .work-entry:hover .work-arrow {
+        color: var(--color-accent);
+        transform: translate(2px, -2px);
+      }
+    </style>
+  </div>
+
+  <script is:inline>
+    (function () {
+      var btn = document.getElementById('copy-email');
+      if (!btn) return;
+      var copying = false;
+      btn.addEventListener('click', function () {
+        if (copying) return;
+        copying = true;
+        navigator.clipboard.writeText('me@sidv.dev').then(function () {
+          btn.classList.add('is-copied');
+          setTimeout(function () {
+            btn.classList.remove('is-copied');
+            copying = false;
+          }, 2500);
+        }).catch(function () {
+          copying = false;
+        });
+      });
+    })();
+  </script>
+
+</BaseLayout>

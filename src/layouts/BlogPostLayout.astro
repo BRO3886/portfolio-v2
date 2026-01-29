@@ -1,0 +1,267 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import CopyButton from '../components/CopyButton.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  tags?: string[];
+  author?: string;
+  image?: string;
+  rawMarkdown?: string;
+}
+
+const { title, description, pubDate, updatedDate, tags = [], author = 'Siddhartha Varma', image, rawMarkdown } = Astro.props;
+
+const formattedPubDate = pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  author: {
+    '@type': 'Person',
+    name: author,
+    url: 'https://sidv.dev',
+  },
+  datePublished: pubDate.toISOString(),
+  ...(updatedDate && { dateModified: updatedDate.toISOString() }),
+  ...(image && { image }),
+  publisher: {
+    '@type': 'Person',
+    name: 'Siddhartha Varma',
+    url: 'https://sidv.dev',
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': new URL(Astro.url.pathname, Astro.site).href,
+  },
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogType="article"
+  ogImage={image}
+  publishedTime={pubDate.toISOString()}
+  modifiedTime={updatedDate?.toISOString()}
+  author={author}
+  jsonLd={articleJsonLd}
+>
+  <article class="max-w-4xl mx-auto px-6 py-16">
+    <header class="mb-10 text-center">
+      {rawMarkdown && (
+        <div class="flex justify-center mb-6">
+          <CopyButton id="copy-markdown" label="Markdown" copiedLabel="Copied" variant="ghost">
+            <svg slot="icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+            </svg>
+          </CopyButton>
+        </div>
+      )}
+
+      <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+        {title}
+      </h1>
+
+      <p class="text-lg text-text-secondary mb-5 max-w-2xl mx-auto">{description}</p>
+
+      <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-text-tertiary mb-5">
+        <time datetime={pubDate.toISOString()}>{formattedPubDate}</time>
+        {updatedDate && (
+          <>
+            <span class="text-text-tertiary">/</span>
+            <time datetime={updatedDate.toISOString()}>Updated {formattedUpdatedDate}</time>
+          </>
+        )}
+      </div>
+
+      {tags.length > 0 && (
+        <div class="flex flex-wrap justify-center gap-1.5">
+          {tags.map((tag) => (
+            <span class="px-2 py-0.5 text-xs text-text-tertiary bg-surface rounded">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+
+  {rawMarkdown && (
+    <template id="markdown-source">{rawMarkdown}</template>
+  )}
+
+  <script is:inline>
+    (function () {
+      var btn = document.getElementById('copy-markdown');
+      if (!btn) return;
+      var copying = false;
+      btn.addEventListener('click', function () {
+        if (copying) return;
+        var tpl = document.getElementById('markdown-source');
+        if (!tpl) return;
+        var md = tpl.content.textContent || tpl.textContent || '';
+        copying = true;
+        navigator.clipboard.writeText(md.trim()).then(function () {
+          btn.classList.add('is-copied');
+          setTimeout(function () {
+            btn.classList.remove('is-copied');
+            copying = false;
+          }, 2500);
+        }).catch(function () {
+          copying = false;
+        });
+      });
+    })();
+  </script>
+</BaseLayout>
+
+<style is:global>
+  .prose {
+    color: var(--color-text-secondary);
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 450;
+    line-height: 1.8;
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    color: var(--color-text-primary);
+    font-family: var(--font-serif);
+    font-weight: 700;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+
+  .prose h1 {
+    font-size: 1.5rem;
+  }
+
+  .prose h2 {
+    font-size: 1.35rem;
+  }
+
+  .prose h3 {
+    font-size: 1.2rem;
+  }
+
+  .prose p {
+    margin-bottom: 1.25rem;
+  }
+
+  .prose a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .prose a:hover {
+    color: var(--color-primary-hover);
+  }
+
+  .prose strong {
+    color: var(--color-text-primary);
+    font-weight: 700;
+  }
+
+  .prose code {
+    background-color: var(--color-code-bg);
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    font-family: var(--font-mono);
+  }
+
+  .prose pre {
+    background-color: var(--color-pre-bg);
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid var(--color-pre-border);
+  }
+
+  .prose pre code {
+    background-color: transparent;
+    padding: 0;
+    font-size: 0.875rem;
+  }
+
+  .prose ul,
+  .prose ol {
+    margin: 1.25rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .prose li {
+    margin-bottom: 0.375rem;
+  }
+
+  .prose li::marker {
+    color: var(--color-text-tertiary);
+  }
+
+  .prose blockquote {
+    border-left: 2px solid var(--color-primary);
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: var(--color-text-tertiary);
+    font-style: italic;
+  }
+
+  .prose img {
+    border-radius: 0.5rem;
+    margin: 2rem 0;
+  }
+
+  .prose hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 2.5rem 0;
+  }
+
+  /* Shiki dual-theme */
+  .prose pre {
+    background-color: var(--color-pre-bg) !important;
+    border: 1px solid var(--color-pre-border);
+  }
+
+  .prose pre span {
+    background-color: transparent !important;
+  }
+
+  :root:not([data-theme="dark"]) .prose pre span {
+    color: var(--shiki-light) !important;
+  }
+
+  :root[data-theme="dark"] .prose pre span {
+    color: var(--shiki-dark) !important;
+  }
+
+</style>
