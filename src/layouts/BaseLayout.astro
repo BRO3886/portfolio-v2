@@ -68,11 +68,11 @@ const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
       <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     )}
 
-    <!-- Prevent FOUC: apply saved theme before render -->
+    <!-- Prevent FOUC: apply saved theme before render (dark default) -->
     <script is:inline>
       (function() {
         const saved = localStorage.getItem('theme');
-        if (saved === 'dark') {
+        if (saved !== 'light') {
           document.documentElement.setAttribute('data-theme', 'dark');
         }
       })();
