@@ -33,6 +33,13 @@ const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Prevent FOUC: apply saved theme before any styles are parsed -->
+    <script is:inline>
+      (function() {
+        var s = localStorage.getItem('theme');
+        if (s !== 'light') document.documentElement.setAttribute('data-theme', 'dark');
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
@@ -67,16 +74,6 @@ const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
     {jsonLd && (
       <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     )}
-
-    <!-- Prevent FOUC: apply saved theme before render (dark default) -->
-    <script is:inline>
-      (function() {
-        const saved = localStorage.getItem('theme');
-        if (saved !== 'light') {
-          document.documentElement.setAttribute('data-theme', 'dark');
-        }
-      })();
-    </script>
   </head>
   <body class="min-h-screen flex flex-col bg-background text-text-primary">
     <header class="border-b border-border">

@@ -109,26 +109,31 @@ portfolio-v2/
 **Last Updated**: 29 Jan 2026
 
 ### Active Work
-- Homepage polish: hero statement heading, "Get in Touch" clipboard CTA, "Blog" secondary button
-- Blog post typography tuning — prose heading hierarchy fixed, Shiki dual-theme syntax highlighting working
+- Site deployed to Cloudflare Pages with performance optimizations (inline CSS, cache headers)
+- Dark mode set as default theme
+- First real blog post imported ("Software Engineering in the Agentic Era")
+- CopyButton component extracted for reusable clipboard functionality
 
 ### Architectural Decisions
-- **Content management**: `src/lib/content.ts` centralizes typed work experience (`WorkEntry` with multi-role support) and social links — blog stays in Markdown content collections
-- **Theme system**: Dual light (paper) / dark (charcoal) via `[data-theme="dark"]` on `<html>`, localStorage persistence, FOUC prevention script
-- **Fonts**: Source Sans 3 (sans, UI), Lora (serif, blog prose), JetBrains Mono (code) — all variable fonts with preloading
+- **SSG + Edge**: Astro 5.x static build deployed to Cloudflare Pages with `build.inlineStylesheets: 'always'` for render-blocking CSS elimination
+- **Content management**: `src/lib/content.ts` for typed work experience (`WorkEntry` with multi-role support) and social links; Markdown content collections for blog
+- **Theme system**: Dual light (paper) / dark (charcoal) via `[data-theme="dark"]` on `<html>`, dark default, localStorage persistence, FOUC prevention script
+- **Fonts**: Source Sans 3 (sans, UI), Lora (serif, blog prose), JetBrains Mono (code) — variable fonts with preloading
+- **SEO**: Full Open Graph/Twitter meta, canonical URLs, JSON-LD structured data (Person on homepage, Article on posts)
 - **Accent color**: Warm amber/ochre (`hsl(36 55% 45%)` light, `hsl(36 55% 58%)` dark)
-- **Layout width**: `max-w-4xl mx-auto px-6` for all pages
 
 ### Established Patterns
 - CSS custom properties in `theme.css` for all colors — no hardcoded values
-- Shiki dual-theme via `:root:not([data-theme="dark"])` / `:root[data-theme="dark"]` selectors with `--shiki-light` / `--shiki-dark` variables
-- Work timeline: left-edge accent line, dot markers, bordered cards with hover lift, staggered fade-in animation
-- Toast notifications: lightweight inline `<div>` with CSS transitions, no dependencies
+- Shiki dual-theme via `:root:not([data-theme="dark"])` / `:root[data-theme="dark"]` selectors
+- Work timeline: left-edge accent line, dot markers, bordered cards with hover lift, staggered fade-in
+- `CopyButton.astro` component: `variant="ghost"|"primary"`, icon slot, label/copiedLabel props
+- Blog post header: center-aligned editorial layout, copy-markdown button, description subtitle
+- Layout: `max-w-3xl mx-auto px-6` for content pages
+- Cloudflare Pages `_headers` for cache control, `_redirects` for 404 → /
 
 ### Next Steps
-- Write real blog content replacing placeholder posts
-- Add more work experience descriptions
-- Configure custom domain and deployment pipeline
+- Write more real blog content (currently one post)
+- Add detailed work experience descriptions
 - Consider adding project showcase section with real projects
 
 <!-- CONTEXT_END -->
