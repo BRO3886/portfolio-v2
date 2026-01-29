@@ -34,11 +34,10 @@ const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Prevent FOUC: apply saved theme before any styles are parsed -->
+    <!-- Prevent FOUC: dark is the CSS default, only apply light if explicitly chosen -->
     <script is:inline>
       (function() {
-        var s = localStorage.getItem('theme');
-        if (s !== 'light') document.documentElement.setAttribute('data-theme', 'dark');
+        if (localStorage.getItem('theme') === 'light') document.documentElement.setAttribute('data-theme', 'light');
       })();
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -47,9 +46,9 @@ const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
     <link rel="canonical" href={canonicalURL.href} />
 
     <!-- Font Preloading -->
-    <link rel="preload" href="/fonts/SourceSans3/SourceSans3-VariableFont_wght.ttf" as="font" type="font/ttf" crossorigin />
-    <link rel="preload" href="/fonts/Lora/Lora-VariableFont_wght.ttf" as="font" type="font/ttf" crossorigin />
-    <link rel="preload" href="/fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="/fonts/SourceSans3/SourceSans3-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Lora/Lora-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- Open Graph -->
     <meta property="og:type" content={ogType} />
@@ -156,12 +155,16 @@ const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
 
     <script is:inline>
       (function() {
+        function isLight() {
+          return document.documentElement.getAttribute('data-theme') === 'light';
+        }
+
         function updateIcons() {
-          var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          var light = isLight();
           var darkIcons = document.querySelectorAll('.dark-icon');
           var lightIcons = document.querySelectorAll('.light-icon');
-          darkIcons.forEach(function(el) { el.style.display = isDark ? 'block' : 'none'; });
-          lightIcons.forEach(function(el) { el.style.display = isDark ? 'none' : 'block'; });
+          darkIcons.forEach(function(el) { el.style.display = light ? 'none' : 'block'; });
+          lightIcons.forEach(function(el) { el.style.display = light ? 'block' : 'none'; });
         }
 
         updateIcons();
@@ -169,16 +172,15 @@ const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
         var toggle = document.getElementById('theme-toggle');
         if (toggle) {
           toggle.addEventListener('click', function() {
-            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             var newTheme;
-            if (isDark) {
+            if (isLight()) {
               document.documentElement.removeAttribute('data-theme');
-              localStorage.setItem('theme', 'light');
-              newTheme = 'light';
-            } else {
-              document.documentElement.setAttribute('data-theme', 'dark');
               localStorage.setItem('theme', 'dark');
               newTheme = 'dark';
+            } else {
+              document.documentElement.setAttribute('data-theme', 'light');
+              localStorage.setItem('theme', 'light');
+              newTheme = 'light';
             }
             updateIcons();
             if (window.posthog) { posthog.capture('theme_toggle', { new_theme: newTheme }); }
