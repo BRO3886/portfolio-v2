@@ -27,6 +27,10 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', {
   day: 'numeric',
 });
 
+const WORDS_PER_MINUTE = 200;
+const wordCount = rawMarkdown ? rawMarkdown.trim().split(/\s+/).length : 0;
+const readingTime = Math.max(1, Math.ceil(wordCount / WORDS_PER_MINUTE));
+
 const articleJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
@@ -89,6 +93,8 @@ const articleJsonLd = {
             <time datetime={updatedDate.toISOString()}>Updated {formattedUpdatedDate}</time>
           </>
         )}
+        <span class="text-text-tertiary">&middot;</span>
+        <span>{readingTime} min read</span>
       </div>
 
       {tags.length > 0 && (

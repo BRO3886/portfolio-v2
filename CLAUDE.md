@@ -70,6 +70,8 @@ portfolio-v2/
 │   └── commands/
 ├── .claude/
 ├── journal/
+├── scripts/
+│   └── deploy.sh          # Build + deploy to Cloudflare Pages
 ├── astro.config.mjs       # Astro configuration
 ├── tailwind.config.mjs    # Tailwind configuration
 ├── tsconfig.json          # TypeScript configuration
@@ -165,8 +167,7 @@ Output will be in `dist/` directory
 
 ### Deploying to Cloudflare
 ```bash
-npm run build
-wrangler pages publish dist
+bash scripts/deploy.sh
 ```
 
-Or set up GitHub Actions workflow for automatic deployments.
+This builds and deploys to Cloudflare Pages in one step. Always use this script instead of running build + deploy separately.
