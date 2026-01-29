@@ -282,6 +282,7 @@ const personJsonLd = {
         copying = true;
         navigator.clipboard.writeText('me@sidv.dev').then(function () {
           btn.classList.add('is-copied');
+          if (window.posthog) { posthog.capture('copy_email'); }
           setTimeout(function () {
             btn.classList.remove('is-copied');
             copying = false;

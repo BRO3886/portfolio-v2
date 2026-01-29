@@ -1,6 +1,7 @@
 ---
 import '../styles/theme.css';
 import { socialLinks } from '../lib/content';
+import PostHog from '../components/PostHog.astro';
 
 interface Props {
   title: string;
@@ -74,6 +75,7 @@ const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
     {jsonLd && (
       <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     )}
+    <PostHog />
   </head>
   <body class="min-h-screen flex flex-col bg-background text-text-primary">
     <header class="border-b border-border">
@@ -168,17 +170,37 @@ const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
         if (toggle) {
           toggle.addEventListener('click', function() {
             var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            var newTheme;
             if (isDark) {
               document.documentElement.removeAttribute('data-theme');
               localStorage.setItem('theme', 'light');
+              newTheme = 'light';
             } else {
               document.documentElement.setAttribute('data-theme', 'dark');
               localStorage.setItem('theme', 'dark');
+              newTheme = 'dark';
             }
             updateIcons();
+            if (window.posthog) { posthog.capture('theme_toggle', { new_theme: newTheme }); }
           });
         }
       })();
+    </script>
+
+    <script is:inline>
+      document.addEventListener('click', function(e) {
+        var link = e.target.closest('a');
+        if (!link) return;
+        try {
+          var url = new URL(link.href, window.location.origin);
+          if (url.hostname && url.hostname !== window.location.hostname && window.posthog) {
+            posthog.capture('outbound_link_click', {
+              url: link.href,
+              link_text: (link.textContent || '').trim().substring(0, 200),
+            });
+          }
+        } catch (_) {}
+      });
     </script>
   </body>
 </html>
