@@ -114,7 +114,7 @@ const articleJsonLd = {
   </article>
 
   {rawMarkdown && (
-    <template id="markdown-source">{rawMarkdown}</template>
+    <script id="markdown-source" type="application/json" set:html={JSON.stringify(rawMarkdown)} />
   )}
 
   <script is:inline>
@@ -126,7 +126,7 @@ const articleJsonLd = {
         if (copying) return;
         var tpl = document.getElementById('markdown-source');
         if (!tpl) return;
-        var md = tpl.content.textContent || tpl.textContent || '';
+        var md = JSON.parse(tpl.textContent || '""');
         copying = true;
         navigator.clipboard.writeText(md.trim()).then(function () {
           btn.classList.add('is-copied');
