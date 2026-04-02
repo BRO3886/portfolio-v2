@@ -19,7 +19,7 @@ export const workExperience: WorkEntry[] = [
     duration: "Apr 2025 - Present",
     roles: [
       {
-        title: "SeniorSoftware Engineer",
+        title: "Senior Software Engineer",
         duration: "Jul 2025 - Present",
         description:
           "AI-powered task management, Slack bots with Temporal workflows, and a Calendly alternative with multi-tenant scheduling.",
