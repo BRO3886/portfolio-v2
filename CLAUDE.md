@@ -141,6 +141,18 @@ portfolio-v2/
 
 <!-- CONTEXT_END -->
 
+## IndexNow
+
+Run `npm run indexnow` after any deploy whose content changed (new/updated pages). This notifies Bing, Yandex, Naver, Seznam, and Yep to re-crawl the site promptly.
+
+The key lives in two places that must stay in sync:
+- `public/85b9b886157bfea1cf85c8b64bbf7705.txt` — key file served at the site root (filename and single-line contents must both equal the key)
+- `KEY` constant in `scripts/indexnow.mjs`
+
+The live submission only works once the key file is deployed to `https://sidv.dev/85b9b886157bfea1cf85c8b64bbf7705.txt`. A 403 response from IndexNow means that URL is unreachable or the file contents are wrong — merge and deploy first, then run.
+
+To submit specific URLs instead of the full sitemap: `node scripts/indexnow.mjs https://sidv.dev/blog/some-post/`
+
 ## Setup Instructions
 
 ### Prerequisites
