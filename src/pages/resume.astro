@@ -2,18 +2,55 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const resumePath = '/documents/Resume_Siddhartha_Varma.pdf';
+
+const resumeJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  url: 'https://sidv.dev/resume/',
+  name: 'Siddhartha Varma Resume',
+  description:
+    'Resume of Siddhartha Varma, a backend and systems engineer specializing in Go, distributed workflows, search infrastructure, and reliable product platforms.',
+  mainEntity: {
+    '@type': 'Person',
+    name: 'Siddhartha Varma',
+    url: 'https://sidv.dev',
+    jobTitle: 'Backend and Systems Engineer',
+    sameAs: [
+      'https://github.com/BRO3886',
+      'https://linkedin.com/in/siddharthav22/',
+    ],
+    knowsAbout: [
+      'Go',
+      'Distributed systems',
+      'Search infrastructure',
+      'Temporal',
+      'PostgreSQL',
+      'Redis',
+      'Kafka',
+    ],
+  },
+};
 ---
 
 <BaseLayout
-  title="Resume | Siddhartha Varma"
-  description="Resume for Siddhartha Varma, backend and systems engineer."
+  title="Siddhartha Varma Resume | Backend & Systems Engineer"
+  description="Resume of Siddhartha Varma, a backend and systems engineer with 4+ years of experience in Go, distributed workflows, search infrastructure, and reliable product platforms."
+  ogType="profile"
+  jsonLd={resumeJsonLd}
 >
   <section class="resume-page">
     <div class="resume-shell">
       <header class="resume-heading">
-        <h1>Resume</h1>
+        <div>
+          <h1>Resume</h1>
+          <p>
+            Backend and systems engineer with 4+ years of experience building distributed workflows,
+            search infrastructure, and reliable product platforms in Go.
+          </p>
+        </div>
         <a
           href={resumePath}
+          type="application/pdf"
           download="Resume_Siddhartha_Varma.pdf"
           data-resume-download
           class="resume-download"
@@ -88,6 +125,7 @@ const resumePath = '/documents/Resume_Siddhartha_Varma.pdf';
   .resume-shell { margin: 0 auto; max-width: 52rem; }
   .resume-heading { align-items: center; display: flex; gap: 1.5rem; justify-content: space-between; margin-bottom: 1.5rem; }
   .resume-heading h1 { color: var(--color-text-primary); font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 650; letter-spacing: -0.035em; line-height: 0.95; margin: 0; }
+  .resume-heading p { color: var(--color-text-secondary); line-height: 1.6; margin: 0.75rem 0 0; max-width: 42rem; }
 
   .resume-download { align-items: center; background: var(--color-primary); border-radius: 0.5rem; color: var(--color-text-on-primary); display: inline-flex; flex: none; font-size: 0.875rem; font-weight: 500; gap: 0.4rem; justify-content: center; overflow: hidden; padding: 0.625rem 1.25rem; position: relative; text-decoration: none; transition: background-color 280ms cubic-bezier(0.16, 1, 0.3, 1), color 280ms cubic-bezier(0.16, 1, 0.3, 1), transform 280ms cubic-bezier(0.16, 1, 0.3, 1); }
   .resume-download:hover { background: var(--color-primary-hover); }

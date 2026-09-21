@@ -102,15 +102,6 @@ const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
           >
             Blog
           </a>
-          <a
-            href="/resume"
-            class:list={[
-              'transition-colors',
-              currentPath === '/resume' ? 'text-text-primary font-medium' : 'text-text-secondary hover:text-text-primary',
-            ]}
-          >
-            Resume
-          </a>
           <button
             id="theme-toggle"
             type="button"
