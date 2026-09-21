@@ -7,7 +7,7 @@ author: "Siddhartha Varma"
 image: "/images/dynamodb-architecture/featured.webp"
 ---
 
-![A deep dive into Dynamo's architecture and scale](/images/dynamodb-architecture/featured.webp)
+<img src="/images/dynamodb-architecture/featured.webp" alt="A deep dive into DynamoDB architecture and scale" width="1024" height="538" decoding="async" />
 
 ## Intro
 
@@ -50,7 +50,7 @@ Now, you might be thinking, does it not introduce the [noisy neighbour problem](
 These mechanisms ensure workload isolation between co-resident tables while maintaining high resource utilization. The benefit of this is cost savings, which gets passed down to customers while giving performance guarantees.
 
 <figure>
-  <img src="/images/dynamodb-architecture/multi-tenancy.webp" alt="Multi-tenancy in DynamoDB" />
+  <img src="/images/dynamodb-architecture/multi-tenancy.webp" alt="Multi-tenancy in DynamoDB" width="1348" height="574" loading="lazy" decoding="async" />
   <figcaption>Multi-tenancy in DynamoDB</figcaption>
 </figure>
 
@@ -78,7 +78,7 @@ Each key range is handled by exactly one partition, with no gaps or overlaps bet
 This automatic splitting enables tables to scale horizontally as they grow. Each new partition adds more dedicated storage and compute capacity to your table, all managed transparently by DynamoDB.
 
 <figure>
-  <img src="/images/dynamodb-architecture/automatic-splitting.webp" alt="Automatic splitting" />
+  <img src="/images/dynamodb-architecture/automatic-splitting.webp" alt="Automatic DynamoDB partition splitting" width="1209" height="242" loading="lazy" decoding="async" />
   <figcaption>Automatic splitting</figcaption>
 </figure>
 
@@ -91,7 +91,7 @@ At its core, DynamoDB achieves this through a sophisticated replication strategy
 Each partition has multiple replicas distributed across different AZs, forming what's called a **replication group**. Within each group, one replica acts as the leader, coordinating writes and strongly consistent reads.
 
 <figure>
-  <img src="/images/dynamodb-architecture/core-components.webp" alt="Interaction Between Core Components" />
+  <img src="/images/dynamodb-architecture/core-components.webp" alt="Interaction between DynamoDB core components" width="706" height="455" loading="lazy" decoding="async" />
   <figcaption>Interaction Between Core Components</figcaption>
 </figure>
 
@@ -116,7 +116,7 @@ In case when things go wrong, DynamoDB has multiple layers of failure protection
 - **Automatic healing** - DynamoDB's autoadmin service continuously monitors partition health and automatically replaces unhealthy replicas, ensuring your data remains triple-replicated
 
 <figure>
-  <img src="/images/dynamodb-architecture/replication-group.webp" alt="Interaction inside a Replication Group" />
+  <img src="/images/dynamodb-architecture/replication-group.webp" alt="Interaction inside a DynamoDB replication group" width="1141" height="822" loading="lazy" decoding="async" />
   <figcaption>Interaction inside a Replication Group</figcaption>
 </figure>
 

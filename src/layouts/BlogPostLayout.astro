@@ -30,6 +30,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', {
 const WORDS_PER_MINUTE = 200;
 const wordCount = rawMarkdown ? rawMarkdown.trim().split(/\s+/).length : 0;
 const readingTime = Math.max(1, Math.ceil(wordCount / WORDS_PER_MINUTE));
+const resolvedImage = image ? new URL(image, Astro.site).href : undefined;
 
 const articleJsonLd = {
   '@context': 'https://schema.org',
@@ -43,7 +44,7 @@ const articleJsonLd = {
   },
   datePublished: pubDate.toISOString(),
   ...(updatedDate && { dateModified: updatedDate.toISOString() }),
-  ...(image && { image }),
+  ...(resolvedImage && { image: resolvedImage }),
   publisher: {
     '@type': 'Person',
     name: 'Siddhartha Varma',

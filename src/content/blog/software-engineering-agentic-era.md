@@ -1,14 +1,16 @@
 ---
-title: "Software Engineering In The Agentic Era"
-description: "Thoughts on using AI as an amplifier, not a replacement, and how AI tools create opportunities for engineers who understand them"
+title: "Software Engineering in the Agentic Era: Why Fundamentals Still Matter"
+description: "Why coding agents amplify engineering judgment rather than replace it, and how developers can use them without losing the fundamentals that keep software reliable"
 pubDate: 2025-09-21
+updatedDate: 2026-09-21
 tags: ["ai", "software engineering", "opinion"]
 author: "Siddhartha Varma"
+image: "/images/seae/featured.webp"
 ---
 
-![header image](/images/seae/featured.webp)
+<img src="/images/seae/featured.webp" alt="Software engineering in the agentic era" width="1200" height="630" decoding="async" />
 
-# When Prompting Becomes Programming
+## When Prompting Becomes Programming
 
 Prompt in, app out. The code fails, but too many builders cannot tell you why.
 
@@ -17,7 +19,7 @@ My feed is full of "vibe coders" shipping apps with prompts, accepting whatever 
 In two years, we've jumped from awkward tab completions from Copilot to it raising PRs directly on GitHub. This feels like developers' Excel moment: coding agents remove the tedium of typing, but fundamentals still matter, just like we still teach math without calculators.
 
   <figure>                                                                                                                                                               
-    <img src="/images/seae/twt.webp" alt="andrej karpathy's tweet" />                                                                                                    
+    <img src="/images/seae/twt.webp" alt="Andrej Karpathy's tweet about software changing in the agentic era" width="2268" height="784" loading="lazy" decoding="async" />
     <figcaption>Andrej Karpathy's very popular tweet</figcaption>                                                                                                                     
   </figure>
 
@@ -30,7 +32,7 @@ A good chunk of people believe AI agents like Claude Code, Codex, and Copilot ar
 On the other hand, my experience has been more like navigating rush hour traffic in Mumbai. It's so chaotic. A Tesla would just give up, and you, a driver well-versed with Mumbai traffic, would want to grab the wheel to avoid crashing into someone.
 
   <figure>                                                                                                                                                               
-    <img src="/images/seae/congestion.webp" alt="congestion in mumbai traffic" />                                                                                                    
+    <img src="/images/seae/congestion.webp" alt="Congested traffic in Mumbai" width="1280" height="800" loading="lazy" decoding="async" />
     <figcaption>a chaotic congestion in Mumbai, modified with nano 🍌</figcaption>                                                                                                                     
   </figure>
 
@@ -57,7 +59,7 @@ I don't think this speed is real. Yes, speed matters when you're building softwa
 When you're moving fast, prompting your way through the problems, you're not actually understanding what you're building. You're not learning the patterns. You don't form mental models. You're not developing the intuition to understand where things might break, and they will, and when they do, you're stuck — **because you can't debug what you don't understand**.
 
   <figure>                                                                                                                                                               
-    <img src="/images/seae/bobthebuilder.png" alt="bob the confused builder" />                                                                                                    
+    <img src="/images/seae/bobthebuilder.webp" alt="A confused builder surrounded by tools" width="1024" height="1024" loading="lazy" decoding="async" />
     <figcaption>bob the confused builder</figcaption>                                                                                                                     
   </figure>
 
@@ -116,7 +118,7 @@ The Agentic Era doesn't scare me. It excites me, because I think it's going to m
 The question isn't whether AI will change how we build software — it already has. The question is whether you'll use it as a crutch or as a catalyst for becoming a better engineer.
 
   <figure>                                                                                                                                                               
-    <img src="/images/seae/architect.png" alt="You're the architect, not the builder" />                                                                                                    
+    <img src="/images/seae/architect.webp" alt="An architect directing an AI coding agent" width="1024" height="1024" loading="lazy" decoding="async" />
     <figcaption>Humans set the blueprint. AI follows it.</figcaption>                                                                                                                     
   </figure>
 

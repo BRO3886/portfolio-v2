@@ -7,7 +7,7 @@ author: "Siddhartha Varma"
 image: "/images/green-tea-gc/featured.webp"
 ---
 
-![Green Tea GC: How Go Stopped Wasting 35% of Your CPU Cycles](/images/green-tea-gc/featured.webp)
+<img src="/images/green-tea-gc/featured.webp" alt="Green Tea GC: How Go Stopped Wasting 35% of Your CPU Cycles" width="1536" height="806" decoding="async" />
 
 ## Introduction
 
@@ -26,7 +26,7 @@ In the early days of programming, programmers used to manage memory on their own
 Then came Garbage Collectors, popularized by languages like Java, JS (V8). The idea was novel, instead of allocating and deallocating by hand, the runtime would manage the memory instead.
 
 <figure>
-  <img src="/images/green-tea-gc/gc-visualized.png" alt="Garbage Collection visualized by ChatGPT" />
+  <img src="/images/green-tea-gc/gc-visualized.webp" alt="Garbage collection visualized" width="1536" height="1024" loading="lazy" decoding="async" />
   <figcaption>Garbage Collection visualized by ChatGPT</figcaption>
 </figure>
 
@@ -53,7 +53,7 @@ Go's Garbage Collector has gone through various transitions, starting from a sim
 The current GC runs in two phases — Mark and Sweep. In the Mark phase, we assume all objects to be *white* (unreachable). We start at the root objects (constants etc), mark them as *grey.* All grey objects are added to a queue to be processed. We pick a grey object from the queue and start processing it's children. As soon as a child is marked grey, it's added to the queue and the parent is marked *black.* At the end, we have a mix of black and grey *accessible* objects. In the Sweep phase, we find all the *inaccessible* white objects (garbage) and clean it.
 
 <figure>
-  <img src="/images/green-tea-gc/tri-colour-mark-sweep.png" alt="Tri-Colour Mark and Sweep" />
+  <img src="/images/green-tea-gc/tri-colour-mark-sweep.webp" alt="Tri-colour mark and sweep" width="750" height="1536" loading="lazy" decoding="async" />
   <figcaption>Tri-Colour Mark and Sweep</figcaption>
 </figure>
 
@@ -66,7 +66,7 @@ Modern CPUs process instructions at gigahertz speeds, but accessing main memory 
 The current garbage collector creates poor **spatial locality** by following object references randomly across memory. When the GC jumps from object A (at memory address 0x1000) to object B (at 0x5000), it likely causes a cache miss. The CPU must then wait hundreds of cycles to fetch the new data from DRAM.
 
 <figure>
-  <img src="/images/green-tea-gc/cache-misses.png" alt="Cache misses cause wastage of CPU cycles" />
+  <img src="/images/green-tea-gc/cache-misses.webp" alt="Cache misses waste CPU cycles" width="1600" height="775" loading="lazy" decoding="async" />
   <figcaption>Cache misses causes wastage of CPU cycles</figcaption>
 </figure>
 
@@ -81,7 +81,7 @@ But that's not all. What if the span has only one marked object? Processing the 
 It tracks the object which caused the span to be queued and uses a *hit flag* to detect if more objects get marked while the span is waiting. If more objects get marked, the hit flag is true and we process the entire span for *maximum locality.* If the hit flag is false, just process the representative object.
 
 <figure>
-  <img src="/images/green-tea-gc/green-tea-vs-existing.png" alt="Existing GC vs Green Tea" />
+  <img src="/images/green-tea-gc/green-tea-vs-existing.webp" alt="Existing Go garbage collector compared with Green Tea GC" width="1600" height="1696" loading="lazy" decoding="async" />
   <figcaption>Existing GC vs Green Tea</figcaption>
 </figure>
 
