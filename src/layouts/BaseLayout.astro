@@ -57,6 +57,7 @@ const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
     <meta property="og:url" content={canonicalURL.href} />
     <meta property="og:site_name" content="Siddhartha Varma" />
     {resolvedOgImage && <meta property="og:image" content={resolvedOgImage} />}
+    {resolvedOgImage && <meta property="og:image:alt" content={title} />}
     {publishedTime && <meta property="article:published_time" content={publishedTime} />}
     {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
     {author && <meta property="article:author" content={author} />}
@@ -66,6 +67,7 @@ const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}
+    {resolvedOgImage && <meta name="twitter:image:alt" content={title} />}
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="application/rss+xml" title="Siddhartha Varma's Blog" href="/rss.xml" />
