@@ -10,7 +10,7 @@ const sitemapLastModified = new Map([
   ['/blog/dynamodb-architecture/', '2025-01-31'],
   ['/blog/green-tea-gc-how-go-cut-memory-waste/', '2025-07-13'],
   ['/blog/software-engineering-agentic-era/', '2026-09-21'],
-  ['/resume/', '2026-09-15'],
+  ['/resume/', '2026-09-30'],
 ]);
 
 // https://astro.build/config

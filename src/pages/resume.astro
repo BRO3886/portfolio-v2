@@ -8,8 +8,15 @@ const resumeJsonLd = {
   '@type': 'ProfilePage',
   url: 'https://sidv.dev/resume/',
   name: 'Siddhartha Varma Resume',
+  dateModified: '2026-09-30',
   description:
     'Resume of Siddhartha Varma, a backend and systems engineer specializing in Go, distributed workflows, search infrastructure, and reliable product platforms.',
+  associatedMedia: {
+    '@type': 'MediaObject',
+    name: 'Siddhartha Varma Resume PDF',
+    contentUrl: `https://sidv.dev${resumePath}`,
+    encodingFormat: 'application/pdf',
+  },
   mainEntity: {
     '@type': 'Person',
     name: 'Siddhartha Varma',
@@ -70,15 +77,15 @@ const resumeJsonLd = {
         <img
           src="/images/resume/page-1.webp"
           alt="First page of Siddhartha Varma's resume"
-          width="1237"
-          height="1600"
+          width="1020"
+          height="1320"
           class="resume-sheet"
         />
         <img
           src="/images/resume/page-2.webp"
           alt="Second page of Siddhartha Varma's resume"
-          width="1237"
-          height="1600"
+          width="1020"
+          height="1320"
           loading="lazy"
           class="resume-sheet"
         />
