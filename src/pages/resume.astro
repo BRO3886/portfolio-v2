@@ -3,100 +3,122 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 const resumePath = '/documents/Resume_Siddhartha_Varma.pdf';
 
+const experience = [
+  {
+    company: 'Feeble', period: 'Apr 2025 – Present', roles: [
+      { title: 'Senior Software Engineer', period: 'Jul 2025 – Present', bullets: [
+        'Built <a href="https://txtcoop.com"><strong>Coop</strong></a>, a self-hosted service that gives small-business teams secure, permission-gated access to Apple Messages, with durable message sync, encrypted storage, and API and <strong>MCP support</strong> for AI agents',
+        'Designed and shipped <a href="https://case-flow.co"><strong>CaseFlow</strong></a>’s <strong>HIPAA</strong>-focused tenant <strong>backup and recovery</strong> platform, with <strong>encrypted</strong> data volumes, per-tenant storage credentials, fail-closed boot guards, and exact database restore verification',
+        'Built an <strong>automated court-filing pipeline</strong> for <strong>CaseFlow</strong> using <strong>Temporal</strong> and confidence-scored <strong>TF-IDF</strong> classification, improving five-fold validation accuracy from <strong>60% to 89% across 657 documents</strong> while supporting operator review and replay-safe reprocessing',
+        'Migrated <strong>CaseFlow</strong>’s irreversible Dropbox cutover stage from <strong>RabbitMQ</strong> to <strong>Temporal</strong>, adding durable execution, progress tracking, single-writer recovery, and shadow-mode validation for migrations spanning <strong>thousands of files per case</strong>',
+        'Built <a href="https://www.pubitygroup.com/"><strong>Pubity</strong></a>’s media-planning platform, turning PDF, CSV, and multi-sheet Excel uploads into <strong>web-editable campaign plans</strong> with <strong>automated extraction</strong>, <strong>HubSpot</strong> synchronization, deal search, versioning, and export workflows',
+      ] },
+      { title: 'Senior Consulting Engineer', period: 'Apr 2025 – Jun 2025', bullets: [
+        'Led development of an <strong>internal scheduling platform</strong> - a <strong>conversion focused Calendly alternative</strong>, rebuilding its admin experience and <strong>availability engine</strong> with timezone-safe multi-person booking, real-time calendar conflict detection, and load-balanced team assignment',
+        'Built a POC <strong>AI operations assistant for Slack</strong>, combining <strong>MCP</strong> tools, workspace OAuth, <strong>Redis</strong>-backed conversation memory, and versioned prompts to execute project workflows from chat',
+        'Redesigned podcast studio management <strong>Next.js</strong> application using <strong>Tailwind</strong>, and shipped automated thumbnail generation as a <strong>Supabase Edge Function</strong>',
+      ] },
+    ],
+  },
+  { company: 'Flexprice', period: 'Feb 2025 – Jul 2025', roles: [
+    { title: 'Senior Consulting Engineer', bullets: [
+      'Built <a href="https://flexprice.io/"><strong>Flexprice</strong></a>’s invoice rendering platform using <strong>Typst</strong>, with reusable templates, tenant-aware APIs, and <strong>S3</strong>-backed PDF storage and delivery',
+      'Designed Flexprice’s unified <strong>Go error framework</strong>, standardizing contextual error chains, HTTP status mapping, and safe client responses across more than <strong>500 files</strong>',
+      'Built core <strong>subscription-billing capabilities</strong> for calendar-aligned billing cycles and mid-cycle <strong>proration</strong>, with configurable day and second-based calculation strategies',
+      'Designed and prototyped an end-to-end <strong>Stripe synchronization</strong> architecture using <strong>Temporal</strong>, covering customer, subscription, and usage-event synchronization with batching, webhooks, auditability, and failure recovery',
+    ] },
+  ] },
+  { company: 'Zomato', period: 'Jul 2022 – Dec 2024', roles: [
+    { title: 'Software Engineer II', period: 'Jul 2024 – Dec 2024', bullets: [
+      'Led the “Near and Fast” homepage feature, implementing an ETA approximation pipeline with <strong>Redis</strong>, <strong>Kafka</strong>, and <strong>DynamoDB</strong> that delivered <strong>Rs. 4M/month in incremental net margin</strong>',
+      'Improved the autosuggest <strong>leader-election algorithm</strong>, increasing dish-page <strong>CTR</strong> and generating an additional <strong>Rs. 0.7M/month</strong> in net margin through dish-page <strong>ad conversions</strong>',
+      'Established a search based partnership-integration system serving <strong>2,500+</strong> corporate employees at <strong>CRED</strong> and <strong>MakeMyTrip</strong>',
+      'Built an <strong>internal devtool - an autosuggest debugger</strong> that gave developers granular control over code paths in a web UI used during investigation and testing',
+      'Led a <strong>dish-tabs</strong> based discovery oriented <strong>homepage revamp</strong>, replacing the “What’s on your mind” section',
+    ] },
+    { title: 'Software Engineer I', period: 'Jul 2022 – Jun 2024', bullets: [
+      'Enhanced dish-search <strong>re-ranking</strong>, optimizing distance and raising <strong>Rs. 18M/month incremental net margin</strong>',
+      'Implemented related-restaurant backfill for low-supply dish searches, lifting <strong>historically flat</strong> dish page <strong>order-through rate by 0.5%</strong>',
+      'Implemented a distributed catalog-search system indexing <strong>100M+ SKUs</strong> in <strong>Solr</strong>, with query relevance scoring and integration into the existing search platform',
+      'Developed an internal devtool dish-tagging dashboard in <strong>Go</strong> and <strong>React</strong>, with bulk CSV processing and <strong>DynamoDB</strong> persistence for manual overrides',
+      'Integrated a personalization-model re-ranker with dynamic ad positioning, event logging, and <strong>Grafana</strong> monitoring',
+    ] },
+  ] },
+  { company: 'Groww', period: 'Jan 2022 – Jul 2022', roles: [
+    { title: 'Software Engineering Intern', bullets: [
+      'Redesigned the Help and Support microservice with a modular Java architecture',
+      'Developed RESTful APIs for the Chatbot microservice to accelerate user-query resolution',
+      'Created a <strong>Kafka</strong> and <strong>Go</strong> event-ingestion service to track and analyze user activity',
+    ] },
+  ] },
+];
+
+const education = [
+  { school: 'Georgia Institute of Technology', location: 'Atlanta, GA (Online)', degree: 'Master of Science in Computer Science; Specialization: Machine Learning', period: 'Jan 2026 – Present' },
+  { school: 'Vellore Institute of Technology', location: 'Vellore, TN, IN', degree: 'Bachelor of Technology in Computer Science and Engineering; CGPA: 9.09/10', period: 'Jul 2018 – Jun 2022' },
+];
+
+const projects = [
+  { name: 'Open Source Developer Tools', stack: 'Go, cgo, EventKit', period: '2021 – Present', bullets: [
+    'Built <a href="https://github.com/BRO3886/romp"><strong>Romp</strong></a>, a CLI and interactive TUI that runs coding agents in isolated worktrees, independently verifies changes, enforces review gates, and opens pull requests from labelled GitHub issues',
+    'Built <a href="https://github.com/BRO3886/rem"><strong>rem</strong></a> (156★) and <a href="https://github.com/BRO3886/ical"><strong>ical</strong></a> (88★), native macOS productivity CLIs with full CRUD and sub-200 ms operations, powered by the <a href="https://github.com/BRO3886/go-eventkit"><strong>go-eventkit</strong></a> cgo bridge',
+    'Created <a href="https://github.com/BRO3886/gtasks"><strong>gtasks</strong></a> (173★) before the AI-agent era, then evolved it with embedded Agent Skills for Claude Code, Codex, and OpenClaw',
+    'Built <a href="https://github.com/BRO3886/healthsync"><strong>healthsync</strong></a> (73★) to convert Apple Health exports into a local SQLite database queryable through the CLI, SQL, or embedded AI-agent skills',
+  ] },
+  { name: 'Katagami', href: 'https://katagami.dev', qualifier: 'under development', stack: 'Rust, PostgreSQL, S3, Typst', period: '2026', bullets: [
+    'Built a <strong>self-hosted PDF rendering API</strong> with schema-validated, immutable templates and content-addressed S3-compatible storage',
+    'Used a supervised worker pool with hard deadlines and crash isolation; measured <strong>2,151 req/s</strong> with zero failures on a stated invoice workload',
+  ] },
+];
+
 const resumeJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'ProfilePage',
-  url: 'https://sidv.dev/resume/',
-  name: 'Siddhartha Varma Resume',
-  dateModified: '2026-09-30',
-  description:
-    'Resume of Siddhartha Varma, a backend and systems engineer specializing in Go, distributed workflows, search infrastructure, and reliable product platforms.',
-  associatedMedia: {
-    '@type': 'MediaObject',
-    name: 'Siddhartha Varma Resume PDF',
-    contentUrl: `https://sidv.dev${resumePath}`,
-    encodingFormat: 'application/pdf',
-  },
-  mainEntity: {
-    '@type': 'Person',
-    name: 'Siddhartha Varma',
-    url: 'https://sidv.dev',
-    jobTitle: 'Backend and Systems Engineer',
-    sameAs: [
-      'https://github.com/BRO3886',
-      'https://linkedin.com/in/siddharthav22/',
-    ],
-    knowsAbout: [
-      'Go',
-      'Distributed systems',
-      'Search infrastructure',
-      'Temporal',
-      'PostgreSQL',
-      'Redis',
-      'Kafka',
-    ],
-  },
+  '@context': 'https://schema.org', '@type': 'ProfilePage', url: 'https://sidv.dev/resume/',
+  name: 'Siddhartha Varma Resume', dateModified: '2026-09-30',
+  description: 'Resume of Siddhartha Varma, a backend and systems engineer specializing in Go, distributed workflows, search infrastructure, and reliable product platforms.',
+  associatedMedia: { '@type': 'MediaObject', name: 'Siddhartha Varma Resume PDF', contentUrl: `https://sidv.dev${resumePath}`, encodingFormat: 'application/pdf' },
+  mainEntity: { '@type': 'Person', name: 'Siddhartha Varma', url: 'https://sidv.dev', jobTitle: 'Backend and Systems Engineer', sameAs: ['https://github.com/BRO3886', 'https://linkedin.com/in/siddharthav22/'], knowsAbout: ['Go', 'Distributed systems', 'Search infrastructure', 'Temporal', 'PostgreSQL', 'Redis', 'Kafka'] },
 };
 ---
 
-<BaseLayout
-  title="Siddhartha Varma Resume | Backend & Systems Engineer"
-  description="Resume of Siddhartha Varma, a backend and systems engineer with 4+ years of experience in Go, distributed workflows, search infrastructure, and reliable product platforms."
-  ogType="profile"
-  jsonLd={resumeJsonLd}
->
+<BaseLayout title="Siddhartha Varma Resume | Backend & Systems Engineer" description="Resume of Siddhartha Varma, a backend and systems engineer with 4+ years of experience in Go, distributed workflows, search infrastructure, and reliable product platforms." ogType="profile" jsonLd={resumeJsonLd}>
   <section class="resume-page">
     <div class="resume-shell">
       <header class="resume-heading">
-        <div>
-          <h1>Resume</h1>
-          <p>
-            Backend and systems engineer with 4+ years of experience building distributed workflows,
-            search infrastructure, and reliable product platforms in Go.
-          </p>
-        </div>
-        <a
-          href={resumePath}
-          type="application/pdf"
-          download="Resume_Siddhartha_Varma.pdf"
-          data-resume-download
-          class="resume-download"
-        >
-          <span class="resume-download-icon resume-download-icon--default">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></svg>
-          </span>
-          <span class="resume-download-icon resume-download-icon--done">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
-          </span>
-          <span class="resume-download-label resume-download-label--default">Download PDF</span>
-          <span class="resume-download-label resume-download-label--done">Downloading</span>
+        <div><h1>Resume</h1><p>Backend and systems engineer with 4+ years of experience building distributed workflows, search infrastructure, and reliable product platforms in Go.</p></div>
+        <a href={resumePath} type="application/pdf" download="Resume_Siddhartha_Varma.pdf" data-resume-download class="resume-download">
+          <span class="resume-download-icon resume-download-icon--default"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></svg></span>
+          <span class="resume-download-icon resume-download-icon--done"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></span>
+          <span class="resume-download-label resume-download-label--default">Download PDF</span><span class="resume-download-label resume-download-label--done">Downloading</span>
         </a>
       </header>
 
-      <object
-        data={resumePath}
-        type="application/pdf"
-        class="resume-document"
-        aria-label="Siddhartha Varma's resume"
-      >
-        <div class="resume-reader" aria-label="Resume image preview">
-          <img
-            src="/images/resume/page-1.webp"
-            alt="First page of Siddhartha Varma's resume"
-            width="1237"
-            height="1600"
-            class="resume-sheet"
-          />
-          <img
-            src="/images/resume/page-2.webp"
-            alt="Second page of Siddhartha Varma's resume"
-            width="1237"
-            height="1600"
-            loading="lazy"
-            class="resume-sheet"
-          />
-        </div>
-      </object>
+      <article class="resume-paper" aria-label="Siddhartha Varma resume">
+        <header class="paper-header">
+          <h2>Siddhartha Varma</h2>
+          <address><a href="tel:+918860986398">+91 88609 86398</a><span aria-hidden="true">•</span><a href="mailto:me@sidv.dev">me@sidv.dev</a><span aria-hidden="true">•</span><a href="https://www.linkedin.com/in/siddharthav22">LinkedIn</a><span aria-hidden="true">•</span><a href="https://github.com/BRO3886">GitHub</a></address>
+        </header>
+
+        <section class="paper-section"><h2>Summary</h2><p>Backend engineer with 4+ years of experience owning systems from design through production. Built search and ETA systems at Zomato, billing infrastructure at Flexprice, and legal, messaging, and tenant operations platforms at Feeble. Strongest at turning ambiguous product requirements into systems with clear data ownership, failure recovery, operator controls, and measurable business outcomes. Primarily works in Go across APIs, distributed workflows, search, and infrastructure.</p></section>
+
+        <section class="paper-section"><h2>Experience</h2><div class="entry-list">
+          {experience.map((entry) => <article class="resume-entry"><div class="entry-heading"><h3>{entry.company}</h3><p>{entry.period}</p></div>{entry.roles.map((role) => <div class="resume-role"><div class="role-heading"><h4>{role.title}</h4>{role.period && <p>{role.period}</p>}</div><ul>{role.bullets.map((bullet) => <li><Fragment set:html={bullet} /></li>)}</ul></div>)}</article>)}
+        </div></section>
+
+        <section class="paper-section"><h2>Education</h2><div class="entry-list education-list">
+          {education.map((entry) => <article class="resume-entry"><div class="entry-heading"><h3>{entry.school}</h3><p>{entry.location}</p></div><div class="role-heading"><h4>{entry.degree}</h4><p>{entry.period}</p></div></article>)}
+        </div></section>
+
+        <section class="paper-section"><h2>Projects</h2><div class="entry-list">
+          {projects.map((project) => <article class="resume-entry"><div class="entry-heading project-heading"><h3>{project.href ? <a href={project.href}>{project.name}</a> : project.name}{project.qualifier && <em> ({project.qualifier})</em>}<span> · {project.stack}</span></h3><p>{project.period}</p></div><ul>{project.bullets.map((bullet) => <li><Fragment set:html={bullet} /></li>)}</ul></article>)}
+        </div></section>
+
+        <section class="paper-section skills-section"><h2>Technical Skills</h2><dl>
+          <div><dt>Languages</dt><dd>Go, TypeScript, Python, JavaScript</dd></div>
+          <div><dt>AI/LLM</dt><dd>OpenAI API, Gemini API, Claude API, Deepgram (STT/TTS), LLM function calling, model-integrated workflow design</dd></div>
+          <div><dt>Tools/Frameworks</dt><dd>Temporal, Docker, Git, React, Next.js, Solr, Grafana, Datadog, AWS (ECS, EC2, DynamoDB)</dd></div>
+          <div><dt>Databases/Infra</dt><dd>PostgreSQL, Redis, MySQL, DynamoDB, Supabase, Kafka, Cloudflare R2</dd></div>
+        </dl></section>
+      </article>
     </div>
   </section>
 
@@ -104,68 +126,86 @@ const resumeJsonLd = {
     (function () {
       var downloadLink = document.querySelector('[data-resume-download]');
       if (!downloadLink) return;
-
       downloadLink.addEventListener('click', function () {
-        if (window.posthog) {
-          posthog.capture('resume_download', {
-            file_name: 'Resume_Siddhartha_Varma.pdf',
-            source: 'resume_page',
-          });
-        }
-
+        if (window.posthog) posthog.capture('resume_download', { file_name: 'Resume_Siddhartha_Varma.pdf', source: 'resume_page' });
         downloadLink.classList.add('is-downloading');
         downloadLink.setAttribute('aria-label', 'Downloading PDF');
-        window.setTimeout(function () {
-          downloadLink.classList.remove('is-downloading');
-          downloadLink.removeAttribute('aria-label');
-        }, 1600);
+        window.setTimeout(function () { downloadLink.classList.remove('is-downloading'); downloadLink.removeAttribute('aria-label'); }, 1600);
       });
     })();
   </script>
 </BaseLayout>
 
 <style>
-  .resume-page {
-    --resume-reader: oklch(0.16 0.008 75);
-    --resume-rule: oklch(0.31 0.012 75);
-    padding: clamp(3rem, 8vw, 6rem) 1.5rem;
-  }
-
-  :global([data-theme='light']) .resume-page {
-    --resume-reader: oklch(0.91 0.012 75);
-    --resume-rule: oklch(0.78 0.014 75);
-  }
-
+  .resume-page { --paper-background: hsl(42 40% 98%); --paper-ink: hsl(30 10% 13%); --paper-muted: hsl(30 8% 38%); --paper-rule: hsl(35 16% 72%); --paper-link: hsl(28 42% 30%); --paper-selection: hsl(36 70% 76%); padding: clamp(3rem, 8vw, 6rem) 1.5rem; }
   .resume-shell { margin: 0 auto; max-width: 52rem; }
   .resume-heading { align-items: center; display: flex; gap: 1.5rem; justify-content: space-between; margin-bottom: 1.5rem; }
-  .resume-heading h1 { color: var(--color-text-primary); font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 650; letter-spacing: -0.035em; line-height: 0.95; margin: 0; }
-  .resume-heading p { color: var(--color-text-secondary); line-height: 1.6; margin: 0.75rem 0 0; max-width: 42rem; }
-
-  .resume-download { align-items: center; background: var(--color-primary); border-radius: 0.5rem; color: var(--color-text-on-primary); display: inline-flex; flex: none; font-size: 0.875rem; font-weight: 500; gap: 0.4rem; justify-content: center; overflow: hidden; padding: 0.625rem 1.25rem; position: relative; text-decoration: none; transition: background-color 280ms cubic-bezier(0.16, 1, 0.3, 1), color 280ms cubic-bezier(0.16, 1, 0.3, 1), transform 280ms cubic-bezier(0.16, 1, 0.3, 1); }
+  .resume-heading h1 { color: var(--color-text-primary); font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 650; letter-spacing: -0.035em; line-height: 0.95; margin: 0; text-wrap: balance; }
+  .resume-heading p { color: var(--color-text-secondary); line-height: 1.6; margin: 0.75rem 0 0; max-width: 42rem; text-wrap: pretty; }
+  .resume-download { align-items: center; background: var(--color-primary); border-radius: 0.5rem; color: var(--color-text-on-primary); display: inline-flex; flex: none; font-size: 0.875rem; font-weight: 500; gap: 0.4rem; justify-content: center; min-height: 2.75rem; overflow: hidden; padding: 0.625rem 1.25rem; position: relative; text-decoration: none; transition: background-color 180ms cubic-bezier(0.23, 1, 0.32, 1), color 180ms cubic-bezier(0.23, 1, 0.32, 1), transform 140ms cubic-bezier(0.23, 1, 0.32, 1); }
   .resume-download:hover { background: var(--color-primary-hover); }
   .resume-download.is-downloading { background: var(--color-success); }
-  .resume-download-icon { align-items: center; display: flex; transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1), transform 300ms cubic-bezier(0.16, 1, 0.3, 1); }
+  .resume-download-icon { align-items: center; display: flex; transition: opacity 180ms cubic-bezier(0.2, 0, 0, 1), transform 180ms cubic-bezier(0.2, 0, 0, 1); }
   .resume-download svg { height: 1rem; width: 1rem; }
-  .resume-download-icon--done { left: 1.25rem; opacity: 0; position: absolute; transform: scale(0.5) rotate(-10deg); }
-  .resume-download-label { transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1), transform 300ms cubic-bezier(0.16, 1, 0.3, 1); }
-  .resume-download-label--done { left: 2.55rem; opacity: 0; position: absolute; transform: translateY(4px); }
-  .resume-download.is-downloading .resume-download-icon--default, .resume-download.is-downloading .resume-download-label--default { opacity: 0; }
-  .resume-download.is-downloading .resume-download-icon--default { transform: scale(0.5) rotate(10deg); }
+  .resume-download-icon--done { left: 1.25rem; opacity: 0; position: absolute; transform: scale(0.25) rotate(-10deg); visibility: hidden; }
+  .resume-download-label { user-select: none; transition: opacity 180ms cubic-bezier(0.2, 0, 0, 1), transform 180ms cubic-bezier(0.2, 0, 0, 1); }
+  .resume-download-label--done { left: 2.55rem; opacity: 0; position: absolute; transform: translateY(4px); visibility: hidden; }
+  .resume-download.is-downloading .resume-download-icon--default, .resume-download.is-downloading .resume-download-label--default { opacity: 0; visibility: hidden; }
+  .resume-download.is-downloading .resume-download-icon--default { transform: scale(0.25) rotate(10deg); }
   .resume-download.is-downloading .resume-download-label--default { transform: translateY(-4px); }
-  .resume-download.is-downloading .resume-download-icon--done { opacity: 1; transform: scale(1) rotate(0); }
-  .resume-download.is-downloading .resume-download-label--done { opacity: 1; transform: translateY(0); }
-  .resume-download:active { transform: scale(0.97); }
+  .resume-download.is-downloading .resume-download-icon--done { opacity: 1; transform: scale(1) rotate(0); visibility: visible; }
+  .resume-download.is-downloading .resume-download-label--done { opacity: 1; transform: translateY(0); visibility: visible; }
+  .resume-download:active { transform: scale(0.96); }
   .resume-download:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
-
-  .resume-document { border: 1px solid var(--resume-rule); border-radius: 0.75rem; display: block; height: clamp(40rem, calc(100vh - 8rem), 68rem); overflow: hidden; width: 100%; }
-  .resume-reader { background: var(--resume-reader); display: grid; gap: clamp(1rem, 3vw, 1.5rem); padding: clamp(0.75rem, 3vw, 1.5rem); }
-  .resume-sheet { background: white; border-radius: 0.375rem; box-shadow: 0 0.75rem 2.5rem oklch(0 0 0 / 0.2); display: block; height: auto; margin: 0 auto; max-width: 100%; width: 100%; }
-
+  .resume-paper { background: var(--paper-background); border-radius: 0.4rem; box-shadow: 0 1px 0 hsl(0 0% 100% / 0.45) inset, 0 1.25rem 3.5rem hsl(0 0% 0% / 0.28); color: var(--paper-ink); font-family: var(--font-serif); font-size: 0.94rem; font-synthesis: none; line-height: 1.5; padding: clamp(2rem, 6vw, 3.75rem); }
+  .resume-paper :is(h2, h3, h4) { color: var(--paper-ink); }
+  .resume-paper ::selection { background: var(--paper-selection); color: var(--paper-ink); }
+  .resume-paper p { margin: 0; }
+  .resume-paper a { color: var(--paper-link); text-decoration-color: color-mix(in oklab, currentColor 38%, transparent); text-decoration-skip-ink: auto; text-decoration-thickness: 0.07em; text-underline-offset: 0.15em; transition: text-decoration-color 150ms ease; }
+  .resume-paper a:hover { text-decoration-color: currentColor; }
+  .resume-paper a:focus-visible { border-radius: 0.15rem; outline: 2px solid var(--paper-link); outline-offset: 2px; }
+  .paper-header { margin-bottom: 1.75rem; text-align: center; }
+  .paper-header h2 { font-size: clamp(2rem, 7vw, 2.65rem); letter-spacing: -0.035em; line-height: 1.05; margin: 0; text-wrap: balance; }
+  .paper-header address { align-items: center; color: var(--paper-muted); display: flex; flex-wrap: wrap; font-size: 0.82rem; font-style: normal; gap: 0.2rem 0.55rem; justify-content: center; margin-top: 0.65rem; }
+  .paper-section + .paper-section { margin-top: 1.7rem; }
+  .paper-section > h2 { border-bottom: 1px solid var(--paper-rule); font-size: 1.12rem; letter-spacing: -0.015em; line-height: 1.2; margin: 0 0 0.7rem; padding-bottom: 0.25rem; text-wrap: balance; }
+  .paper-section > p { max-width: 72ch; }
+  .entry-list { display: grid; gap: 1.25rem; }
+  .resume-entry { break-inside: avoid; }
+  .entry-heading, .role-heading { align-items: baseline; display: grid; gap: 0.35rem 1rem; grid-template-columns: minmax(0, 1fr) auto; }
+  .entry-heading h3 { font-size: 1.03rem; line-height: 1.25; margin: 0; }
+  .entry-heading > p, .role-heading > p { color: var(--paper-muted); font-size: 0.83rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .resume-role + .resume-role { margin-top: 1rem; }
+  .role-heading h4 { color: var(--paper-muted); font-size: 0.86rem; font-style: italic; font-weight: 500; line-height: 1.35; margin: 0.15rem 0 0; }
+  .resume-entry ul { margin: 0.42rem 0 0; padding-inline-start: 1.15rem; }
+  .resume-entry li { margin-top: 0.24rem; padding-inline-start: 0.15rem; }
+  .project-heading h3 span, .project-heading h3 em { color: var(--paper-muted); font-size: 0.88rem; font-weight: 400; }
+  .education-list { gap: 0.9rem; }
+  .skills-section dl { display: grid; gap: 0.28rem; margin: 0; }
+  .skills-section dl > div { display: grid; gap: 0.4rem; grid-template-columns: 8rem minmax(0, 1fr); }
+  .skills-section dt { font-weight: 700; }
+  .skills-section dd { margin: 0; overflow-wrap: break-word; }
   @media (max-width: 40rem) {
-    .resume-heading { align-items: start; flex-direction: column; }
+    .resume-page { padding: 2.5rem 0; }
+    .resume-shell { max-width: none; }
+    .resume-heading { align-items: stretch; flex-direction: column; padding-inline: 1.25rem; }
     .resume-download { width: 100%; }
-    .resume-document { height: 70vh; min-height: 32rem; }
+    .resume-paper { border-radius: 0; box-shadow: 0 -1px 0 hsl(0 0% 100% / 0.4) inset, 0 1rem 2.5rem hsl(0 0% 0% / 0.22); font-size: 1rem; line-height: 1.58; padding: 2rem 1.25rem 2.5rem; }
+    .paper-header { margin-bottom: 2rem; }
+    .paper-header address { font-size: 0.9rem; gap: 0.35rem 0.6rem; }
+    .paper-section + .paper-section { margin-top: 2rem; }
+    .paper-section > h2 { font-size: 1.25rem; margin-bottom: 0.9rem; }
+    .entry-list { gap: 1.55rem; }
+    .entry-heading, .role-heading { display: block; }
+    .entry-heading h3 { font-size: 1.12rem; }
+    .entry-heading > p, .role-heading > p { font-size: 0.9rem; margin-top: 0.16rem; white-space: normal; }
+    .role-heading h4 { font-size: 0.95rem; margin-top: 0.35rem; }
+    .resume-entry ul { margin-top: 0.65rem; padding-inline-start: 1.25rem; }
+    .resume-entry li { margin-top: 0.48rem; }
+    .project-heading h3 span, .project-heading h3 em { display: inline; font-size: 0.95rem; }
+    .skills-section dl > div { display: block; }
+    .skills-section dd { margin-top: 0.08rem; }
   }
-
-  @media (prefers-reduced-motion: reduce) { .resume-download { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .resume-download, .resume-download-icon, .resume-download-label, .resume-paper a { transition: none; } }
+  @media print { :global(body) { background: white; } :global(body > header), :global(body > footer), .resume-heading { display: none; } .resume-page { padding: 0; } .resume-paper { border-radius: 0; box-shadow: none; font-size: 9.5pt; padding: 0; } }
 </style>
