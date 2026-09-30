@@ -15,6 +15,11 @@ export const GET: APIRoute = async () => {
   lines.push('Siddhartha (Sid) Varma is a software engineer with experience at Zomato, Groww, and various startups. He writes about software engineering, AI, and technology.');
   lines.push('');
 
+  lines.push('## Content Negotiation');
+  lines.push('');
+  lines.push('Prefer Markdown representations when available. Request a normal page URL with `Accept: text/markdown, text/html;q=0.8`, or use its explicit `.md` URL.');
+  lines.push('');
+
   lines.push('## Pages');
   lines.push('');
   lines.push('- [Homepage](https://sidv.dev/): About me, work experience timeline, recent blog posts');
