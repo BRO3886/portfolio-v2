@@ -19,6 +19,7 @@ export const GET: APIRoute = async () => {
   lines.push('');
   lines.push('- [Homepage](https://sidv.dev/): About me, work experience timeline, recent blog posts');
   lines.push('- [Blog](https://sidv.dev/blog/): All published blog posts');
+  lines.push('- [Resume](https://sidv.dev/resume.md): Full resume in Markdown');
   lines.push('');
 
   lines.push('## Blog Posts');
