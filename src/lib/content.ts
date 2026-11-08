@@ -116,41 +116,52 @@ export interface ProjectEntry {
 
 export const projects: ProjectEntry[] = [
   {
+    name: "Romp",
+    description:
+      "A CLI and interactive TUI that runs coding agents in isolated worktrees, verifies changes, enforces review gates, and opens pull requests from GitHub issues.",
+    url: "https://github.com/BRO3886/romp",
+    tech: ["Go", "Git", "TUI"],
+    stars: 1,
+  },
+  {
+    name: "rem",
+    description:
+      "A native macOS Reminders CLI for managing lists and tasks from the terminal, with embedded agent skills and direct EventKit access through Go.",
+    url: "https://github.com/BRO3886/rem",
+    tech: ["Go", "EventKit", "macOS"],
+    stars: 157,
+  },
+  {
+    name: "ical",
+    description:
+      "A fast macOS Calendar CLI for managing calendars and events from the terminal. Built on go-eventkit, with embedded skills for coding agents.",
+    url: "https://github.com/BRO3886/ical",
+    tech: ["Go", "EventKit", "macOS"],
+    stars: 97,
+  },
+  {
     name: "gtasks",
     description:
-      "A full-featured CLI client for Google Tasks. Manage task lists, create and complete tasks, all from the terminal.",
+      "A Google Tasks CLI built before the coding-agent era. Manage task lists and tasks from the terminal, with embedded skills for Claude Code, Codex, and OpenClaw.",
     url: "https://github.com/BRO3886/gtasks",
-    tech: ["Go", "Google API", "CLI"],
-    stars: 126,
+    tech: ["Go", "Google Tasks", "CLI"],
+    stars: 173,
   },
   {
-    name: "mcp-memory-custom",
+    name: "healthsync",
     description:
-      "An MCP server that gives AI agents persistent memory with configurable storage locations. Works with Claude and other MCP-compatible clients.",
-    url: "https://github.com/BRO3886/mcp-memory-custom",
-    tech: ["JavaScript", "MCP", "AI Tooling"],
+      "Parse Apple Health exports into a local SQLite database. Explore health data through the CLI, SQL queries, or embedded skills for coding agents.",
+    url: "https://github.com/BRO3886/healthsync",
+    tech: ["Go", "SQLite", "Apple Health"],
+    stars: 74,
   },
   {
-    name: "QwikScan",
+    name: "go-eventkit",
     description:
-      "Document scanner app built with Flutter and BLoC. Won first place at Apptitude 2020 hackathon by ACM VIT.",
-    url: "https://github.com/BRO3886/qwikscan",
-    tech: ["Dart", "Flutter", "BLoC"],
-    highlight: "Hackathon Winner",
-  },
-  {
-    name: "genlookup",
-    description:
-      "Chrome extension for instant LLM-powered explanations. Select any text, right-click, and get a contextual breakdown.",
-    url: "https://github.com/BRO3886/genlookup",
-    tech: ["JavaScript", "Chrome Extension", "LLM"],
-  },
-  {
-    name: "portfolio-v2",
-    description:
-      "This site. Static Astro build with dual-theme system, editorial blog layout, and Cloudflare edge deployment.",
-    url: "https://github.com/BRO3886/portfolio-v2",
-    tech: ["Astro", "TypeScript", "Cloudflare"],
+      "Native macOS Calendar and Reminders bindings for Go via cgo. The EventKit bridge behind rem and ical, with direct access to Apple's calendar and task APIs.",
+    url: "https://github.com/BRO3886/go-eventkit",
+    tech: ["Go", "cgo", "EventKit"],
+    stars: 23,
   },
 ];
 
