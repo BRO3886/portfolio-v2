@@ -16,92 +16,60 @@ export const workExperience: WorkEntry[] = [
   {
     company: "Feeble",
     url: "https://feeble.io/",
-    duration: "Apr 2025 - Nov 2026",
+    duration: "Apr 2025 – Nov 2026",
     roles: [
       {
         title: "Senior Software Engineer",
-        duration: "Jul 2025 - Nov 2026",
+        duration: "Jul 2025 – Nov 2026",
         description:
-          "AI-powered task management, Slack bots with Temporal workflows, and a Calendly alternative with multi-tenant scheduling.",
+          "Built Coop and CaseFlow workflows to protect sensitive data, with permission-gated messaging, encrypted storage, and resumable case migrations spanning thousands of files.",
       },
       {
-        title: "Freelance Consultant",
-        duration: "Apr 2025 - Jun 2025",
+        title: "Senior Consulting Engineer",
+        duration: "Apr 2025 – Jun 2025",
         description:
-          "Podcast studio management UI in Next.js and automated thumbnail generation via Supabase functions.",
+          "Rebuilt team scheduling to make booking reliable across time zones, with live calendar conflict checks and balanced team assignment.",
       },
     ],
   },
   {
     company: "Flexprice",
     url: "https://flexprice.io",
-    duration: "Feb 2025 - July 2025",
+    duration: "Feb 2025 – Jul 2025",
     description:
-      "Error handling redesign in Go, PDF invoice generation with Typst, calendar billing, Stripe sync workflows, and an MCP server for AI agent integrations.",
+      "Built subscription billing and invoice delivery to support accurate charges, with calendar-aligned cycles, mid-cycle proration, and reusable PDF templates.",
     roles: [
-      { title: "Freelance Consultant", duration: "Feb 2025 - July 2025" },
+      { title: "Senior Consulting Engineer", duration: "Feb 2025 – Jul 2025" },
     ],
   },
   {
     company: "Zomato",
     url: "https://zomato.com",
-    duration: "Jul 2022 - Dec 2024",
+    duration: "Jul 2022 – Dec 2024",
     roles: [
       {
         title: "Software Engineer II",
-        duration: "Jul 2024 - Dec 2024",
+        duration: "Jul 2024 – Dec 2024",
         description:
-          "Led homepage features and autosuggest improvements using Redis, Kafka, and DynamoDB. Built partnerships integration serving 2500+ corporate employees.",
+          "Led the Near and Fast homepage feature to surface restaurants with shorter delivery times, adding ₹20 lakh in monthly incremental net margin.",
       },
       {
         title: "Software Engineer I",
-        duration: "Jul 2022 - Jun 2024",
+        duration: "Jul 2022 – Jun 2024",
         description:
-          "Search re-ranking and distributed catalog search indexing 100M+ SKUs on Solr.",
+          "Improved dish-search ranking to prioritize closer restaurants, adding ₹1.8 crore in monthly incremental net margin.",
       },
     ],
   },
   {
     company: "Groww",
     url: "https://groww.in",
-    duration: "Jan 2022 - Jun 2022",
+    duration: "Jan 2022 – Jul 2022",
     description:
-      "Core platform services, Help & Support microservice redesign, and event ingestion with Kafka and Go.",
+      "Rebuilt Help and Support with modular Java services and chatbot APIs to help users resolve queries faster.",
     roles: [
-      { title: "Software Engineering Intern", duration: "Jan 2022 - Jun 2022" },
+      { title: "Software Engineering Intern", duration: "Jan 2022 – Jul 2022" },
     ],
-  },
-  {
-    company: "Nearcast",
-    url: "https://nearcast.com",
-    duration: "Apr 2021 - Aug 2021",
-    description:
-      "Flutter app development with native modules for video capture and processing.",
-    roles: [{ title: "Flutter Developer", duration: "Apr 2021 - Aug 2021" }],
-  },
-  {
-    company: "Winuall",
-    url: "https://winuall.com",
-    duration: "Jan 2021 - Apr 2021",
-    description:
-      "Marketplace backend, Jitsi integration, and deployment automation.",
-    roles: [{ title: "Backend Dev Intern", duration: "Jan 2021 - Apr 2021" }],
-  },
-  {
-    company: "Nirmitee.io",
-    url: "https://www.nirmitee.io/",
-    duration: "Sep 2020 - Nov 2020",
-    description:
-      "Built the Byteseal mobile app for this Pune-based product studio.",
-    roles: [{ title: "Flutter Intern", duration: "Sep 2020 - Nov 2020" }],
-  },
-  {
-    company: "OYO Rooms",
-    url: "https://www.oyorooms.com/",
-    duration: "Jun 2019 - Jul 2019",
-    description:
-      "Internal tech support portal with Django and Freshdesk API integration.",
-    roles: [{ title: "Intern - Technology", duration: "Jun 2019 - Jul 2019" }],
   },
 ];
 
