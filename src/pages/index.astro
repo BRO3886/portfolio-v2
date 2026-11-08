@@ -157,52 +157,43 @@ const personJsonLd = {
     <!-- Work Experience -->
     <section id="work">
       <h2 class="text-2xl font-bold mb-10">Work Experience</h2>
-      <div class="work-timeline">
-        {workExperience.map((entry, i) => (
-          <a
-            href={entry.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="work-entry group"
-            style={`--delay: ${i * 80}ms`}
-          >
-            <div class="work-entry-marker" aria-hidden="true">
-              <span class="work-dot" />
+      <ol class="work-timeline" role="list">
+        {workExperience.map((entry) => (
+          <li class="work-entry">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 mb-3">
+              <h3 class="text-lg font-bold">
+                <a href={entry.url} target="_blank" rel="noopener noreferrer" class="work-company">
+                  {entry.company}
+                  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                </a>
+              </h3>
+              <span class="work-duration">{entry.duration}</span>
             </div>
-            <div class="work-entry-content">
-              <span class="work-duration font-mono">{entry.duration}</span>
-              <div class="work-card">
-                <div class="flex items-baseline gap-2 flex-wrap mb-1">
-                  <h3 class="text-lg font-bold text-text-primary group-hover:text-accent transition-colors">
-                    {entry.company}
-                  </h3>
-                  <svg class="work-arrow" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            <div class="space-y-5">
+              {entry.roles.map((role) => (
+                <div>
+                  <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                    <p class="text-sm text-text-primary font-medium">{role.title}</p>
+                    {entry.roles.length > 1 && (
+                      <span class="work-duration">{role.duration}</span>
+                    )}
+                  </div>
+                  {role.description && (
+                    <p class="work-description text-base text-text-secondary leading-relaxed mt-1.5">
+                      {role.description}
+                    </p>
+                  )}
                 </div>
-                <div class="work-roles">
-                  {entry.roles.map((role, ri) => (
-                    <div class:list={["work-role", { "mt-3 pt-3 work-role-border": ri > 0 }]}>
-                      <div class="flex items-baseline justify-between gap-3">
-                        <p class="text-sm text-accent font-medium">{role.title}</p>
-                        <span class="text-xs font-mono text-text-tertiary whitespace-nowrap">{role.duration}</span>
-                      </div>
-                      {role.description && (
-                        <p class="text-[0.94rem] text-text-secondary leading-relaxed mt-1.5">
-                          {role.description}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {entry.description && (
-                  <p class="text-[0.94rem] text-text-secondary leading-relaxed mt-2.5">
-                    {entry.description}
-                  </p>
-                )}
-              </div>
+              ))}
             </div>
-          </a>
+            {entry.description && (
+              <p class="work-description text-base text-text-secondary leading-relaxed mt-1.5">
+                {entry.description}
+              </p>
+            )}
+          </li>
         ))}
-      </div>
+      </ol>
     </section>
 
     <style>
@@ -288,121 +279,68 @@ const personJsonLd = {
 
       /* Work Experience */
       .work-timeline {
-        position: relative;
-        padding-left: 2rem;
-      }
-
-      .work-timeline::before {
-        content: '';
-        position: absolute;
-        left: 5px;
-        top: 8px;
-        bottom: 8px;
-        width: 1px;
-        background: linear-gradient(
-          to bottom,
-          var(--color-accent),
-          var(--color-border) 50%,
-          transparent
-        );
+        list-style: none;
+        margin: 0;
+        padding: 0;
       }
 
       .work-entry {
-        display: block;
         position: relative;
-        padding-bottom: 2rem;
-        text-decoration: none;
-        animation: work-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-        animation-delay: var(--delay);
+        padding-inline-start: 1.5rem;
+        padding-block-end: 2.5rem;
+        border-inline-start: 1px solid var(--color-border);
       }
 
       .work-entry:last-child {
-        padding-bottom: 0;
+        padding-block-end: 0;
+        border-inline-start-color: transparent;
       }
 
-      @keyframes work-fade-in {
-        from {
-          opacity: 0;
-          transform: translateY(12px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .work-entry-marker {
+      .work-entry::before {
+        content: '';
         position: absolute;
-        left: -2rem;
-        top: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 11px;
-        height: 11px;
-      }
-
-      .work-dot {
-        display: block;
+        inset-inline-start: -4px;
+        inset-block-start: 0.5rem;
         width: 7px;
         height: 7px;
         border-radius: 50%;
-        background: var(--color-border);
-        border: 1.5px solid var(--color-background);
-        box-shadow: 0 0 0 1.5px var(--color-border);
-        transition: all 200ms ease;
-      }
-
-      .work-entry:hover .work-dot {
         background: var(--color-accent);
-        box-shadow: 0 0 0 2px var(--color-accent), 0 0 8px color-mix(in srgb, var(--color-accent) 30%, transparent);
-        transform: scale(1.3);
       }
 
-      .work-entry-content {
-        min-height: 2rem;
+      .work-company {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 44px;
+        margin-block: -0.5rem;
+        color: var(--color-text-primary);
+        text-decoration: none;
+        text-underline-offset: 0.2em;
+        text-decoration-thickness: from-font;
+        text-decoration-skip-ink: auto;
+      }
+
+      .work-company:hover {
+        text-decoration: underline;
+      }
+
+      .work-company:focus-visible {
+        outline: 2px solid var(--color-text-primary);
+        outline-offset: 4px;
+        border-radius: var(--radius-sm);
       }
 
       .work-duration {
-        display: inline-block;
-        font-size: 0.75rem;
-        letter-spacing: 0.03em;
-        color: var(--color-text-tertiary);
-        margin-bottom: 0.5rem;
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        font-variant-numeric: tabular-nums;
+        color: var(--color-text-secondary);
       }
 
-      .work-card {
-        padding: 1rem 1.25rem;
-        border-radius: 0.75rem;
-        border: 1px solid var(--color-border);
-        background: var(--color-background);
-        transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
-      }
-
-      .work-entry:hover .work-card {
-        border-color: var(--color-border-hover);
-        background: var(--color-surface);
-        box-shadow: 0 2px 16px -2px rgb(0 0 0 / 0.3);
-        transform: translateX(4px);
-      }
-
-      [data-theme="light"] .work-entry:hover .work-card {
-        box-shadow: 0 2px 12px -2px rgb(0 0 0 / 0.06);
-      }
-
-      .work-role-border {
-        border-top: 1px dashed var(--color-border);
-      }
-
-      .work-arrow {
-        color: var(--color-text-disabled);
-        transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
-        flex-shrink: 0;
-      }
-
-      .work-entry:hover .work-arrow {
-        color: var(--color-accent);
-        transform: translate(2px, -2px);
+      .work-description {
+        max-width: 65ch;
+        text-wrap: pretty;
+        overflow-wrap: break-word;
       }
     </style>
   </div>
