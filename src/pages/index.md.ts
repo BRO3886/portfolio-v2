@@ -45,13 +45,10 @@ export const GET: APIRoute = async () => {
     lines.push('');
     for (const role of entry.roles) {
       lines.push(`**${role.title}** (${role.duration})`);
-      if (role.description) {
-        lines.push(`  ${role.description}`);
-      }
       lines.push('');
-    }
-    if (entry.description) {
-      lines.push(entry.description);
+      lines.push(`- **What:** ${role.what}`);
+      lines.push(`- **Why:** ${role.why}`);
+      lines.push(`- **Impact:** ${role.impact}`);
       lines.push('');
     }
   }

@@ -32,16 +32,12 @@ export const GET: APIRoute = async () => {
     lines.push('');
     lines.push(`${entry.duration} | [${entry.company}](${entry.url})`);
     lines.push('');
-    if (entry.description) {
-      lines.push(entry.description);
-      lines.push('');
-    }
     for (const role of entry.roles) {
       lines.push(`**${role.title}** (${role.duration})`);
-      if (role.description) {
-        lines.push('');
-        lines.push(role.description);
-      }
+      lines.push('');
+      lines.push(`- **What:** ${role.what}`);
+      lines.push(`- **Why:** ${role.why}`);
+      lines.push(`- **Impact:** ${role.impact}`);
       lines.push('');
     }
   }

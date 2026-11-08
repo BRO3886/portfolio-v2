@@ -1,14 +1,15 @@
 export interface RoleEntry {
   title: string;
   duration: string;
-  description?: string;
+  what: string;
+  why: string;
+  impact: string;
 }
 
 export interface WorkEntry {
   company: string;
   url: string;
   duration: string;
-  description?: string;
   roles: RoleEntry[];
 }
 
@@ -21,14 +22,17 @@ export const workExperience: WorkEntry[] = [
       {
         title: "Senior Software Engineer",
         duration: "Jul 2025 – Nov 2026",
-        description:
-          "Built Coop and CaseFlow workflows to protect sensitive data, with permission-gated messaging, encrypted storage, and resumable case migrations spanning thousands of files.",
+        what: "Built Coop’s messaging service and CaseFlow’s security, court-filing, and migration pipelines.",
+        why: "Give teams controlled access to messages and protect sensitive legal data during processing and recovery.",
+        impact:
+          "Made eight-stage migrations resumable across thousands of files per case, with encrypted backups and verified restores.",
       },
       {
         title: "Senior Consulting Engineer",
         duration: "Apr 2025 – Jun 2025",
-        description:
-          "Rebuilt team scheduling to make booking reliable across time zones, with live calendar conflict checks and balanced team assignment.",
+        what: "Rebuilt an internal scheduling platform’s admin experience and availability engine.",
+        why: "Support multi-person bookings across time zones without calendar conflicts.",
+        impact: "Shipped live conflict checks and load-balanced team assignment.",
       },
     ],
   },
@@ -36,10 +40,15 @@ export const workExperience: WorkEntry[] = [
     company: "Flexprice",
     url: "https://flexprice.io",
     duration: "Feb 2025 – Jul 2025",
-    description:
-      "Built subscription billing and invoice delivery to support accurate charges, with calendar-aligned cycles, mid-cycle proration, and reusable PDF templates.",
     roles: [
-      { title: "Senior Consulting Engineer", duration: "Feb 2025 – Jul 2025" },
+      {
+        title: "Senior Consulting Engineer",
+        duration: "Feb 2025 – Jul 2025",
+        what: "Built subscription billing, PDF invoicing, and a shared Go error framework.",
+        why: "Handle subscription changes accurately and make invoices and API failures consistent.",
+        impact:
+          "Delivered calendar-aligned billing and proration, and standardized safe error responses across more than 500 files.",
+      },
     ],
   },
   {
@@ -50,14 +59,16 @@ export const workExperience: WorkEntry[] = [
       {
         title: "Software Engineer II",
         duration: "Jul 2024 – Dec 2024",
-        description:
-          "Led the Near and Fast homepage feature to surface restaurants with shorter delivery times, adding ₹20 lakh in monthly incremental net margin.",
+        what: "Led the Near and Fast homepage feature and its delivery-time estimation pipeline.",
+        why: "Surface restaurants with shorter delivery times on the homepage.",
+        impact: "Added ₹20 lakh in monthly incremental net margin.",
       },
       {
         title: "Software Engineer I",
         duration: "Jul 2022 – Jun 2024",
-        description:
-          "Improved dish-search ranking to prioritize closer restaurants, adding ₹1.8 crore in monthly incremental net margin.",
+        what: "Improved dish-search ranking and built catalog search indexing more than 100 million SKUs.",
+        why: "Prioritize closer restaurants and make large catalogs searchable.",
+        impact: "Added ₹1.8 crore in monthly incremental net margin through dish-search ranking.",
       },
     ],
   },
@@ -65,10 +76,14 @@ export const workExperience: WorkEntry[] = [
     company: "Groww",
     url: "https://groww.in",
     duration: "Jan 2022 – Jul 2022",
-    description:
-      "Rebuilt Help and Support with modular Java services and chatbot APIs to help users resolve queries faster.",
     roles: [
-      { title: "Software Engineering Intern", duration: "Jan 2022 – Jul 2022" },
+      {
+        title: "Software Engineering Intern",
+        duration: "Jan 2022 – Jul 2022",
+        what: "Redesigned Help and Support, built chatbot APIs, and shipped a Kafka/Go event-ingestion service.",
+        why: "Accelerate query resolution and track user activity.",
+        impact: "Delivered modular support services and user-activity data for analysis.",
+      },
     ],
   },
 ];
@@ -152,12 +167,12 @@ export const socialLinks: SocialLink[] = [
   },
   {
     name: "Twitter",
-    url: "https://twitter.com/sidv_22",
+    url: "https://twitter.com/sidposting",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>`,
   },
   {
     name: "Email",
-    url: "mailto:siddverma1999@gmail.com",
+    url: "mailto:me@sidv.dev",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>`,
   },
   {
