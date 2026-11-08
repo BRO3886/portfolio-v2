@@ -17,16 +17,16 @@ Backend engineer with 4+ years of experience owning systems from design through 
 
 ### Feeble
 
-Apr 2025 – Present
+Apr 2025 – Nov 2026
 
 #### Senior Software Engineer
 
-Jul 2025 – Present
+Jul 2025 – Nov 2026
 
 - Built [**Coop**](https://txtcoop.com), a self-hosted service that gives small-business teams secure, permission-gated access to Apple Messages, with durable message sync, encrypted storage, and API and **MCP support** for AI agents
-- Designed and shipped [**CaseFlow**](https://case-flow.co)’s **HIPAA**-focused tenant **backup and recovery** platform, with **encrypted** data volumes, per-tenant storage credentials, fail-closed boot guards, and exact database restore verification
-- Built an **automated court-filing pipeline** for **CaseFlow** using **Temporal** and confidence-scored **TF-IDF** classification, improving five-fold validation accuracy from **60% to 89% across 657 documents** while supporting operator review and replay-safe reprocessing
-- Migrated **CaseFlow**’s irreversible Dropbox cutover stage from **RabbitMQ** to **Temporal**, adding durable execution, progress tracking, single-writer recovery, and shadow-mode validation for migrations spanning **thousands of files per case**
+- Designed and shipped [**CaseFlow**](https://case-flow.co)’s **HIPAA security and recovery controls** for protected health information (PHI), including encrypted tenant volumes, **client-encrypted backups**, per-tenant **GCP KMS** keys, approval-gated decryption, and verified restore drills
+- Built **CaseFlow**’s automated court-filing pipeline with **Temporal**, in addition to replacing Gemini-only classification with a lightweight **TF-IDF classifier** trained on labeled data and a **Gemini** fallback to reduce paid model calls
+- Migrated **CaseFlow**’s entire **eight-stage case migration pipeline** from **RabbitMQ** consumers to **Temporal workflows**, adding durable orchestration, automatic retries, resumable execution, and human approval gates for migrations spanning **thousands of files per case**
 - Built [**Pubity**](https://www.pubitygroup.com/)’s media-planning platform, turning PDF, CSV, and multi-sheet Excel uploads into **web-editable campaign plans** with **automated extraction**, **HubSpot** synchronization, deal search, versioning, and export workflows
 
 #### Senior Consulting Engineer
@@ -56,7 +56,7 @@ Jul 2022 – Dec 2024
 
 Jul 2024 – Dec 2024
 
-- Led the “Near and Fast” homepage feature, implementing an ETA approximation pipeline with **Redis**, **Kafka**, and **DynamoDB** that delivered **Rs. 4M/month in incremental net margin**
+- Led the “Near and Fast” homepage feature, implementing an ETA approximation pipeline with **Redis**, **Kafka**, and **DynamoDB** that delivered **Rs. 2M/month in incremental net margin**
 - Improved the autosuggest **leader-election algorithm**, increasing dish-page **CTR** and generating an additional **Rs. 0.7M/month** in net margin through dish-page **ad conversions**
 - Established a search based partnership-integration system serving **2,500+** corporate employees at **CRED** and **MakeMyTrip**
 - Built an **internal devtool - an autosuggest debugger** that gave developers granular control over code paths in a web UI used during investigation and testing
@@ -86,7 +86,7 @@ Jan 2022 – Jul 2022
 
 ### Georgia Institute of Technology
 
-**Master of Science in Computer Science; Specialization: Machine Learning**  
+**Master of Science in Computer Science**
 Atlanta, GA (Online) · Jan 2026 – Present
 
 ### Vellore Institute of Technology
@@ -101,16 +101,9 @@ Vellore, TN, IN · Jul 2018 – Jun 2022
 Go, cgo, EventKit · 2021 – Present
 
 - Built [**Romp**](https://github.com/BRO3886/romp), a CLI and interactive TUI that runs coding agents in isolated worktrees, independently verifies changes, enforces review gates, and opens pull requests from labelled GitHub issues
-- Built [**rem**](https://github.com/BRO3886/rem) (156★) and [**ical**](https://github.com/BRO3886/ical) (88★), native macOS productivity CLIs with full CRUD and sub-200 ms operations, powered by the [**go-eventkit**](https://github.com/BRO3886/go-eventkit) cgo bridge
+- Built [**rem**](https://github.com/BRO3886/rem) (157★) and [**ical**](https://github.com/BRO3886/ical) (97★), native macOS productivity CLIs with full CRUD and sub-200 ms operations, powered by the [**go-eventkit**](https://github.com/BRO3886/go-eventkit) cgo bridge
 - Created [**gtasks**](https://github.com/BRO3886/gtasks) (173★) before the AI-agent era, then evolved it with embedded Agent Skills for Claude Code, Codex, and OpenClaw
-- Built [**healthsync**](https://github.com/BRO3886/healthsync) (73★) to convert Apple Health exports into a local SQLite database queryable through the CLI, SQL, or embedded AI-agent skills
-
-### [Katagami](https://katagami.dev) *(under development)*
-
-Rust, PostgreSQL, S3, Typst · 2026
-
-- Built a **self-hosted PDF rendering API** with schema-validated, immutable templates and content-addressed S3-compatible storage
-- Used a supervised worker pool with hard deadlines and crash isolation; measured **2,151 req/s** with zero failures on a stated invoice workload
+- Built [**healthsync**](https://github.com/BRO3886/healthsync) (74★) to convert Apple Health exports into a local SQLite database queryable through the CLI, SQL, or embedded AI-agent skills
 
 ## Technical Skills
 
