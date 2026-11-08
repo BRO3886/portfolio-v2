@@ -2,7 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CopyButton from '../components/CopyButton.astro';
-import { workExperience, projects } from '../lib/content';
+import { projects } from '../lib/content';
+import WorkExperience from '../components/WorkExperience.astro';
 
 const recentPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
@@ -155,50 +156,7 @@ const personJsonLd = {
     </section>
 
     <!-- Work Experience -->
-    <section id="work">
-      <h2 class="text-2xl font-bold mb-10">Work Experience</h2>
-      <ol class="work-timeline" role="list">
-        {workExperience.map((entry) => (
-          <li class="work-entry">
-            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 mb-3">
-              <h3 class="text-lg font-bold">
-                <a href={entry.url} target="_blank" rel="noopener noreferrer" class="work-company">
-                  {entry.company}
-                  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-                </a>
-              </h3>
-              <span class="work-duration">{entry.duration}</span>
-            </div>
-            <div class="space-y-8">
-              {entry.roles.map((role) => (
-                <div>
-                  <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                    <h4 class="text-base text-text-primary font-semibold">{role.title}</h4>
-                    {entry.roles.length > 1 && (
-                      <span class="work-duration">{role.duration}</span>
-                    )}
-                  </div>
-                  <dl class="mt-3 mb-0 space-y-3">
-                    <div class="work-detail">
-                      <dt class="text-sm text-text-primary font-medium">What</dt>
-                      <dd class="work-description text-base text-text-secondary leading-relaxed m-0">{role.what}</dd>
-                    </div>
-                    <div class="work-detail">
-                      <dt class="text-sm text-text-primary font-medium">Why</dt>
-                      <dd class="work-description text-base text-text-secondary leading-relaxed m-0">{role.why}</dd>
-                    </div>
-                    <div class="work-detail">
-                      <dt class="text-sm text-text-primary font-medium">Impact</dt>
-                      <dd class="work-description text-base text-text-secondary leading-relaxed m-0">{role.impact}</dd>
-                    </div>
-                  </dl>
-                </div>
-              ))}
-            </div>
-          </li>
-        ))}
-      </ol>
-    </section>
+    <WorkExperience />
 
     <style>
       /* Projects */
@@ -281,84 +239,6 @@ const personJsonLd = {
         transform: translate(2px, -2px);
       }
 
-      /* Work Experience */
-      .work-timeline {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      .work-entry {
-        position: relative;
-        padding-inline-start: 1.5rem;
-        padding-block-end: 2.5rem;
-        border-inline-start: 1px solid var(--color-border);
-      }
-
-      .work-entry:last-child {
-        padding-block-end: 0;
-        border-inline-start-color: transparent;
-      }
-
-      .work-entry::before {
-        content: '';
-        position: absolute;
-        inset-inline-start: -4px;
-        inset-block-start: 0.5rem;
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: var(--color-accent);
-      }
-
-      .work-company {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        min-height: 44px;
-        margin-block: -0.5rem;
-        color: var(--color-text-primary);
-        text-decoration: none;
-        text-underline-offset: 0.2em;
-        text-decoration-thickness: from-font;
-        text-decoration-skip-ink: auto;
-      }
-
-      .work-company:hover {
-        text-decoration: underline;
-      }
-
-      .work-company:focus-visible {
-        outline: 2px solid var(--color-text-primary);
-        outline-offset: 4px;
-        border-radius: var(--radius-sm);
-      }
-
-      .work-duration {
-        font-family: var(--font-mono);
-        font-size: var(--text-sm);
-        font-variant-numeric: tabular-nums;
-        color: var(--color-text-secondary);
-      }
-
-      .work-description {
-        max-width: 65ch;
-        text-wrap: pretty;
-        overflow-wrap: break-word;
-      }
-
-      .work-detail {
-        display: grid;
-        gap: 0.25rem;
-      }
-
-      @media (min-width: 640px) {
-        .work-detail {
-          grid-template-columns: 4rem minmax(0, 1fr);
-          column-gap: 0.75rem;
-          align-items: baseline;
-        }
-      }
     </style>
   </div>
 
