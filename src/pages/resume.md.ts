@@ -4,7 +4,6 @@ const resumeMarkdown = `# Siddhartha Varma
 
 - URL: https://sidv.dev/resume/
 - PDF: https://sidv.dev/documents/Resume_Siddhartha_Varma.pdf
-- Phone: [+91 88609 86398](tel:+918860986398)
 - Email: [me@sidv.dev](mailto:me@sidv.dev)
 - LinkedIn: https://www.linkedin.com/in/siddharthav22
 - GitHub: https://github.com/BRO3886
