@@ -17,7 +17,7 @@ const personJsonLd = {
   sameAs: [
     'https://github.com/BRO3886',
     'https://linkedin.com/in/siddharthav22/',
-    'https://twitter.com/sidv_22',
+    'https://twitter.com/sidposting',
   ],
 };
 ---
@@ -169,28 +169,32 @@ const personJsonLd = {
               </h3>
               <span class="work-duration">{entry.duration}</span>
             </div>
-            <div class="space-y-5">
+            <div class="space-y-8">
               {entry.roles.map((role) => (
                 <div>
                   <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                    <p class="text-sm text-text-primary font-medium">{role.title}</p>
+                    <h4 class="text-base text-text-primary font-semibold">{role.title}</h4>
                     {entry.roles.length > 1 && (
                       <span class="work-duration">{role.duration}</span>
                     )}
                   </div>
-                  {role.description && (
-                    <p class="work-description text-base text-text-secondary leading-relaxed mt-1.5">
-                      {role.description}
-                    </p>
-                  )}
+                  <dl class="mt-3 mb-0 space-y-3">
+                    <div class="work-detail">
+                      <dt class="text-sm text-text-primary font-medium">What</dt>
+                      <dd class="work-description text-base text-text-secondary leading-relaxed m-0">{role.what}</dd>
+                    </div>
+                    <div class="work-detail">
+                      <dt class="text-sm text-text-primary font-medium">Why</dt>
+                      <dd class="work-description text-base text-text-secondary leading-relaxed m-0">{role.why}</dd>
+                    </div>
+                    <div class="work-detail">
+                      <dt class="text-sm text-text-primary font-medium">Impact</dt>
+                      <dd class="work-description text-base text-text-secondary leading-relaxed m-0">{role.impact}</dd>
+                    </div>
+                  </dl>
                 </div>
               ))}
             </div>
-            {entry.description && (
-              <p class="work-description text-base text-text-secondary leading-relaxed mt-1.5">
-                {entry.description}
-              </p>
-            )}
           </li>
         ))}
       </ol>
@@ -341,6 +345,19 @@ const personJsonLd = {
         max-width: 65ch;
         text-wrap: pretty;
         overflow-wrap: break-word;
+      }
+
+      .work-detail {
+        display: grid;
+        gap: 0.25rem;
+      }
+
+      @media (min-width: 640px) {
+        .work-detail {
+          grid-template-columns: 4rem minmax(0, 1fr);
+          column-gap: 0.75rem;
+          align-items: baseline;
+        }
       }
     </style>
   </div>
