@@ -1,0 +1,260 @@
+---
+import { workExperience } from '../lib/content';
+---
+<section id="work" class="work-experience" aria-labelledby="work-heading">
+  <div class="work-heading">
+    <h2 id="work-heading">Work Experience</h2>
+    <a class="work-resume" href="/resume/">Full résumé <span aria-hidden="true">↗</span></a>
+  </div>
+  <ol class="work-timeline" role="list">
+    {workExperience.map((entry, i) => (
+      <li class="work-entry">
+        <header class="work-company-header">
+          <h3>
+            <a href={entry.url} target="_blank" rel="noopener noreferrer" class="work-company">
+              {entry.company}
+              <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 17L17 7M7 7h10v10" />
+              </svg>
+            </a>
+          </h3>
+          <span class="work-duration">{entry.duration}</span>
+        </header>
+        <div class="work-panel">
+          {entry.roles.map((role, ri) => (
+            <section class="work-role" aria-labelledby={`work-role-${i}-${ri}`}>
+              <div class="work-role-header">
+                <h4 id={`work-role-${i}-${ri}`}>{role.title}</h4>
+                {entry.roles.length > 1 && <span class="work-duration">{role.duration}</span>}
+              </div>
+              <dl class="work-details">
+                <div class="work-detail work-what">
+                  <dt>What</dt>
+                  <dd class="work-description">{role.what}</dd>
+                </div>
+                <div class="work-detail work-why">
+                  <dt>Why</dt>
+                  <dd class="work-description">{role.why}</dd>
+                </div>
+                <div class="work-detail work-impact">
+                  <dt>Impact</dt>
+                  <dd class="work-description">{role.impact}</dd>
+                </div>
+              </dl>
+            </section>
+          ))}
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>
+<style>
+  .work-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-block-end: 2rem;
+  }
+
+  .work-heading h2 {
+    font-size: var(--text-2xl);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .work-resume {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .work-timeline {
+    list-style: none;
+    display: grid;
+    gap: 2.5rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .work-entry {
+    min-width: 0;
+  }
+
+  .work-company-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding-inline: 0.25rem;
+    margin-block-end: 1rem;
+  }
+
+  .work-company-header h3 {
+    font-size: var(--text-2xl);
+    letter-spacing: -0.025em;
+  }
+
+  .work-company {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 44px;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: from-font;
+  }
+
+  .work-company svg {
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+  }
+
+  .work-company:focus-visible,
+  .work-resume:focus-visible {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+
+  .work-company,
+  .work-resume {
+    touch-action: manipulation;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .work-company:hover {
+      text-decoration: underline;
+    }
+
+    .work-resume:hover {
+      color: var(--color-text-primary);
+    }
+  }
+
+  .work-duration {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-secondary);
+  }
+
+  .work-panel {
+    background: var(--color-work-panel);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-work-panel);
+  }
+
+  .work-role {
+    padding: 1.25rem;
+  }
+
+  .work-role + .work-role {
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  .work-role-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-block-end: 1.5rem;
+  }
+
+  .work-role-header h4 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: 1.4;
+    text-wrap: balance;
+  }
+
+  .work-details {
+    display: grid;
+    gap: 1.25rem;
+    margin: 0;
+  }
+
+  .work-detail {
+    min-width: 0;
+  }
+
+  .work-detail dt {
+    margin-block-end: 0.5rem;
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .work-description {
+    margin: 0;
+    max-width: 65ch;
+    color: var(--color-text-secondary);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    text-wrap: pretty;
+    overflow-wrap: break-word;
+  }
+
+  .work-impact {
+    padding: 1rem 1.25rem;
+    border-inline-start: 2px solid var(--color-accent);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    background: color-mix(in oklch, var(--color-accent) 6%, var(--color-work-panel));
+  }
+
+  .work-impact dt {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .work-impact dt::before {
+    content: '';
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  .work-impact dd {
+    color: var(--color-text-primary);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 640px) {
+    .work-role {
+      padding: 1.5rem;
+    }
+
+    .work-details {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      grid-template-areas: 'what impact' 'why impact';
+      column-gap: 2rem;
+    }
+
+    .work-what {
+      grid-area: what;
+    }
+
+    .work-why {
+      grid-area: why;
+    }
+
+    .work-impact {
+      grid-area: impact;
+      align-self: stretch;
+      padding: 1.25rem;
+    }
+  }
+</style>

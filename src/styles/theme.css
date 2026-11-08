@@ -119,6 +119,9 @@
   --color-info-bg: hsl(199 50% 12%);
   --color-info-border: hsl(199 50% 22%);
 
+  --color-work-panel: var(--color-surface);
+  --shadow-work-panel: 0 0 0 1px oklch(1 0 0 / 0.09);
+
   /* Component Tokens */
   --color-input-bg: hsl(0 0% 13%);
   --color-input-border: hsl(0 0% 25%);
@@ -243,6 +246,12 @@
   --color-info: hsl(199 70% 45%);
   --color-info-bg: hsl(199 50% 92%);
   --color-info-border: hsl(199 50% 78%);
+
+  --color-work-panel: var(--color-background);
+  --shadow-work-panel:
+    0 0 0 1px oklch(0 0 0 / 0.06),
+    0 2px 4px -2px oklch(0 0 0 / 0.06),
+    0 12px 24px -12px oklch(0 0 0 / 0.08);
 
   /* Component Tokens */
   --color-input-bg: hsl(40 15% 93%);
