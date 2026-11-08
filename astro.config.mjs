@@ -4,12 +4,12 @@ import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 
 const sitemapLastModified = new Map([
-  ['/', '2026-09-21'],
+  ['/', '2026-11-08'],
   ['/blog/', '2026-09-21'],
   ['/blog/dynamodb-architecture/', '2025-01-31'],
   ['/blog/green-tea-gc-how-go-cut-memory-waste/', '2025-07-13'],
   ['/blog/software-engineering-agentic-era/', '2026-09-21'],
-  ['/resume/', '2026-09-30'],
+  ['/resume/', '2026-11-08'],
 ]);
 
 // https://astro.build/config

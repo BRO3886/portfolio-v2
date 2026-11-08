@@ -5,12 +5,12 @@ const resumePath = '/documents/Resume_Siddhartha_Varma.pdf';
 
 const experience = [
   {
-    company: 'Feeble', period: 'Apr 2025 – Present', roles: [
-      { title: 'Senior Software Engineer', period: 'Jul 2025 – Present', bullets: [
+    company: 'Feeble', period: 'Apr 2025 – Nov 2026', roles: [
+      { title: 'Senior Software Engineer', period: 'Jul 2025 – Nov 2026', bullets: [
         'Built <a href="https://txtcoop.com"><strong>Coop</strong></a>, a self-hosted service that gives small-business teams secure, permission-gated access to Apple Messages, with durable message sync, encrypted storage, and API and <strong>MCP support</strong> for AI agents',
-        'Designed and shipped <a href="https://case-flow.co"><strong>CaseFlow</strong></a>’s <strong>HIPAA</strong>-focused tenant <strong>backup and recovery</strong> platform, with <strong>encrypted</strong> data volumes, per-tenant storage credentials, fail-closed boot guards, and exact database restore verification',
-        'Built an <strong>automated court-filing pipeline</strong> for <strong>CaseFlow</strong> using <strong>Temporal</strong> and confidence-scored <strong>TF-IDF</strong> classification, improving five-fold validation accuracy from <strong>60% to 89% across 657 documents</strong> while supporting operator review and replay-safe reprocessing',
-        'Migrated <strong>CaseFlow</strong>’s irreversible Dropbox cutover stage from <strong>RabbitMQ</strong> to <strong>Temporal</strong>, adding durable execution, progress tracking, single-writer recovery, and shadow-mode validation for migrations spanning <strong>thousands of files per case</strong>',
+        'Designed and shipped <a href="https://case-flow.co"><strong>CaseFlow</strong></a>’s <strong>HIPAA security and recovery controls</strong> for protected health information (PHI), including encrypted tenant volumes, <strong>client-encrypted backups</strong>, per-tenant <strong>GCP KMS</strong> keys, approval-gated decryption, and verified restore drills',
+        'Built <strong>CaseFlow</strong>’s automated court-filing pipeline with <strong>Temporal</strong>, in addition to replacing Gemini-only classification with a lightweight <strong>TF-IDF classifier</strong> trained on labeled data and a <strong>Gemini</strong> fallback to reduce paid model calls',
+        'Migrated <strong>CaseFlow</strong>’s entire <strong>eight-stage case migration pipeline</strong> from <strong>RabbitMQ</strong> consumers to <strong>Temporal workflows</strong>, adding durable orchestration, automatic retries, resumable execution, and human approval gates for migrations spanning <strong>thousands of files per case</strong>',
         'Built <a href="https://www.pubitygroup.com/"><strong>Pubity</strong></a>’s media-planning platform, turning PDF, CSV, and multi-sheet Excel uploads into <strong>web-editable campaign plans</strong> with <strong>automated extraction</strong>, <strong>HubSpot</strong> synchronization, deal search, versioning, and export workflows',
       ] },
       { title: 'Senior Consulting Engineer', period: 'Apr 2025 – Jun 2025', bullets: [
@@ -30,7 +30,7 @@ const experience = [
   ] },
   { company: 'Zomato', period: 'Jul 2022 – Dec 2024', roles: [
     { title: 'Software Engineer II', period: 'Jul 2024 – Dec 2024', bullets: [
-      'Led the “Near and Fast” homepage feature, implementing an ETA approximation pipeline with <strong>Redis</strong>, <strong>Kafka</strong>, and <strong>DynamoDB</strong> that delivered <strong>Rs. 4M/month in incremental net margin</strong>',
+      'Led the “Near and Fast” homepage feature, implementing an ETA approximation pipeline with <strong>Redis</strong>, <strong>Kafka</strong>, and <strong>DynamoDB</strong> that delivered <strong>Rs. 2M/month in incremental net margin</strong>',
       'Improved the autosuggest <strong>leader-election algorithm</strong>, increasing dish-page <strong>CTR</strong> and generating an additional <strong>Rs. 0.7M/month</strong> in net margin through dish-page <strong>ad conversions</strong>',
       'Established a search based partnership-integration system serving <strong>2,500+</strong> corporate employees at <strong>CRED</strong> and <strong>MakeMyTrip</strong>',
       'Built an <strong>internal devtool - an autosuggest debugger</strong> that gave developers granular control over code paths in a web UI used during investigation and testing',
@@ -54,26 +54,22 @@ const experience = [
 ];
 
 const education = [
-  { school: 'Georgia Institute of Technology', location: 'Atlanta, GA (Online)', degree: 'Master of Science in Computer Science; Specialization: Machine Learning', period: 'Jan 2026 – Present' },
+  { school: 'Georgia Institute of Technology', location: 'Atlanta, GA (Online)', degree: 'Master of Science in Computer Science', period: 'Jan 2026 – Present' },
   { school: 'Vellore Institute of Technology', location: 'Vellore, TN, IN', degree: 'Bachelor of Technology in Computer Science and Engineering; CGPA: 9.09/10', period: 'Jul 2018 – Jun 2022' },
 ];
 
 const projects = [
   { name: 'Open Source Developer Tools', stack: 'Go, cgo, EventKit', period: '2021 – Present', bullets: [
     'Built <a href="https://github.com/BRO3886/romp"><strong>Romp</strong></a>, a CLI and interactive TUI that runs coding agents in isolated worktrees, independently verifies changes, enforces review gates, and opens pull requests from labelled GitHub issues',
-    'Built <a href="https://github.com/BRO3886/rem"><strong>rem</strong></a> (156★) and <a href="https://github.com/BRO3886/ical"><strong>ical</strong></a> (88★), native macOS productivity CLIs with full CRUD and sub-200 ms operations, powered by the <a href="https://github.com/BRO3886/go-eventkit"><strong>go-eventkit</strong></a> cgo bridge',
+    'Built <a href="https://github.com/BRO3886/rem"><strong>rem</strong></a> (157★) and <a href="https://github.com/BRO3886/ical"><strong>ical</strong></a> (97★), native macOS productivity CLIs with full CRUD and sub-200 ms operations, powered by the <a href="https://github.com/BRO3886/go-eventkit"><strong>go-eventkit</strong></a> cgo bridge',
     'Created <a href="https://github.com/BRO3886/gtasks"><strong>gtasks</strong></a> (173★) before the AI-agent era, then evolved it with embedded Agent Skills for Claude Code, Codex, and OpenClaw',
-    'Built <a href="https://github.com/BRO3886/healthsync"><strong>healthsync</strong></a> (73★) to convert Apple Health exports into a local SQLite database queryable through the CLI, SQL, or embedded AI-agent skills',
-  ] },
-  { name: 'Katagami', href: 'https://katagami.dev', qualifier: 'under development', stack: 'Rust, PostgreSQL, S3, Typst', period: '2026', bullets: [
-    'Built a <strong>self-hosted PDF rendering API</strong> with schema-validated, immutable templates and content-addressed S3-compatible storage',
-    'Used a supervised worker pool with hard deadlines and crash isolation; measured <strong>2,151 req/s</strong> with zero failures on a stated invoice workload',
+    'Built <a href="https://github.com/BRO3886/healthsync"><strong>healthsync</strong></a> (74★) to convert Apple Health exports into a local SQLite database queryable through the CLI, SQL, or embedded AI-agent skills',
   ] },
 ];
 
 const resumeJsonLd = {
   '@context': 'https://schema.org', '@type': 'ProfilePage', url: 'https://sidv.dev/resume/',
-  name: 'Siddhartha Varma Resume', dateModified: '2026-09-30',
+  name: 'Siddhartha Varma Resume', dateModified: '2026-11-08',
   description: 'Resume of Siddhartha Varma, a backend and systems engineer specializing in Go, distributed workflows, search infrastructure, and reliable product platforms.',
   associatedMedia: { '@type': 'MediaObject', name: 'Siddhartha Varma Resume PDF', contentUrl: `https://sidv.dev${resumePath}`, encodingFormat: 'application/pdf' },
   mainEntity: { '@type': 'Person', name: 'Siddhartha Varma', url: 'https://sidv.dev', jobTitle: 'Backend and Systems Engineer', sameAs: ['https://github.com/BRO3886', 'https://linkedin.com/in/siddharthav22/'], knowsAbout: ['Go', 'Distributed systems', 'Search infrastructure', 'Temporal', 'PostgreSQL', 'Redis', 'Kafka'] },
@@ -109,7 +105,7 @@ const resumeJsonLd = {
         </div></section>
 
         <section class="paper-section"><h2>Projects</h2><div class="entry-list">
-          {projects.map((project) => <article class="resume-entry"><div class="entry-heading project-heading"><h3>{project.href ? <a href={project.href}>{project.name}</a> : project.name}{project.qualifier && <em> ({project.qualifier})</em>}<span> · {project.stack}</span></h3><p>{project.period}</p></div><ul>{project.bullets.map((bullet) => <li><Fragment set:html={bullet} /></li>)}</ul></article>)}
+          {projects.map((project) => <article class="resume-entry"><div class="entry-heading project-heading"><h3>{project.name}<span> · {project.stack}</span></h3><p>{project.period}</p></div><ul>{project.bullets.map((bullet) => <li><Fragment set:html={bullet} /></li>)}</ul></article>)}
         </div></section>
 
         <section class="paper-section skills-section"><h2>Technical Skills</h2><dl>

@@ -16,11 +16,11 @@ export const workExperience: WorkEntry[] = [
   {
     company: "Feeble",
     url: "https://feeble.io/",
-    duration: "Apr 2025 - Present",
+    duration: "Apr 2025 - Nov 2026",
     roles: [
       {
         title: "Senior Software Engineer",
-        duration: "Jul 2025 - Present",
+        duration: "Jul 2025 - Nov 2026",
         description:
           "AI-powered task management, Slack bots with Temporal workflows, and a Calendly alternative with multi-tenant scheduling.",
       },
