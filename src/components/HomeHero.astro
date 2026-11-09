@@ -1,0 +1,214 @@
+---
+import { Image } from 'astro:assets';
+import CopyButton from './CopyButton.astro';
+import heroPhoto from '../assets/siddhartha-overlooking-sea.jpg';
+---
+
+<section class="home-hero">
+  <div class="scene">
+    <figure class="photo">
+      <Image
+        src={heroPhoto}
+        alt="Siddhartha Varma looking out over the sea"
+        widths={[640, 960, 1280, 1920, 2560]}
+        sizes="100vw"
+        format="webp"
+        quality={80}
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+      />
+    </figure>
+    <div class="sky max-w-4xl mx-auto px-6">
+      <h1>Hi, I’m Siddhartha. Backend engineer who cares how things feel.</h1>
+    </div>
+  </div>
+
+  <div class="intro max-w-4xl mx-auto px-6">
+    <p class="text-lg text-text-secondary leading-relaxed mb-8 max-w-[55ch]">
+      Senior engineer at Feeble, previously Zomato. Off the clock I make open-source Go CLIs and tools for coding agents.
+    </p>
+    <div class="flex gap-3">
+      <CopyButton id="copy-email" label="Get in Touch" copiedLabel="Email Copied" variant="primary">
+        <svg slot="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+        </svg>
+      </CopyButton>
+      <a
+        href="/blog"
+        class="px-5 py-2.5 border border-border text-text-secondary rounded-lg text-sm font-medium hover:text-text-primary hover:border-border-hover transition-colors"
+      >
+        Blog
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-hero {
+    --header-h: 4.25rem;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .scene {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    max-height: 84svh;
+    margin-bottom: -5rem;
+    overflow: hidden;
+    isolation: isolate;
+    view-timeline: --hero-scene block;
+  }
+
+  .photo {
+    position: absolute;
+    inset: -6% 0 0;
+    margin: 0;
+    z-index: -1;
+    -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 98%);
+    mask-image: linear-gradient(to bottom, #000 55%, transparent 98%);
+  }
+
+  /* Zooming past 1 crops a floodlight out of the photo's top-left corner. */
+  .photo :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 0% 100%;
+    transform: scale(1.29);
+    transform-origin: right bottom;
+    filter: saturate(0.8) brightness(0.72) contrast(1.08);
+  }
+
+  .photo::before,
+  .photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .photo::before {
+    background: linear-gradient(to bottom, oklch(0.22 0.07 275 / 0.7), oklch(0.3 0.08 285 / 0.25) 45%, transparent 70%);
+    mix-blend-mode: multiply;
+  }
+
+  .photo::after {
+    background: radial-gradient(120% 55% at 70% 78%, oklch(0.78 0.14 55 / 0.55), transparent 70%);
+    mix-blend-mode: soft-light;
+  }
+
+  :global([data-theme='light']) .photo :global(img) {
+    filter: saturate(1.05) brightness(1.04);
+  }
+
+  :global([data-theme='light']) .photo::before {
+    background: linear-gradient(to bottom, oklch(0.4 0.1 255 / 0.3), transparent 50%);
+  }
+
+  :global([data-theme='light']) .photo::after {
+    background: radial-gradient(120% 55% at 70% 78%, oklch(0.95 0.06 85 / 0.5), transparent 70%);
+  }
+
+  .sky {
+    display: flex;
+    padding-top: calc(var(--header-h) + 0.5rem);
+  }
+
+  h1 {
+    max-width: 17ch;
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    color: var(--color-text-on-photo);
+    text-wrap: balance;
+    text-shadow: 0 1px 3px oklch(0.2 0.06 270 / 0.4);
+  }
+
+  .intro {
+    position: relative;
+    padding-bottom: 5rem;
+  }
+
+  @media (min-width: 768px) {
+    .scene {
+      aspect-ratio: 2 / 1;
+      max-height: 88svh;
+      min-height: 34rem;
+      margin-bottom: -7rem;
+    }
+
+    .photo :global(img) {
+      transform: scale(1.15);
+      transform-origin: left bottom;
+    }
+
+    .sky {
+      justify-content: flex-end;
+      padding-top: calc(var(--header-h) + clamp(3rem, 9vh, 6rem));
+    }
+
+    h1 {
+      max-width: 15ch;
+      font-size: var(--text-5xl);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .photo {
+      animation: hero-settle 1800ms var(--ease-out) both;
+    }
+
+    h1 {
+      animation: hero-rise 900ms var(--ease-out) 250ms both;
+    }
+
+    .intro {
+      animation: hero-rise 900ms var(--ease-out) 450ms both;
+    }
+
+    @supports (animation-timeline: view()) {
+      .photo {
+        animation: hero-settle 1800ms var(--ease-out) both, hero-parallax linear both;
+        animation-timeline: auto, --hero-scene;
+        animation-range: normal, exit 0% exit 100%;
+      }
+
+      .sky {
+        animation: hero-lift linear both;
+        animation-timeline: --hero-scene;
+        animation-range: exit 0% exit 60%;
+      }
+    }
+  }
+
+  @keyframes hero-settle {
+    from {
+      scale: 1.08;
+      filter: brightness(1.2);
+    }
+  }
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      translate: 0 14px;
+    }
+  }
+
+  @keyframes hero-parallax {
+    to {
+      translate: 0 18%;
+    }
+  }
+
+  @keyframes hero-lift {
+    to {
+      opacity: 0;
+      translate: 0 -30%;
+    }
+  }
+</style>
