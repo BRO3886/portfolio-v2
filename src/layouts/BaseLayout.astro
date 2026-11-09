@@ -443,7 +443,8 @@ const markdownPath = currentPath === '/'
     border-radius: 999px;
     background: var(--color-primary);
     color: var(--color-text-on-primary);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.2), 0 6px 16px rgb(0 0 0 / 0.22), 0 16px 32px rgb(0 0 0 / 0.14);
+    /* iOS Safari clips fixed elements at the viewport's bottom edge, so the shadow must not reach past the button's bottom offset. */
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.2), 0 4px 10px rgb(0 0 0 / 0.18);
     transition: background-color 150ms ease, scale 150ms ease-out;
   }
 
