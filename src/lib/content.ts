@@ -148,6 +148,8 @@ export const projects: ProjectEntry[] = [
   },
 ];
 
+export const bookingUrl = "https://calendar.app.google/7FGngYx6S1HUHHhp8";
+
 export interface SocialLink {
   name: string;
   url: string;

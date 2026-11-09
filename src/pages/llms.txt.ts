@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { socialLinks } from '../lib/content';
+import { bookingUrl, socialLinks } from '../lib/content';
 
 export const GET: APIRoute = async () => {
   const posts = (await getCollection('blog', ({ data }) => !data.draft))
@@ -41,6 +41,7 @@ export const GET: APIRoute = async () => {
     if (link.url.startsWith('mailto:')) continue;
     lines.push(`- [${link.name}](${link.url})`);
   }
+  lines.push(`- [Book a call](${bookingUrl})`);
   lines.push('');
 
   lines.push('## Optional');

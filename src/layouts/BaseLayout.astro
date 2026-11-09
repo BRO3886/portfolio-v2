@@ -1,6 +1,6 @@
 ---
 import '../styles/theme.css';
-import { socialLinks } from '../lib/content';
+import { bookingUrl, socialLinks } from '../lib/content';
 import PostHog from '../components/PostHog.astro';
 
 interface Props {
@@ -29,7 +29,11 @@ const {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const currentPath = Astro.url.pathname;
-const resolvedOgImage = ogImage ? new URL(ogImage, Astro.site).href : undefined;
+const emailLink = socialLinks.find((link) => link.url.startsWith('mailto:'));
+const elsewhereLinks = socialLinks.filter((link) => link !== emailLink);
+const email = emailLink?.url.replace('mailto:', '');
+const calendarIcon = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>`;
+const resolvedOgImage =ogImage ? new URL(ogImage, Astro.site).href : undefined;
 const markdownPath = currentPath === '/'
   ? '/index.md'
   : currentPath === '/resume/'
@@ -148,31 +152,57 @@ const markdownPath = currentPath === '/'
     </main>
 
     <footer class="border-t border-border mt-auto">
-      <div class="max-w-3xl mx-auto px-6 py-8">
-        <div class="flex items-center justify-center gap-4 mb-4">
-          {socialLinks.map((link) => (
-            <a
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={link.name}
-              class="text-text-tertiary hover:text-text-primary transition-colors"
-            >
-              <Fragment set:html={link.icon} />
+      <div class="max-w-4xl mx-auto px-6 pt-14 pb-8">
+        <div class="footer-grid">
+          <div>
+            <p class="footer-label">Say hello</p>
+            <p class="text-xl font-semibold tracking-tight text-text-primary mb-2 footer-heading">
+              Building something interesting? Let’s talk.
+            </p>
+            <p class="text-sm text-text-tertiary leading-relaxed mb-6 max-w-[40ch]">
+              Pick a slot on my calendar, or write to <a href={emailLink?.url} class="footer-inline-link">{email}</a>.
+            </p>
+            <a href={bookingUrl} target="_blank" rel="noopener noreferrer" class="footer-book" id="footer-book">
+              <Fragment set:html={calendarIcon} />
+              Book a call
+              <span class="footer-book-arrow">
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+              </span>
             </a>
-          ))}
-          <a
-            href="/rss.xml"
-            aria-label="RSS Feed"
-            class="text-text-tertiary hover:text-text-primary transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
-          </a>
+          </div>
+          <nav aria-label="Site">
+            <p class="footer-label">Site</p>
+            <ul class="footer-list">
+              <li><a href="/">Home</a></li>
+              <li><a href="/blog">Blog</a></li>
+              <li><a href="/resume">Resume</a></li>
+              <li><a href="/rss.xml">RSS</a></li>
+            </ul>
+          </nav>
+          <nav aria-label="Elsewhere">
+            <p class="footer-label">Elsewhere</p>
+            <ul class="footer-list">
+              {elsewhereLinks.map((link) => (
+                <li>
+                  <a href={link.url} target="_blank" rel="noopener noreferrer">
+                    <Fragment set:html={link.icon} />
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
-        <p class="text-text-tertiary text-sm text-center">
-          &copy; {new Date().getFullYear()} Siddhartha Varma
-        </p>
+        <div class="footer-bottom">
+          <p>&copy; {new Date().getFullYear()} Siddhartha Varma</p>
+          <p>Built with Astro, served from Cloudflare</p>
+        </div>
       </div>
+
+      <a href={bookingUrl} target="_blank" rel="noopener noreferrer" class="book-fab" id="book-fab" aria-label="Book a call">
+        <span class="book-fab-label" aria-hidden="true">Book a call</span>
+        <span class="book-fab-icon"><Fragment set:html={calendarIcon} /></span>
+      </a>
     </footer>
 
     <script is:inline>
@@ -212,6 +242,28 @@ const markdownPath = currentPath === '/'
     </script>
 
     <script is:inline>
+      (function() {
+        var fab = document.getElementById('book-fab');
+        var footerBook = document.getElementById('footer-book');
+        if (!fab || !footerBook) return;
+        var footerBookVisible = false;
+
+        function update() {
+          var pastFold = window.scrollY > window.innerHeight * 0.5;
+          fab.toggleAttribute('data-shown', pastFold && !footerBookVisible);
+        }
+
+        new IntersectionObserver(function(entries) {
+          footerBookVisible = entries[0].isIntersecting;
+          update();
+        }).observe(footerBook);
+
+        window.addEventListener('scroll', update, { passive: true });
+        update();
+      })();
+    </script>
+
+    <script is:inline>
       document.addEventListener('click', function(e) {
         var link = e.target.closest('a');
         if (!link) return;
@@ -240,5 +292,219 @@ const markdownPath = currentPath === '/'
     --color-text-secondary: var(--color-text-on-photo-muted);
     --color-primary: var(--color-text-on-photo);
     --color-surface: var(--color-surface-on-photo);
+  }
+
+  .footer-grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .footer-grid {
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.7fr) minmax(0, 0.9fr);
+    }
+  }
+
+  .footer-heading {
+    text-wrap: balance;
+  }
+
+  .footer-label {
+    margin-bottom: 0.875rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+  }
+
+  .footer-list {
+    display: grid;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+  }
+
+  .footer-list a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2rem;
+    color: var(--color-text-secondary);
+    transition: color 150ms ease;
+  }
+
+  .footer-list a:hover {
+    color: var(--color-text-primary);
+  }
+
+  .footer-list :global(svg) {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: var(--color-text-tertiary);
+  }
+
+  .footer-inline-link {
+    color: var(--color-text-secondary);
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-hover);
+    text-underline-offset: 3px;
+    transition: color 150ms ease, text-decoration-color 150ms ease;
+  }
+
+  .footer-inline-link:hover {
+    color: var(--color-text-primary);
+    text-decoration-color: currentColor;
+  }
+
+  .footer-book {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0 1.25rem;
+    border-radius: 0.5rem;
+    background: var(--color-primary);
+    color: var(--color-text-on-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 150ms ease, scale 150ms ease-out;
+  }
+
+  .footer-book:hover {
+    background: var(--color-primary-hover);
+  }
+
+  .footer-book:active {
+    scale: 0.97;
+  }
+
+  .footer-book-arrow {
+    display: flex;
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .footer-book:hover .footer-book-arrow {
+    transform: translate(2px, -2px);
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+  }
+
+  .book-fab {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: opacity 220ms cubic-bezier(0.32, 0.72, 0, 1), transform 220ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .book-fab[data-shown] {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .book-fab:focus-visible {
+    outline: none;
+  }
+
+  .book-fab:focus-visible .book-fab-icon {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  @media (min-width: 640px) {
+    .book-fab {
+      right: 1.5rem;
+      bottom: 1.5rem;
+    }
+  }
+
+  .book-fab-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: var(--color-text-on-primary);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.2), 0 6px 16px rgb(0 0 0 / 0.22), 0 16px 32px rgb(0 0 0 / 0.14);
+    transition: background-color 150ms ease, scale 150ms ease-out;
+  }
+
+  .book-fab:active .book-fab-icon {
+    scale: 0.94;
+  }
+
+  .book-fab-label {
+    position: absolute;
+    right: calc(100% + 0.6rem);
+    padding: 0.4rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(6px);
+    pointer-events: none;
+    transition: opacity 150ms ease-out, transform 150ms ease-out;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .book-fab:hover .book-fab-icon {
+      background: var(--color-primary-hover);
+    }
+
+    .book-fab:hover .book-fab-label {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .book-fab:focus-visible .book-fab-label {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .book-fab,
+    .book-fab-label,
+    .footer-book-arrow {
+      transition: none;
+    }
+
+    .book-fab,
+    .book-fab[data-shown] {
+      transform: none;
+    }
+
+    .footer-book:active,
+    .book-fab:active .book-fab-icon {
+      scale: 1;
+    }
+  }
+
+  @media print {
+    .book-fab {
+      display: none;
+    }
   }
 </style>
