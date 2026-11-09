@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { workExperience, projects, socialLinks } from '../lib/content';
+import { bookingUrl, workExperience, projects, socialLinks } from '../lib/content';
 
 export const GET: APIRoute = async () => {
   const posts = (await getCollection('blog', ({ data }) => !data.draft))
@@ -22,6 +22,7 @@ export const GET: APIRoute = async () => {
   for (const link of socialLinks) {
     lines.push(`- [${link.name}](${link.url})`);
   }
+  lines.push(`- [Book a call](${bookingUrl})`);
   lines.push('');
 
   // Work experience
