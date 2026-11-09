@@ -12,6 +12,7 @@ interface Props {
   modifiedTime?: string;
   author?: string;
   jsonLd?: Record<string, unknown>;
+  overlayHeader?: boolean;
 }
 
 const {
@@ -23,6 +24,7 @@ const {
   modifiedTime,
   author,
   jsonLd,
+  overlayHeader = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -90,7 +92,7 @@ const markdownPath = currentPath === '/'
     <PostHog />
   </head>
   <body class="min-h-screen flex flex-col bg-background text-text-primary">
-    <header class="border-b border-border">
+    <header class:list={['border-b border-border', { 'header-overlay': overlayHeader }]}>
       <nav class="max-w-4xl mx-auto px-6 py-5 flex items-center justify-between">
         <a href="/" class="text-lg font-semibold tracking-tight text-text-primary hover:text-primary transition-colors">
           Siddhartha Varma
@@ -226,3 +228,17 @@ const markdownPath = currentPath === '/'
     </script>
   </body>
 </html>
+
+<style>
+  .header-overlay {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    z-index: 20;
+    border-color: transparent;
+    --color-text-primary: var(--color-text-on-photo);
+    --color-text-secondary: var(--color-text-on-photo-muted);
+    --color-primary: var(--color-text-on-photo);
+    --color-surface: var(--color-surface-on-photo);
+  }
+</style>

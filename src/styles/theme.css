@@ -100,6 +100,9 @@
   --color-text-tertiary: hsl(0 0% 55%);
   --color-text-disabled: hsl(0 0% 38%);
   --color-text-on-primary: hsl(0 0% 8%);
+  --color-text-on-photo: oklch(0.99 0 0);
+  --color-text-on-photo-muted: oklch(0.99 0 0 / 0.78);
+  --color-surface-on-photo: oklch(1 0 0 / 0.12);
   --color-text-on-accent: hsl(0 0% 8%);
 
   /* Semantic Colors */

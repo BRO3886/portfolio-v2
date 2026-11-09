@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import CopyButton from '../components/CopyButton.astro';
+import HomeHero from '../components/HomeHero.astro';
 import { projects } from '../lib/content';
 import WorkExperience from '../components/WorkExperience.astro';
 
@@ -27,32 +27,11 @@ const personJsonLd = {
   title="Siddhartha Varma | Backend & Systems Engineer"
   description="Portfolio of Siddhartha Varma, a backend-focused software engineer building reliable systems, clean interfaces, open-source Go CLIs, and AI-native tooling."
   jsonLd={personJsonLd}
+  overlayHeader
 >
-  <div class="max-w-4xl mx-auto px-6 py-16 md:py-24">
-    <!-- Hero -->
-    <section class="mb-20">
-      <h1 class="text-4xl md:text-5xl font-bold mb-8 leading-[1.15]">
-        Engineer who designs with taste. I build reliable systems and clean human interfaces.
-      </h1>
-      <p class="text-lg text-text-secondary leading-relaxed mb-8">
-        Backend first. Product minded. Currently exploring AI-native tooling and Machine Learning.
-      </p>
-      <div class="flex gap-3">
-        <CopyButton id="copy-email" label="Get in Touch" copiedLabel="Email Copied" variant="primary">
-          <svg slot="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-          </svg>
-        </CopyButton>
-        <a
-          href="/blog"
-          class="px-5 py-2.5 border border-border text-text-secondary rounded-lg text-sm font-medium hover:text-text-primary hover:border-border-hover transition-all"
-        >
-          Blog
-        </a>
-      </div>
-    </section>
+  <HomeHero />
 
+  <div class="max-w-4xl mx-auto px-6 pb-16 md:pb-24">
     <!-- Recent Posts -->
     {recentPosts.length > 0 && (
       <section class="mb-20">
