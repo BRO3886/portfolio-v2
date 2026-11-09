@@ -51,8 +51,10 @@ import heroPhoto from '../assets/siddhartha-overlooking-sea.jpg';
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
+  /* An explicit width stops aspect-ratio from turning max-height and min-height into width limits. */
   .scene {
     position: relative;
+    width: 100%;
     aspect-ratio: 9 / 16;
     max-height: 84svh;
     margin-bottom: -5rem;
