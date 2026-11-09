@@ -19,6 +19,15 @@ import heroPhoto from '../assets/siddhartha-overlooking-sea.jpg';
         fetchpriority="high"
       />
     </figure>
+    <script is:inline>
+      (function () {
+        var photo = document.querySelector('.home-hero .photo');
+        var img = photo && photo.querySelector('img');
+        if (!img) return;
+        var ready = function () { photo.setAttribute('data-ready', ''); };
+        img.decode().then(ready, ready);
+      })();
+    </script>
     <div class="sky max-w-4xl mx-auto px-6">
       <h1>Hi, I’m Siddhartha. Backend engineer who cares how things feel.</h1>
     </div>
@@ -159,8 +168,9 @@ import heroPhoto from '../assets/siddhartha-overlooking-sea.jpg';
     }
   }
 
+  /* The settle waits for the decoded photo; started earlier, it plays out on an empty box. */
   @media (prefers-reduced-motion: no-preference) {
-    .photo {
+    .photo[data-ready] {
       animation: hero-settle 1800ms var(--ease-out) both;
     }
 
@@ -171,9 +181,19 @@ import heroPhoto from '../assets/siddhartha-overlooking-sea.jpg';
     .intro {
       animation: hero-rise 900ms var(--ease-out) 450ms both;
     }
+  }
 
+  /* Touch scrolling runs off the main thread on iOS, and scroll-linked motion that can't keep
+     pace with it judders behind the finger, so the parallax is limited to mouse and trackpad. */
+  @media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
     @supports (animation-timeline: view()) {
       .photo {
+        animation: hero-parallax linear both;
+        animation-timeline: --hero-scene;
+        animation-range: exit 0% exit 100%;
+      }
+
+      .photo[data-ready] {
         animation: hero-settle 1800ms var(--ease-out) both, hero-parallax linear both;
         animation-timeline: auto, --hero-scene;
         animation-range: normal, exit 0% exit 100%;
