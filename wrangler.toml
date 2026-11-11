@@ -1,3 +1,14 @@
 name = "portfolio-v2"
-compatibility_date = "2025-01-28"
-pages_build_output_dir = "./dist"
+main = "dist/_worker.js/index.js"
+compatibility_date = "2026-11-11"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+# Markdown content negotiation needs the Worker to see these requests before the
+# matching HTML asset is served. Everything else is served straight from assets.
+run_worker_first = ["/", "/blog", "/blog/*", "/resume", "/resume/"]
+
+[observability]
+enabled = true

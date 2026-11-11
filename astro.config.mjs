@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import cloudflare from '@astrojs/cloudflare';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 
@@ -16,6 +17,9 @@ const sitemapLastModified = new Map([
 export default defineConfig({
   site: 'https://sidv.dev',
   output: 'static',
+  adapter: cloudflare({
+    workerEntryPoint: { path: 'worker/entry.ts' },
+  }),
   build: {
     inlineStylesheets: 'always',
   },

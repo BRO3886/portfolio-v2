@@ -4,7 +4,7 @@ Personal portfolio and blog at [sidv.dev](https://sidv.dev).
 
 ## Architecture
 
-Static site built with **Astro 5.x** and deployed to **Cloudflare Pages**. All pages are pre-rendered at build time — no server-side runtime.
+Static site built with **Astro 5.x** and deployed to **Cloudflare Workers** (static assets). All pages are pre-rendered at build time. A small Worker (`worker/`) handles markdown content negotiation; every other request is served straight from static assets.
 
 ```
 src/
@@ -75,7 +75,7 @@ Output goes to `dist/`. The build pre-renders all pages and API endpoints as sta
 bash scripts/deploy.sh
 ```
 
-Builds and deploys to Cloudflare Pages in one step. Requires `wrangler` CLI to be authenticated.
+Builds and deploys to Cloudflare Workers in one step. Requires `wrangler` to be authenticated (`npx wrangler login`).
 
 ### Adding a blog post
 

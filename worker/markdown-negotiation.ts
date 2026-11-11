@@ -6,8 +6,10 @@ const markdownPaths = new Map([
   ['/resume/', '/resume.md'],
 ]);
 
-function qualityFor(accept, mediaType) {
-  let quality = null;
+type AssetFetcher = { fetch: (request: Request | string) => Promise<Response> };
+
+function qualityFor(accept: string, mediaType: string): number | null {
+  let quality: number | null = null;
 
   for (const range of accept.split(',')) {
     const [type, ...parameters] = range.trim().toLowerCase().split(';');
@@ -21,7 +23,7 @@ function qualityFor(accept, mediaType) {
   return quality;
 }
 
-export function prefersMarkdown(accept) {
+export function prefersMarkdown(accept: string): boolean {
   const markdownQuality = qualityFor(accept, 'text/markdown');
   if (markdownQuality === null || markdownQuality === 0) return false;
 
@@ -29,7 +31,7 @@ export function prefersMarkdown(accept) {
   return htmlQuality === null || markdownQuality >= htmlQuality;
 }
 
-export function markdownPathFor(pathname) {
+export function markdownPathFor(pathname: string): string | null {
   const knownPath = markdownPaths.get(pathname);
   if (knownPath) return knownPath;
 
@@ -37,7 +39,7 @@ export function markdownPathFor(pathname) {
   return blogPost ? `/blog/${blogPost[1]}.md` : null;
 }
 
-function withNegotiationHeaders(response, markdownPath, contentLocation) {
+function withNegotiationHeaders(response: Response, markdownPath: string, contentLocation?: string): Response {
   const headers = new Headers(response.headers);
   const vary = headers.get('Vary');
 
@@ -55,20 +57,17 @@ function withNegotiationHeaders(response, markdownPath, contentLocation) {
   });
 }
 
-export async function onRequest(context) {
-  const { request } = context;
-  if (request.method !== 'GET' && request.method !== 'HEAD') return context.next();
+export async function negotiateMarkdown(request: Request, assets: AssetFetcher): Promise<Response | null> {
+  if (request.method !== 'GET' && request.method !== 'HEAD') return null;
 
   const requestURL = new URL(request.url);
   const markdownPath = markdownPathFor(requestURL.pathname);
-  if (!markdownPath) return context.next();
+  if (!markdownPath) return null;
 
   if (!prefersMarkdown(request.headers.get('Accept') || '')) {
-    return withNegotiationHeaders(await context.next(), markdownPath);
+    return withNegotiationHeaders(await assets.fetch(request), markdownPath);
   }
 
-  const markdownURL = new URL(markdownPath, requestURL);
-  const markdownRequest = new Request(markdownURL, request);
-  const response = await context.next(markdownRequest);
-  return withNegotiationHeaders(response, markdownPath, markdownPath);
+  const markdownRequest = new Request(new URL(markdownPath, requestURL), request);
+  return withNegotiationHeaders(await assets.fetch(markdownRequest), markdownPath, markdownPath);
 }
