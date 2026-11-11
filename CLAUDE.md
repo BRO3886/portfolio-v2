@@ -156,7 +156,7 @@ To submit specific URLs instead of the full sitemap: `node scripts/indexnow.mjs 
 ## Setup Instructions
 
 ### Prerequisites
-- Node.js 18+ or 20+
+- Node.js 22.12+ (required by wrangler 4; on older Node, CI silently falls back to wrangler 3, which ignores run_worker_first and _headers)
 - npm or yarn
 
 ### Installation
