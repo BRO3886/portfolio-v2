@@ -2,6 +2,11 @@ name = "portfolio-v2"
 main = "dist/_worker.js/index.js"
 compatibility_date = "2026-11-11"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+# sidv.dev and www.sidv.dev are attached as custom domains in the dashboard.
+# The main *.workers.dev URL is off so the site has one public origin; per-version
+# preview URLs stay on for testing (set explicitly, they otherwise follow workers_dev).
+workers_dev = false
+preview_urls = true
 
 [assets]
 directory = "./dist"
