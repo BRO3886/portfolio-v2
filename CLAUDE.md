@@ -37,8 +37,7 @@ Static site generator (SSG) with pre-rendering at build time. Blog posts are wri
 
 ### Infrastructure
 
-- **Cloudflare Workers** - Serverless edge deployment
-- **Cloudflare Pages** - Static asset hosting and CDN
+- **Cloudflare Workers** - Hosts the site: static assets plus a Worker for markdown content negotiation and any on-demand routes
 
 ### Development Tools
 
@@ -71,11 +70,12 @@ portfolio-v2/
 ├── .claude/
 ├── journal/
 ├── scripts/
-│   └── deploy.sh          # Build + deploy to Cloudflare Pages
+│   └── deploy.sh          # Build + deploy to Cloudflare Workers
 ├── astro.config.mjs       # Astro configuration
 ├── tailwind.config.mjs    # Tailwind configuration
 ├── tsconfig.json          # TypeScript configuration
-└── wrangler.toml          # Cloudflare Workers configuration
+├── worker/                # Worker entry: markdown negotiation, Pages-compatible redirects/404s
+└── wrangler.toml          # Cloudflare Workers configuration (static assets + run_worker_first)
 ```
 
 ## Development Guidelines
@@ -111,13 +111,13 @@ portfolio-v2/
 **Last Updated**: 29 Jan 2026
 
 ### Active Work
-- Site deployed to Cloudflare Pages with full performance optimizations
+- Site deployed to Cloudflare Workers (static assets) with full performance optimizations
 - PostHog analytics integrated (cookieless, GDPR-compliant)
 - Projects showcase section with 6 real GitHub projects
 - Blog prose styling polished (figures, images, list markers)
 
 ### Architectural Decisions
-- **SSG + Edge**: Astro 5.x static build → Cloudflare Pages, `build.inlineStylesheets: 'always'` eliminates render-blocking CSS
+- **SSG + Edge**: Astro 5.x static build + `@astrojs/cloudflare` adapter → Cloudflare Workers static assets (pages opt into SSR with `prerender = false`), `build.inlineStylesheets: 'always'` eliminates render-blocking CSS
 - **Content management**: `src/lib/content.ts` for typed `WorkEntry` (multi-role), `ProjectEntry` (tech tags, stars, highlights), social links; Markdown collections for blog
 - **Theme system**: Dual light (paper) / dark (charcoal) via `[data-theme="dark"]`, dark default, localStorage persistence, FOUC script before `<style>` tags
 - **Analytics**: `PostHog.astro` component — `persistence: 'memory'`, `respect_dnt: true`, `ip: false`; custom events for theme toggle, copy actions, outbound links, scroll depth
@@ -132,7 +132,7 @@ portfolio-v2/
 - `CopyButton.astro`: `variant="ghost"|"primary"`, icon slot, label/copiedLabel props
 - Blog prose: `figure`/`figcaption` with border + shadow, images constrained to 75% width / 28rem height, visible list markers
 - Layout: `max-w-3xl mx-auto px-6`
-- Cloudflare Pages: `_headers` for cache control, `404.astro` with meta refresh redirect
+- Cloudflare Workers: `_headers` for asset cache control (not applied to Worker-generated responses), `run_worker_first` in `wrangler.toml` for routes the Worker must see before assets, `404.astro` with meta refresh redirect
 
 ### Next Steps
 - Write more real blog content (currently one post)
@@ -183,4 +183,4 @@ Output will be in `dist/` directory
 bash scripts/deploy.sh
 ```
 
-This builds and deploys to Cloudflare Pages in one step. Always use this script instead of running build + deploy separately.
+This builds and deploys to Cloudflare Workers in one step. Always use this script instead of running build + deploy separately.
