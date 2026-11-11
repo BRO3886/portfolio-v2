@@ -49,7 +49,7 @@ src/
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22.12+ (required by wrangler 4)
 - npm
 
 ### Setup
