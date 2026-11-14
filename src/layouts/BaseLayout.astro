@@ -98,11 +98,11 @@ const markdownPath = currentPath === '/'
   </head>
   <body class="min-h-screen flex flex-col bg-background text-text-primary">
     <header class:list={['border-b border-border', { 'header-overlay': overlayHeader }]}>
-      <nav class="max-w-4xl mx-auto px-6 py-5 flex items-center justify-between">
-        <a href="/" class="text-lg font-semibold tracking-tight text-text-primary hover:text-primary transition-colors">
+      <nav class="max-w-4xl mx-auto px-6 max-[359px]:px-4 py-5 flex items-center justify-between">
+        <a href="/" class="text-lg max-[359px]:text-base font-semibold tracking-tight whitespace-nowrap text-text-primary hover:text-primary transition-colors">
           Siddhartha Varma
         </a>
-        <div class="flex items-center gap-6 text-sm">
+        <div class="flex items-center gap-6 max-sm:gap-4 max-[359px]:gap-2.5 text-sm">
           <a
             href="/"
             class:list={[
