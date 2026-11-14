@@ -1,8 +1,9 @@
 ---
-title: "A Deep Dive into Dynamo's Architecture and Scale"
-description: "Understanding DynamoDB's core principles - from architecture decisions to real-world patterns"
+title: "DynamoDB Architecture: A Deep Dive into How It Scales"
+description: "How DynamoDB's architecture handles 89.2M requests/second — its six core design principles, automatic partitioning, and the patterns to model your tables around."
 pubDate: 2025-01-31
-tags: ["dynamodb", "aws", "system design", "databases"]
+updatedDate: 2026-06-21
+tags: ["dynamodb", "dynamodb architecture", "aws", "system design", "databases"]
 author: "Siddhartha Varma"
 image: "/images/dynamodb-architecture/featured.webp"
 ---
