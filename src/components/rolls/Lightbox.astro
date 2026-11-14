@@ -1,0 +1,83 @@
+<dialog class="wl-box" aria-label="Photo" data-viewer>
+  <div class="wl-box-stage" data-slot="stage"></div>
+  <p class="wl-box-pos" data-slot="pos" aria-live="polite"></p>
+  <button type="button" class="wl-box-btn wl-box-close" data-act="close" aria-label="Close">✕</button>
+  <button type="button" class="wl-box-btn wl-box-prev" data-act="prev" aria-label="Previous photo">←</button>
+  <button type="button" class="wl-box-btn wl-box-next" data-act="next" aria-label="Next photo">→</button>
+</dialog>
+
+<script>
+  import { hydrateImages } from './hydrate-images';
+
+  const stage = document.getElementById('stage')!;
+  const dlg = stage.querySelector<HTMLDialogElement>('dialog[data-viewer]')!;
+  const stageSlot = dlg.querySelector<HTMLElement>('[data-slot="stage"]')!;
+  const pos = dlg.querySelector<HTMLElement>('[data-slot="pos"]')!;
+  const prev = dlg.querySelector<HTMLButtonElement>('[data-act="prev"]')!;
+  const next = dlg.querySelector<HTMLButtonElement>('[data-act="next"]')!;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const fmt = (n: number) => n.toLocaleString('en-GB');
+  let tiles: HTMLElement[] = [];
+  let current = 0;
+  let opener: HTMLElement | null = null;
+
+  // Shows a copy of the clicked print and steps through the prints in the same gallery (a month, or Featured).
+  function render(i: number) {
+    current = i;
+    const print = tiles[i].querySelector('.print')!.cloneNode(true) as HTMLElement;
+    const img = print.querySelector('img')!;
+    img.sizes = print.hasAttribute('data-pano') ? '1920px' : '(min-width: 1024px) 1024px, 100vw';
+    img.loading = 'eager';
+    stageSlot.replaceChildren(print);
+    stageSlot.scrollLeft = 0;
+    hydrateImages(stageSlot);
+    pos.textContent = `${tiles[i].dataset.roll} · ${fmt(i + 1)} / ${fmt(tiles.length)}`;
+    prev.disabled = i === 0;
+    next.disabled = i === tiles.length - 1;
+  }
+
+  function open(trigger: HTMLElement) {
+    opener = trigger;
+    tiles = [...trigger.closest('[data-gallery]')!.querySelectorAll<HTMLElement>('[data-photo]')];
+    render(tiles.indexOf(trigger));
+    dlg.showModal();
+    requestAnimationFrame(() => dlg.setAttribute('data-open', ''));
+  }
+
+  function close() {
+    if (!dlg.open) return;
+    dlg.removeAttribute('data-open');
+    const finish = () => {
+      dlg.close();
+      opener?.focus({ preventScroll: true });
+    };
+    if (reduced.matches) finish();
+    else setTimeout(finish, 170);
+  }
+
+  const step = (d: number) => {
+    const n = current + d;
+    if (n >= 0 && n < tiles.length) render(n);
+  };
+
+  stage.addEventListener('click', (e) => {
+    const trigger = (e.target as HTMLElement).closest<HTMLElement>('[data-photo]');
+    if (trigger && !dlg.contains(trigger)) open(trigger);
+  });
+  dlg.addEventListener('cancel', (e) => {
+    e.preventDefault();
+    close();
+  });
+  dlg.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    const act = t.closest<HTMLElement>('[data-act]')?.dataset.act;
+    if (act === 'close') close();
+    else if (act === 'prev') step(-1);
+    else if (act === 'next') step(1);
+    else if (t === dlg || t === stageSlot) close();
+  });
+  dlg.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') step(-1);
+    else if (e.key === 'ArrowRight') step(1);
+  });
+</script>

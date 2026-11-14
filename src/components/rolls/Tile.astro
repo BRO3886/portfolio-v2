@@ -14,5 +14,7 @@ const span = photo.pano ? Math.max(2, Math.round(photo.ratio / 1.5)) : 1;
 ---
 
 <li class:list={['wl-cell', { 'wl-cell-pano': photo.pano }]} data-span={span > 1 ? span : undefined}>
-  <Print photo={photo} sizes={photo.pano ? `(min-width: 1024px) ${span * 290}px, 100vw` : sizes} eager={eager} />
+  <button type="button" class="wl-tile" style={`--r: ${photo.ratio}`} data-photo={photo.id} data-roll={photo.rollTitle} aria-label={`Open ${photo.alt || photo.caption || `photo from ${photo.date}`}`}>
+    <Print photo={photo} sizes={photo.pano ? `(min-width: 1024px) ${span * 290}px, 100vw` : sizes} eager={eager} />
+  </button>
 </li>

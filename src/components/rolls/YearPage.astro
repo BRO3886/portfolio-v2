@@ -1,4 +1,5 @@
 ---
+import Lightbox from './Lightbox.astro';
 import Tile from './Tile.astro';
 import Continue from './Continue.astro';
 import { gapLabel, monthMeta, type ArchiveIndex, type Photo, type Year } from '../../lib/rolls/archive';
@@ -67,4 +68,6 @@ const tileSizes = '(min-width: 1024px) 280px, (min-width: 640px) 33vw, 50vw';
     start={!older && index.years.length > 1 ? { text: 'That’s the first roll.', href: '/rolls', label: `Back to ${index.last}` } : undefined}
     back={newer && { href: `/rolls/${newer.year}`, label: `← ${newer.year}` }}
   />
+
+  <Lightbox />
 </div>
