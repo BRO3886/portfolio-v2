@@ -88,6 +88,7 @@ const markdownPath = currentPath === '/'
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate" type="application/rss+xml" title="Siddhartha Varma's Blog" href="/rss.xml" />
     <title>{title}</title>
+    <slot name="head" />
 
     <!-- JSON-LD Structured Data -->
     {jsonLd && (

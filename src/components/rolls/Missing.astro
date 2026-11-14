@@ -1,0 +1,40 @@
+---
+// 404 bodies. An empty year inside the archive explains the hole and points both ways; anything else points home.
+import type { ArchiveIndex } from '../../lib/rolls/archive';
+import { MONTHS } from '../../lib/rolls/exif-format';
+
+export type MissingKind = 'gap' | 'range' | 'month' | 'bad' | 'empty';
+
+interface Props {
+  kind: MissingKind;
+  index?: ArchiveIndex;
+  year?: number;
+  month?: number;
+}
+
+const { kind, index, year = 0, month = 1 } = Astro.props;
+const newer = kind === 'gap' ? index?.newer(year) : undefined;
+const older = kind === 'gap' ? index?.older(year) : undefined;
+const gap = newer && older ? index?.gap(newer.year, older.year) : null;
+const title = { month: `${MONTHS[month - 1]} ${year}`, bad: 'Not a year', empty: 'Rolls', gap: String(year), range: String(year) }[kind];
+---
+
+<div class="wl">
+  <div class="wl-missing">
+    <p class="wl-crumbs">{kind === 'empty' ? <span>Rolls</span> : <a href="/rolls">Rolls</a>}</p>
+    <h1 class="wl-title">{title}</h1>
+    {kind === 'gap' && <p>No photos from {year}. {gap && gap[0] !== gap[1] && newer && older ? `The archive jumps from ${older.year} to ${newer.year}.` : ''}</p>}
+    {kind === 'range' && index && !index.empty && <p>The archive runs from {index.first} to {index.last}.</p>}
+    {kind === 'month' && <p>No photos from {MONTHS[month - 1]} {year}.</p>}
+    {kind === 'bad' && <p>Years look like 2031, and months like 2031/08.</p>}
+    {kind === 'empty' && <p>No photos yet.</p>}
+    {kind !== 'empty' && (
+      <div class="wl-missing-links">
+        {newer && <a href={`/rolls/${newer.year}`}><span aria-hidden="true">←</span>{newer.year}</a>}
+        {older && <a href={`/rolls/${older.year}`}>{older.year}<span aria-hidden="true">→</span></a>}
+        {kind === 'month' && index?.has(year) && <a href={`/rolls/${year}`}>All of {year}</a>}
+        {kind !== 'gap' && <a href="/rolls">Latest photos</a>}
+      </div>
+    )}
+  </div>
+</div>

@@ -1,0 +1,18 @@
+---
+import Print from './Print.astro';
+import type { Photo } from '../../lib/rolls/archive';
+
+interface Props {
+  photo: Photo;
+  sizes: string;
+  eager?: boolean;
+}
+
+const { photo, sizes, eager = false } = Astro.props;
+// A 3:1 panorama spans two columns, a 4.5:1 one three; the layout script caps this at the column count.
+const span = photo.pano ? Math.max(2, Math.round(photo.ratio / 1.5)) : 1;
+---
+
+<li class:list={['wl-cell', { 'wl-cell-pano': photo.pano }]} data-span={span > 1 ? span : undefined}>
+  <Print photo={photo} sizes={photo.pano ? `(min-width: 1024px) ${span * 290}px, 100vw` : sizes} eager={eager} />
+</li>

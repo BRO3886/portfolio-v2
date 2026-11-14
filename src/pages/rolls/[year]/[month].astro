@@ -1,0 +1,27 @@
+---
+// /rolls/2038/08: one month in full, grouped by roll. The year page links here when a month is too big to show whole.
+import RollsLayout from '../../../components/rolls/RollsLayout.astro';
+import MonthPage from '../../../components/rolls/MonthPage.astro';
+import Missing from '../../../components/rolls/Missing.astro';
+import { loadMonth } from '../../../lib/rolls/db';
+import { buildIndex, groupMonthPage, shape } from '../../../lib/rolls/archive';
+
+export const prerender = false;
+
+const { env } = Astro.locals.runtime;
+const rawYear = Astro.params.year ?? '';
+const rawMonth = Astro.params.month ?? '';
+const valid = /^\d{4}$/.test(rawYear) && /^(0[1-9]|1[0-2])$/.test(rawMonth);
+const key = `${rawYear}-${rawMonth}`;
+const data = valid ? await loadMonth(env.DB, key) : null;
+const index = data ? buildIndex(data.months) : undefined;
+const y = Number(rawYear);
+const m = Number(rawMonth);
+const month = data && index?.month(key) ? groupMonthPage(y, m, data.photos.map((r) => shape(r, env.ROLLS_IMG_BASE))) : undefined;
+const cover = data?.cover ? shape(data.cover, env.ROLLS_IMG_BASE) : null;
+if (!month) Astro.response.status = 404;
+---
+
+<RollsLayout title={month ? `Rolls from ${month.label}` : 'Not found'}>
+  {month && index ? <MonthPage month={month} index={index} cover={cover} /> : <Missing kind={valid ? 'month' : 'bad'} index={index} year={y} month={m} />}
+</RollsLayout>

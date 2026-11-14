@@ -4,6 +4,7 @@ import { handle } from '@astrojs/cloudflare/handler';
 import type { ExecutionContext } from '@cloudflare/workers-types';
 import { negotiateMarkdown } from './markdown-negotiation';
 import { handleRollsApi } from './rolls-api';
+import { cachedRollsPage, isRollsPage } from './rolls-cache';
 import { handleIngestBatch } from './rolls-ingest';
 
 type AstroEnv = Parameters<typeof handle>[3];
@@ -44,9 +45,10 @@ export function createExports(manifest: SSRManifest) {
 
         // The runtime passes one Request object; Astro's handler is typed against
         // @cloudflare/workers-types while this file uses the DOM lib's Request.
+        const render = () => handle(manifest, app, request as unknown as WorkerRequest, env, ctx);
         const response =
           (await negotiateMarkdown(request, env.ASSETS)) ??
-          (await handle(manifest, app, request as unknown as WorkerRequest, env, ctx));
+          (isRollsPage(new URL(request.url).pathname) ? await cachedRollsPage(request, ctx, render) : await render());
 
         return withPagesSemantics(request, response);
       },

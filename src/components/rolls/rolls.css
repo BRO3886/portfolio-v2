@@ -1,0 +1,337 @@
+/* /rolls page styles. The print itself lives in Print.astro. */
+
+.wl {
+  --wl-gutter: 1rem;
+  --hairline: 1px;
+  max-width: 75rem;
+  margin-inline: auto;
+  padding: 3rem var(--wl-gutter) 6rem;
+}
+
+@media (min-width: 640px) {
+  .wl { --wl-gutter: 1.5rem; padding-top: 3.5rem; }
+}
+
+@media (min-resolution: 2dppx) {
+  .wl { --hairline: 0.5px; }
+}
+
+/* ---------- header ---------- */
+
+.wl-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-tertiary);
+}
+
+.wl-crumbs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-block: -12px;
+  padding-inline: 0.5rem;
+  margin-inline: -0.5rem;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 150ms ease-out;
+}
+
+.wl-title {
+  margin-top: 0.75rem;
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 8vw, 3.75rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--color-text-primary);
+  text-wrap: balance;
+}
+
+.wl-intro {
+  margin-top: 0.75rem;
+  max-width: 46ch;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+
+.wl-meta {
+  margin-top: 0.625rem;
+  font-size: 0.875rem;
+  color: var(--color-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+a:focus-visible:is(.wl-continue, .wl-more, .wl-back),
+.wl-crumbs a:focus-visible,
+.wl-month-title a:focus-visible {
+  outline: 2px solid var(--color-text-secondary);
+  outline-offset: 2px;
+}
+
+/* ---------- sections ---------- */
+
+.wl-kicker {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-tertiary);
+}
+
+.wl-section {
+  margin-top: 3rem;
+}
+
+.wl-month {
+  margin-top: 4.5rem;
+  scroll-margin-top: 1.5rem;
+  /* A year can hold hundreds of prints: skip layout and paint for months that are off screen. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 60rem;
+}
+
+/* For one synchronous measure (setupMasonry): every month rendered, so each reports its real height. */
+#stage[data-measuring] :is(.wl-month, .mp-day) { content-visibility: visible; }
+
+.wl-month-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.wl-month-title a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-block: -7px;
+  color: inherit;
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+
+.wl-month-meta {
+  min-width: 0;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  color: var(--color-text-tertiary);
+  font-variant-numeric: tabular-nums;
+  text-wrap: pretty;
+}
+/* ---------- end of a year or month: keep going ---------- */
+
+.wl-end {
+  display: grid;
+  gap: 1rem;
+  margin-top: 6rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.wl-continue {
+  max-width: 40rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem;
+  margin-inline: -1rem;
+  border-radius: 14px;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: background-color 150ms ease-out;
+}
+
+.wl-continue-label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--color-text-tertiary);
+}
+
+.wl-continue-title {
+  display: block;
+  margin-top: 0.125rem;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 6vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.wl-continue-meta {
+  display: block;
+  margin-top: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+
+.wl-continue-cover {
+  display: block;
+  width: clamp(5.5rem, 22vw, 9rem);
+  padding: 4px 4px 12px;
+  background: var(--print-bg);
+  box-shadow: var(--print-shadow);
+  border-radius: var(--print-radius);
+}
+
+.wl-continue-cover .lqip { aspect-ratio: 3 / 2; }
+
+.wl-note {
+  font-size: 0.875rem;
+  color: var(--color-text-tertiary);
+}
+
+.wl-note a {
+  color: var(--color-text-secondary);
+  text-underline-offset: 0.2em;
+}
+
+.wl-back {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: 0.5rem;
+  margin-inline: -0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+
+/* ---------- month page ---------- */
+
+.mp-roll {
+  margin-top: 4rem;
+  scroll-margin-top: 1.5rem;
+}
+
+.mp-roll-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+  text-wrap: balance;
+}
+
+.mp-day {
+  margin-top: 2.5rem;
+  scroll-margin-top: 1.5rem;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 40rem;
+}
+
+.mp-day-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.mp-day .wl-grid { margin-top: 1rem; }
+
+/* ---------- missing year / month ---------- */
+
+.wl-missing {
+  max-width: 40rem;
+}
+
+.wl-missing p {
+  margin-top: 1rem;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}
+
+.wl-missing-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.wl-missing-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 44px;
+  padding-inline: 1rem;
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 150ms ease-out;
+}
+
+.wl-missing-links a:focus-visible {
+  outline: 2px solid var(--color-text-secondary);
+  outline-offset: 2px;
+}
+
+/* ---------- hover, only where hover exists ---------- */
+
+@media (hover: hover) and (pointer: fine) {
+  .wl-crumbs a:hover,
+  .wl-back:hover { color: var(--color-text-primary); }
+  .wl-continue:hover,
+  .wl-missing-links a:hover { background: var(--color-surface); }
+  .wl-month-title a:hover { text-decoration-line: underline; }
+}
+
+/* ---------- blur-up ---------- */
+
+#stage {
+  --rolls-blur: 20px;
+  --rolls-fade: 500ms;
+  --rolls-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The inline placeholder is painted blurred behind the real image, which fades in once decoded. */
+.lqip {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--color-surface);
+}
+
+.lqip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ph) center / cover no-repeat;
+  filter: blur(var(--rolls-blur));
+  scale: 1.15;
+}
+
+.lqip img {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

@@ -1,0 +1,27 @@
+---
+import type { Photo } from '../../lib/rolls/archive';
+
+interface Props {
+  photo: Photo;
+  sizes: string;
+  eager?: boolean;
+}
+
+const { photo, sizes, eager = false } = Astro.props;
+---
+
+<figure class="print" style={`--r: ${photo.ratio};`} data-print={photo.id} data-pano={photo.pano ? '' : undefined}>
+  <span class="lqip" style={`--ph: url(${photo.placeholder}); aspect-ratio: ${photo.width} / ${photo.height};`}>
+    <img
+      src={photo.src(1280)}
+      srcset={photo.srcset}
+      sizes={sizes}
+      width={photo.width}
+      height={photo.height}
+      alt={photo.alt}
+      loading={eager ? 'eager' : 'lazy'}
+      fetchpriority={eager ? 'high' : undefined}
+      decoding="async"
+    />
+  </span>
+</figure>

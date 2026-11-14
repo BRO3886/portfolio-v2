@@ -1,0 +1,70 @@
+---
+import Tile from './Tile.astro';
+import Continue from './Continue.astro';
+import { gapLabel, monthMeta, type ArchiveIndex, type Photo, type Year } from '../../lib/rolls/archive';
+import { fmt, plural } from '../../lib/rolls/exif-format';
+
+interface Props {
+  year: Year;
+  index: ArchiveIndex;
+  // The next older year's cover, for "Continue to".
+  cover: Photo | null;
+  landing?: boolean;
+}
+
+const { year, index, cover, landing = false } = Astro.props;
+const older = index.older(year.year);
+const newer = index.newer(year.year);
+const gap = older ? index.gap(year.year, older.year) : null;
+const tileSizes = '(min-width: 1024px) 280px, (min-width: 640px) 33vw, 50vw';
+---
+
+<div class="wl" data-year={year.year}>
+  <header>
+    <p class="wl-crumbs">{landing ? <span>Rolls</span> : <a href="/rolls">Rolls</a>}</p>
+    <h1 class="wl-title">{year.year}</h1>
+    {landing && <p class="wl-intro">Photos from trips, newest first. Open any print to see it large.</p>}
+    <p class="wl-meta">{plural(year.count, 'photo')} · {plural(year.rollCount, 'roll')}</p>
+  </header>
+
+  {year.featured.length > 0 && (
+    <section class="wl-section" aria-labelledby="wl-featured" data-gallery>
+      <h2 id="wl-featured" class="wl-kicker">Featured</h2>
+      <ul class="wl-grid wl-grid-featured" role="list">
+        {year.featured.map((p, i) => <Tile photo={p} sizes="(min-width: 1024px) 380px, (min-width: 640px) 33vw, 50vw" eager={i < 3} />)}
+      </ul>
+    </section>
+  )}
+
+  {year.months.map((m, mi) => (
+    <section class="wl-section wl-month" id={`m${m.mm}`} aria-labelledby={`m${m.mm}-h`} data-gallery data-month-name={m.name}>
+      <h2 id={`m${m.mm}-h`} class="wl-month-title" tabindex="-1">
+        <a href={`/rolls/${year.year}/${m.mm}`}>{m.name}</a>
+        <span class="wl-month-meta">{monthMeta(m)}</span>
+      </h2>
+      <ul class="wl-grid" role="list">
+        {m.preview.map((p, i) => <Tile photo={p} sizes={tileSizes} eager={year.featured.length === 0 && mi === 0 && i < 4} />)}
+        {m.collapsed && (
+          <li class="wl-cell wl-cell-more" data-span="all">
+            <a class="wl-more" href={`/rolls/${year.year}/${m.mm}`}>
+              <span>See all {fmt(m.count)} photos from {m.name}</span><span aria-hidden="true">→</span>
+            </a>
+          </li>
+        )}
+      </ul>
+    </section>
+  ))}
+
+  <Continue
+    note={gap ? `Nothing from ${gapLabel(gap)}.` : undefined}
+    next={older && {
+      href: `/rolls/${older.year}`,
+      label: 'Continue to',
+      title: String(older.year),
+      meta: `${plural(older.count, 'photo')} across ${plural(older.months.length, 'month')}`,
+      cover,
+    }}
+    start={!older && index.years.length > 1 ? { text: 'That’s the first roll.', href: '/rolls', label: `Back to ${index.last}` } : undefined}
+    back={newer && { href: `/rolls/${newer.year}`, label: `← ${newer.year}` }}
+  />
+</div>
