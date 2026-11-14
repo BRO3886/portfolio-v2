@@ -29,7 +29,10 @@ import heroPhoto from '../assets/siddhartha-overlooking-sea.jpg';
       })();
     </script>
     <div class="sky max-w-4xl mx-auto px-6">
-      <h1>Hi, I’m Siddhartha. Backend engineer who cares how things feel.</h1>
+      <h1>
+        <span class="hero-name">Hi, I’m Siddhartha.</span>
+        <span class="hero-tagline">Backend engineer who cares how things feel.</span>
+      </h1>
     </div>
   </div>
 
@@ -130,13 +133,22 @@ import heroPhoto from '../assets/siddhartha-overlooking-sea.jpg';
 
   h1 {
     max-width: 17ch;
+    font-family: var(--font-serif);
     font-size: var(--text-3xl);
-    font-weight: 700;
-    line-height: 1.12;
-    letter-spacing: -0.025em;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
     color: var(--color-text-on-photo);
     text-wrap: balance;
     text-shadow: 0 1px 3px oklch(0.2 0.06 270 / 0.4);
+  }
+
+  .hero-name {
+    display: block;
+  }
+
+  .hero-tagline {
+    color: var(--color-text-on-photo-muted);
   }
 
   .intro {
