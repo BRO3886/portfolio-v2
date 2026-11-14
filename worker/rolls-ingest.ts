@@ -1,10 +1,9 @@
 import exifr from 'exifr';
-import { stripGps } from './strip-gps';
 
-export type IngestMessage = { key: string; reingest?: boolean };
+export type IngestMessage = { key: string };
 type R2EventMessage = { bucket: string; action: string; object: { key: string } };
 
-// Bump when parsing or normalising changes: rows with an older version are the re-ingest list.
+// Bump when parsing or normalising changes, so each row records which version read it.
 const INGEST_VERSION = 1;
 const SIZES = [640, 1280, 3072] as const;
 const EXIF_HEAD_BYTES = 128 * 1024;
@@ -89,19 +88,19 @@ async function sha256(buf: ArrayBuffer) {
   return [...new Uint8Array(await crypto.subtle.digest('SHA-256', buf))].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-async function ingest(env: Env, key: string, reingest: boolean) {
+const statusOf = (env: Env, key: string) => env.DB.prepare('SELECT status FROM photos WHERE original_key = ?').bind(key).first<string>('status');
+
+async function ingest(env: Env, key: string) {
   let row = await env.DB.prepare('SELECT id, status, uploaded_at FROM photos WHERE original_key = ?').bind(key).first<PhotoRow>();
-  if (row?.status === 'ready' && !reingest) return;
+  if (row?.status === 'ready') return;
 
   const object = await env.ORIGINALS.get(key);
-  if (!object) throw new Error(`original ${key} is missing`);
-  let original = await object.arrayBuffer();
-  // Originals uploaded before GPS was stripped at upload are cleaned the next time they are ingested.
-  const cleaned = stripGps(new Uint8Array(original));
-  if (cleaned.buffer !== original) {
-    await env.ORIGINALS.put(key, cleaned, { httpMetadata: { contentType: 'image/jpeg' } });
-    original = cleaned.buffer as ArrayBuffer;
+  if (!object) {
+    // Upload and the R2 notification both queue a message; the other one may have finished and deleted the original.
+    if ((await statusOf(env, key)) === 'ready') return;
+    throw new Error(`original ${key} is missing`);
   }
+  const original = await object.arrayBuffer();
 
   if (!row) {
     const [, roll, id] = /^originals\/([^/]+)\/([0-9a-f]{16})\.jpg$/.exec(key) ?? [];
@@ -149,6 +148,9 @@ async function ingest(env: Env, key: string, reingest: boolean) {
     .bind(...Object.values(columns), row.id)
     .run();
 
+  // The original lives in Google Photos; the derivatives are all the site needs.
+  await env.ORIGINALS.delete(key);
+
   if (columns.camera_raw && !(await env.DB.prepare('SELECT 1 FROM cameras WHERE raw = ?').bind(columns.camera_raw).first())) {
     console.log(JSON.stringify({ event: 'rolls.unknown_camera', camera_raw: columns.camera_raw, photo: row.id }));
   }
@@ -169,14 +171,13 @@ export async function handleIngestBatch(batch: MessageBatch, env: Env) {
       continue;
     }
     try {
-      await ingest(env, parsed.key, parsed.reingest === true);
+      await ingest(env, parsed.key);
       message.ack();
     } catch (error) {
       const reason = error instanceof Error ? error.message : String(error);
       const last = message.attempts >= LAST_ATTEMPT;
       console.error(JSON.stringify({ event: 'rolls.ingest_failed', key: parsed.key, attempt: message.attempts, last, error: reason }));
-      // A ready photo whose re-ingest fails stays up with its old derived columns.
-      await env.DB.prepare(`UPDATE photos SET error = ?${last ? ", status = CASE status WHEN 'ready' THEN 'ready' ELSE 'failed' END" : ''} WHERE original_key = ?`)
+      await env.DB.prepare(`UPDATE photos SET error = ?${last ? ", status = 'failed'" : ''} WHERE original_key = ?`)
         .bind(reason.slice(0, 1000), parsed.key)
         .run();
       // After the last attempt, retry() hands the message to the dead-letter queue.

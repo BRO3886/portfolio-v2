@@ -1,9 +1,9 @@
 import { createExecutionContext, createMessageBatch, getQueueResult } from 'cloudflare:test';
 import { env } from 'cloudflare:workers';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { bare, fuji, iphone, scan } from '../fixtures/images';
 import worker from '../worker';
-import { api, bytes, createRoll, json, upload } from './helpers';
+import { bytes, createRoll, upload } from './helpers';
 
 type Row = Record<string, unknown>;
 
@@ -68,6 +68,8 @@ describe('ingest', () => {
     expect(await publicKeys()).toEqual([`p/${id}-1280.webp`, `p/${id}-3072.webp`, `p/${id}-640.webp`]);
     const derivative = await env.PUBLIC_IMAGES.head(`p/${id}-640.webp`);
     expect(derivative?.httpMetadata).toMatchObject({ contentType: 'image/webp', cacheControl: 'public, max-age=31536000, immutable' });
+    // The original lives in Google Photos; once the derivatives exist it isn't kept.
+    expect(await env.ORIGINALS.head(`originals/goa/${id}.jpg`)).toBeNull();
   });
 
   it('keeps only whitelisted tags: no GPS, serials or owner', async () => {
@@ -87,9 +89,9 @@ describe('ingest', () => {
 
   it('falls back to the upload day, with no time, when there is no EXIF and no roll date', async () => {
     await createRoll();
-    const { id } = await uploadAndIngest(bare);
+    const { id } = await (await upload(bytes(bare))).json<{ id: string }>();
     await env.DB.prepare("UPDATE photos SET uploaded_at = '2026-10-31T20:00:00Z' WHERE id = ?").bind(id).run();
-    await deliver({ key: `originals/goa/${id}.jpg`, reingest: true });
+    await deliver(r2Event(`originals/goa/${id}.jpg`));
     expect(await derived(id)).toMatchObject({ taken_at: '2026-11-01T00:00:00+05:30', taken_month: '2026-11', date_source: 'upload', date_precision: 'day', camera_raw: null });
   });
 
@@ -163,27 +165,3 @@ describe('ingest', () => {
   });
 });
 
-describe('re-ingest', () => {
-  it('rewrites derived columns and leaves caption, alt, featured and hidden alone', async () => {
-    await createRoll('goa', { title: 'Goa' });
-    const { id } = await uploadAndIngest(bare, { 'X-Caption': encodeURIComponent('Kept') });
-    await api('PATCH', `/api/rolls/photos/${id}`, json({ alt: 'New alt', featured: true, hidden: true }));
-    await api('PUT', '/api/rolls/rolls/goa', json({ date: '2026-09' }));
-    await deliver({ key: `originals/goa/${id}.jpg`, reingest: true });
-    const row = await env.DB.prepare('SELECT caption, alt, featured, hidden, taken_month, date_source FROM photos WHERE id = ?').bind(id).first();
-    expect(row).toEqual({ caption: 'Kept', alt: 'New alt', featured: 1, hidden: 1, taken_month: '2026-09', date_source: 'roll' });
-  });
-
-  it('queues the photo from the reingest route', async () => {
-    await createRoll();
-    const { id } = await (await upload(bytes(fuji))).json<{ id: string }>();
-    const send = vi.spyOn(env.ROLLS_INGEST, 'send');
-    const res = await api('POST', `/api/rolls/photos/${id}/reingest`);
-    expect(res.status).toBe(202);
-    expect(send).toHaveBeenCalledWith({ key: `originals/goa/${id}.jpg`, reingest: true });
-  });
-
-  it('answers 404 when re-ingesting an unknown photo', async () => {
-    expect((await api('POST', '/api/rolls/photos/0123456789abcdef/reingest')).status).toBe(404);
-  });
-});
