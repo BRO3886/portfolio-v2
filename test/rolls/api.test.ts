@@ -134,8 +134,9 @@ describe('upload', () => {
     const file = bytes(iphone);
     const res = await upload(file, { 'X-Filename': encodeURIComponent('DSCF0042.JPG'), 'X-Featured': '1' });
     expect(res.status).toBe(202);
-    const { id } = await res.json<{ id: string }>();
+    const { id, message } = await res.json<{ id: string; message: string }>();
     expect(id).toBe((await sha256(file)).slice(0, 16));
+    expect(message).toBe('Uploaded');
     expect(await photo(id)).toEqual({
       id,
       roll: 'goa',
@@ -191,7 +192,7 @@ describe('upload', () => {
     ).bind(id).run();
     const res = await upload(bytes(fuji));
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ id, duplicate: true });
+    expect(await res.json()).toEqual({ id, duplicate: true, message: 'Already uploaded' });
   });
 
   it('retries an interrupted upload into the same row and puts the original', async () => {
@@ -200,7 +201,7 @@ describe('upload', () => {
     await env.ORIGINALS.delete(`originals/goa/${id}.jpg`);
     const res = await upload(bytes(fuji), { 'X-Caption': encodeURIComponent('second try') });
     expect(res.status).toBe(202);
-    expect(await res.json()).toEqual({ id });
+    expect(await res.json()).toEqual({ id, message: 'Uploaded' });
     const count = await env.DB.prepare('SELECT COUNT(*) AS n FROM photos').first('n');
     expect(count).toBe(1);
     expect((await photo(id))?.caption).toBe('first try');

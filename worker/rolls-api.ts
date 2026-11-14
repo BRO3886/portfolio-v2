@@ -135,7 +135,8 @@ async function uploadPhoto(request: Request, env: Env, url: URL) {
   const id = sha.slice(0, 16);
 
   const existing = await env.DB.prepare('SELECT status, original_key FROM photos WHERE sha256 = ?').bind(sha).first<{ status: string; original_key: string }>();
-  if (existing?.status === 'ready') return reply(200, { id, duplicate: true });
+  // message is what the iPhone Shortcut shows: it can read the body but has no clean way to branch on the status.
+  if (existing?.status === 'ready') return reply(200, { id, duplicate: true, message: 'Already uploaded' });
 
   // A row without its object is an earlier upload that was cut off: keep the row, put the object again.
   const key = existing?.original_key ?? `originals/${roll}/${id}.jpg`;
@@ -147,7 +148,7 @@ async function uploadPhoto(request: Request, env: Env, url: URL) {
   await env.ORIGINALS.put(key, body, { httpMetadata: { contentType: 'image/jpeg' } });
   // Queue messages are capped at 128 KB, so the message names the original and the consumer reads it from R2.
   await env.ROLLS_INGEST.send({ key } satisfies IngestMessage);
-  return reply(202, { id });
+  return reply(202, { id, message: 'Uploaded' });
 }
 
 async function patchPhoto(request: Request, env: Env, id: string) {
