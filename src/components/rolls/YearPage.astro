@@ -1,5 +1,6 @@
 ---
 import Lightbox from './Lightbox.astro';
+import RollsNav from './RollsNav.astro';
 import Tile from './Tile.astro';
 import Continue from './Continue.astro';
 import { gapLabel, monthMeta, type ArchiveIndex, type Photo, type Year } from '../../lib/rolls/archive';
@@ -27,6 +28,8 @@ const tileSizes = '(min-width: 1024px) 280px, (min-width: 640px) 33vw, 50vw';
     {landing && <p class="wl-intro">Photos from trips, newest first. Open any print to see it large.</p>}
     <p class="wl-meta">{plural(year.count, 'photo')} · {plural(year.rollCount, 'roll')}</p>
   </header>
+
+  <RollsNav index={index} year={year} />
 
   {year.featured.length > 0 && (
     <section class="wl-section" aria-labelledby="wl-featured" data-gallery>

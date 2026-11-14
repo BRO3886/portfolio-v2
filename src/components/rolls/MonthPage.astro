@@ -1,5 +1,6 @@
 ---
 import Lightbox from './Lightbox.astro';
+import RollsNav from './RollsNav.astro';
 import Tile from './Tile.astro';
 import Continue from './Continue.astro';
 import { DAY_SPLIT, days, withRange, type ArchiveIndex, type Month, type Photo } from '../../lib/rolls/archive';
@@ -24,6 +25,8 @@ const tileSizes = '(min-width: 1024px) 280px, (min-width: 640px) 33vw, 50vw';
     <h1 class="wl-title">{month.label}</h1>
     <p class="wl-meta">{plural(month.count, 'photo')} · {plural(month.rolls.length, 'roll')}</p>
   </header>
+
+  <RollsNav index={index} month={month} />
 
   {month.rolls.map((r) => (
     <section class="mp-roll" id={`r-${r.slug}`} aria-labelledby={`r-${r.slug}-h`}>

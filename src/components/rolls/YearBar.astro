@@ -1,0 +1,238 @@
+---
+/*
+  Where you are (the year, and the section under the bar) plus the neighbouring years. The year is a drum: roll
+  it with the wheel, a drag or the arrow keys, then open what it shows.
+*/
+import { plural } from '../../lib/rolls/exif-format';
+import type { ArchiveIndex } from '../../lib/rolls/archive';
+
+interface Props {
+  index: ArchiveIndex;
+  year: number;
+  // A month page names its month; a year page fills this from the scroll-spy.
+  where?: string;
+}
+
+const { index, year, where } = Astro.props;
+const newer = index.newer(year);
+const older = index.older(year);
+const many = index.years.length > 1;
+const count = index.year(year)?.count ?? 0;
+const spy = where === undefined ? '' : undefined;
+
+// Newest first, like the neighbour links: what the dial steps through.
+const list = index.years.map((y) => ({ y: y.year, n: y.count, m: y.months.length, href: `/rolls/${y.year}` }));
+const at = list.findIndex((y) => y.y === year);
+---
+
+<div class="yb" data-year={year} data-years={many ? JSON.stringify(list) : undefined}>
+  <div class="yb-bar">
+    {many ? (
+      <>
+        <div
+          class="yd"
+          role="slider"
+          tabindex="0"
+          aria-label="Year"
+          aria-orientation="vertical"
+          aria-valuemin={index.first}
+          aria-valuemax={index.last}
+          aria-valuenow={year}
+          aria-valuetext={`${year}, ${plural(count, 'photo')}`}
+          aria-describedby="yd-help"
+          style={`--i: ${at}`}
+          data-yd
+        >
+          <span class="yd-window" aria-hidden="true">
+            <span class="yd-drum">
+              {list.map((y, i) => <span data-at={i === at ? '' : undefined}>{y.y}</span>)}
+            </span>
+          </span>
+          <svg class="yd-grip" viewBox="0 0 12 16" aria-hidden="true"><path d="M3 6l3-3 3 3M3 10l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </div>
+        <span id="yd-help" class="sr-only">Arrow keys roll through years with photos. Enter opens the year shown.</span>
+        <span class="yb-where" data-spy-label={spy}>{where}</span>
+        <span class="yd-preview" data-yd-preview hidden>
+          <span class="yd-meta"></span>
+          <button type="button" class="yd-go" data-yd-go>Open<span class="yd-go-year"></span><kbd aria-hidden="true">↵</kbd></button>
+        </span>
+      </>
+    ) : (
+      <p class="yb-label">
+        <span class="yb-year">{year}</span>
+        <span class="yb-where" data-spy-label={spy}>{where}</span>
+      </p>
+    )}
+    {(newer || older) && (
+      <nav class="yb-steps" aria-label="Years">
+        {newer ? <a href={`/rolls/${newer.year}`} aria-label={`Newer: ${newer.year}`}><span aria-hidden="true">←</span>{newer.year}</a> : <span aria-hidden="true"></span>}
+        {older ? <a href={`/rolls/${older.year}`} aria-label={`Older: ${older.year}`}>{older.year}<span aria-hidden="true">→</span></a> : <span aria-hidden="true"></span>}
+      </nav>
+    )}
+  </div>
+</div>
+
+<script>
+  type Y = { y: number; n: number; m: number; href: string };
+
+  const yb = document.querySelector<HTMLElement>('#stage .yb[data-years]');
+  const dial = yb?.querySelector<HTMLElement>('[data-yd]');
+  const preview = yb?.querySelector<HTMLElement>('[data-yd-preview]');
+
+  if (yb && dial && preview) {
+    const years: Y[] = JSON.parse(yb.dataset.years!);
+    const home = years.findIndex((y) => y.y === Number(yb.dataset.year));
+    const count = (n: number, one: string) => `${n.toLocaleString('en-GB')} ${n === 1 ? one : `${one}s`}`;
+    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const go = (y: Y) => location.assign(y.href);
+
+    const drum = dial.querySelector<HTMLElement>('.yd-drum')!;
+    const cells = [...drum.children] as HTMLElement[];
+    const metaEl = preview.querySelector<HTMLElement>('.yd-meta')!;
+    const goBtn = preview.querySelector<HTMLButtonElement>('[data-yd-go]')!;
+    const goYear = goBtn.querySelector<HTMLElement>('.yd-go-year')!;
+    let at = home;
+    let wheel = 0;
+    type Drag = { id: number; x: number; y: number; from: number; pos: number; moved: boolean; trail: [number, number][] };
+    let drag: Drag | null = null;
+    // A mouse rolls the drum up and down; on touch it lies on its side (see the CSS for why).
+    const vertical = fine;
+    const size = () => (vertical ? cells[0].offsetHeight : cells[0].offsetWidth) || 28;
+    // Where the drum is right now, mid-glide included, in years.
+    const live = () => {
+      const [x = 0, y = 0] = getComputedStyle(drum).translate.split(' ').map((v) => parseFloat(v) || 0);
+      return -(vertical ? y : x) / size();
+    };
+    const clamp = (i: number) => Math.min(Math.max(i, 0), years.length - 1);
+    const show = (i: number) => {
+      cells.forEach((c, j) => c.toggleAttribute('data-at', j === i));
+      const y = years[i];
+      dial.setAttribute('aria-valuenow', String(y.y));
+      dial.setAttribute('aria-valuetext', `${y.y}, ${count(y.n, 'photo')}`);
+      const moved = i !== home;
+      yb.toggleAttribute('data-previewing', moved);
+      preview.hidden = !moved;
+      if (moved) {
+        const part = (text: string) => Object.assign(document.createElement('span'), { textContent: text });
+        metaEl.replaceChildren(part(count(y.n, 'photo')), part(count(y.m, 'month')));
+        goYear.textContent = String(y.y);
+      }
+    };
+    // Keyboard steps land without the roll: keyboard users are moving fast.
+    const set = (i: number, instant = false, glide = 0) => {
+      at = clamp(i);
+      if (instant) {
+        dial.setAttribute('data-instant', '');
+        requestAnimationFrame(() => requestAnimationFrame(() => dial.removeAttribute('data-instant')));
+      }
+      if (glide) dial.style.setProperty('--glide', `${glide}ms`);
+      else dial.style.removeProperty('--glide');
+      dial.style.setProperty('--i', String(at));
+      show(at);
+    };
+    const peek = () => {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      dial.style.setProperty('--peek', at === years.length - 1 ? '-0.3' : '0.3');
+      dial.removeAttribute('data-peek');
+      void dial.offsetWidth;
+      dial.setAttribute('data-peek', '');
+    };
+    const commit = () => {
+      if (at !== home) go(years[at]);
+    };
+    const revert = () => {
+      if (at !== home) set(home);
+    };
+
+    dial.addEventListener('keydown', (e) => {
+      const step: Record<string, number> = { ArrowUp: -1, ArrowLeft: -1, ArrowDown: 1, ArrowRight: 1, PageUp: -5, PageDown: 5 };
+      if (e.key in step) set(at + step[e.key], true);
+      else if (e.key === 'Home') set(0, true);
+      else if (e.key === 'End') set(years.length - 1, true);
+      else if (e.key === 'Enter') commit();
+      else if (e.key === 'Escape' && at !== home) revert();
+      else return;
+      e.preventDefault();
+    });
+    // One notch (or a short trackpad swipe) per year. Wheel down rolls older, like scrolling down the page.
+    dial.addEventListener(
+      'wheel',
+      (e) => {
+        e.preventDefault();
+        wheel += e.deltaMode === 1 ? e.deltaY * 40 : e.deltaY;
+        const n = Math.trunc(wheel / 40);
+        if (n) {
+          wheel -= n * 40;
+          set(at + n);
+        }
+      },
+      { passive: false },
+    );
+    dial.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      dial.removeAttribute('data-peek');
+      // Catching a gliding drum stops it under the finger, like any thrown list.
+      const from = live();
+      const gliding = Math.abs(from - Number(dial.style.getPropertyValue('--i') || at)) > 0.02;
+      if (gliding) {
+        dial.setAttribute('data-dragging', '');
+        dial.style.setProperty('--i', from.toFixed(3));
+      }
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, from, pos: from, moved: gliding, trail: [[e.timeStamp, from]] };
+      dial.setPointerCapture(e.pointerId);
+    });
+    // The drum follows the pointer a year per cell of travel. Past either end it gives a little, then resists.
+    dial.addEventListener('pointermove', (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const d = vertical ? e.clientY - drag.y : e.clientX - drag.x;
+      if (!drag.moved && Math.abs(d) < 4) return;
+      drag.moved = true;
+      dial.setAttribute('data-dragging', '');
+      const raw = drag.from - d / size();
+      const end = years.length - 1;
+      const pos = raw < 0 ? raw * 0.3 : raw > end ? end + (raw - end) * 0.3 : raw;
+      drag.pos = pos;
+      drag.trail.push([e.timeStamp, pos]);
+      if (drag.trail.length > 8) drag.trail.shift();
+      dial.style.setProperty('--i', pos.toFixed(3));
+      if (clamp(Math.round(pos)) !== at) {
+        at = clamp(Math.round(pos));
+        show(at);
+      }
+    });
+    const onUp = (e: PointerEvent) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const { moved, pos, from, trail } = drag;
+      drag = null;
+      dial.removeAttribute('data-dragging');
+      // The browser took the gesture for a page scroll: put the year back where the touch found it.
+      if (e.type === 'pointercancel') return set(Math.round(from));
+      if (!moved) {
+        if (at !== home) commit();
+        else peek();
+        return;
+      }
+      // A flick of a thumb carries on: project the last 100ms of speed forward and settle on the nearest year.
+      // A mouse lands where it lets go.
+      const [t0, p0] = trail.find(([t]) => e.timeStamp - t <= 100) ?? trail[0];
+      const v = e.timeStamp - t0 > 0 ? (pos - p0) / (e.timeStamp - t0) : 0;
+      const target = clamp(Math.round(pos + (vertical ? 0 : v * 300)));
+      set(target, false, Math.round(Math.min(520, 220 + Math.abs(target - pos) * 35)));
+    };
+    dial.addEventListener('pointerup', onUp);
+    dial.addEventListener('pointercancel', onUp);
+    drum.addEventListener('animationend', () => dial.removeAttribute('data-peek'));
+    goBtn.addEventListener('click', commit);
+    preview.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || at === home) return;
+      revert();
+      dial.focus();
+    });
+    yb.addEventListener('focusout', (e) => {
+      if (e.relatedTarget && !yb.contains(e.relatedTarget as Node)) revert();
+    });
+    document.addEventListener('pointerdown', (e) => {
+      if (!yb.contains(e.target as Node)) revert();
+    });
+  }
+</script>
