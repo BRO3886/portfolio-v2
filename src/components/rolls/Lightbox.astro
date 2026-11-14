@@ -28,6 +28,8 @@
     const img = print.querySelector('img')!;
     img.sizes = print.hasAttribute('data-pano') ? '1920px' : '(min-width: 1024px) 1024px, 100vw';
     img.loading = 'eager';
+    const caption = print.querySelector('.print-foot-caption');
+    if (caption) print.append(caption);
     stageSlot.replaceChildren(print);
     stageSlot.scrollLeft = 0;
     hydrateImages(stageSlot);
