@@ -17,3 +17,36 @@ run_worker_first = ["/", "/blog", "/blog/*", "/resume", "/resume/"]
 
 [observability]
 enabled = true
+
+# /rolls photo archive. The remote resources don't exist yet: deploying this config
+# before they're created would let wrangler auto-provision them.
+[[d1_databases]]
+binding = "DB"
+database_name = "rolls"
+database_id = "6aca1abc-8498-4d68-83ef-5e3e3a86b3f6"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "ORIGINALS"
+bucket_name = "rolls-originals"
+
+[[r2_buckets]]
+binding = "PUBLIC_IMAGES"
+bucket_name = "rolls-public"
+
+[[queues.producers]]
+binding = "ROLLS_INGEST"
+queue = "rolls-ingest"
+
+# One message per invocation until CPU per message is measured.
+[[queues.consumers]]
+queue = "rolls-ingest"
+max_batch_size = 1
+max_retries = 3
+dead_letter_queue = "rolls-ingest-dlq"
+
+[images]
+binding = "IMAGES"
+
+[vars]
+ROLLS_IMG_BASE = "https://img.sidv.dev"
