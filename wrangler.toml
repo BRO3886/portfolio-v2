@@ -23,6 +23,7 @@ enabled = true
 [[d1_databases]]
 binding = "DB"
 database_name = "rolls"
+database_id = "6aca1abc-8498-4d68-83ef-5e3e3a86b3f6"
 migrations_dir = "migrations"
 
 [[r2_buckets]]
