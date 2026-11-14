@@ -9,7 +9,7 @@ export const PREVIEW = 36;
 export const FEATURED_MAX = 6;
 // A roll this long is split by day on the month page, so a three-week trip has landmarks.
 export const DAY_SPLIT = 60;
-export const SIZES = [640, 1280, 2048] as const;
+export const SIZES = [640, 1280, 3072] as const;
 const PANO = 2.2;
 
 const pad = (n: number) => String(n).padStart(2, '0');

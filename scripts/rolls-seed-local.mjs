@@ -318,8 +318,8 @@ const sql = [
 const sqlFile = path.join(out, 'seed.sql');
 writeFileSync(sqlFile, sql);
 
-// Derivatives are hard links to the prototype's sizes; 2048 falls back to its 1920px file.
-const SIZES = { 640: 640, 1280: 1280, 2048: 1920 };
+// Derivatives are hard links to the prototype’s sizes; 3072 falls back to its 1920px file.
+const SIZES = { 640: 640, 1280: 1280, 3072: 1920 };
 for (const [id, src] of sources) {
   for (const [w, from] of Object.entries(SIZES)) {
     const dest = path.join(out, 'p', `${id}-${w}.webp`);

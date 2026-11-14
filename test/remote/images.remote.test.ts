@@ -28,7 +28,7 @@ const contains = (haystack: Uint8Array, needle: string) => {
 };
 
 // The ingest's exact transform. The fixture carries GPS, a body serial and an owner name.
-it.each([24, 640, 2048])('the real Images binding writes a %ipx WebP with no metadata', async (width) => {
+it.each([24, 640, 3072])('the real Images binding writes a %ipx WebP with no metadata', async (width) => {
   const input = bytes(fuji);
   expect(contains(input, '9AB12345')).toBe(true);
   const out = await env.IMAGES.input(new Blob([input]).stream()).transform({ width, fit: 'scale-down' }).output({ format: 'image/webp', quality: 80 });

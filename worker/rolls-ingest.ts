@@ -1,11 +1,12 @@
 import exifr from 'exifr';
+import { stripGps } from './strip-gps';
 
 export type IngestMessage = { key: string; reingest?: boolean };
 type R2EventMessage = { bucket: string; action: string; object: { key: string } };
 
 // Bump when parsing or normalising changes: rows with an older version are the re-ingest list.
 const INGEST_VERSION = 1;
-const SIZES = [640, 1280, 2048] as const;
+const SIZES = [640, 1280, 3072] as const;
 const EXIF_HEAD_BYTES = 128 * 1024;
 const DEFAULT_OFFSET = '+05:30';
 // Matches max_retries in wrangler.toml: the first delivery plus three retries.
@@ -94,7 +95,13 @@ async function ingest(env: Env, key: string, reingest: boolean) {
 
   const object = await env.ORIGINALS.get(key);
   if (!object) throw new Error(`original ${key} is missing`);
-  const original = await object.arrayBuffer();
+  let original = await object.arrayBuffer();
+  // Originals uploaded before GPS was stripped at upload are cleaned the next time they are ingested.
+  const cleaned = stripGps(new Uint8Array(original));
+  if (cleaned.buffer !== original) {
+    await env.ORIGINALS.put(key, cleaned, { httpMetadata: { contentType: 'image/jpeg' } });
+    original = cleaned.buffer as ArrayBuffer;
+  }
 
   if (!row) {
     const [, roll, id] = /^originals\/([^/]+)\/([0-9a-f]{16})\.jpg$/.exec(key) ?? [];

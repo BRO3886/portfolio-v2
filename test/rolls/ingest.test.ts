@@ -65,7 +65,7 @@ describe('ingest', () => {
     expect(row?.placeholder).toMatch(/^data:image\/webp;base64,[A-Za-z0-9+/]+=*$/);
     expect(row?.ingested_at).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/);
 
-    expect(await publicKeys()).toEqual([`p/${id}-1280.webp`, `p/${id}-2048.webp`, `p/${id}-640.webp`]);
+    expect(await publicKeys()).toEqual([`p/${id}-1280.webp`, `p/${id}-3072.webp`, `p/${id}-640.webp`]);
     const derivative = await env.PUBLIC_IMAGES.head(`p/${id}-640.webp`);
     expect(derivative?.httpMetadata).toMatchObject({ contentType: 'image/webp', cacheControl: 'public, max-age=31536000, immutable' });
   });

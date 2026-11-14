@@ -1,4 +1,5 @@
 import { env } from 'cloudflare:workers';
+import exifr from 'exifr';
 import { describe, expect, it, vi } from 'vitest';
 import { bare, fuji, iphone } from '../fixtures/images';
 import { api, bytes, createRoll, json, photo, upload } from './helpers';
@@ -131,7 +132,8 @@ describe('upload validation', () => {
 describe('upload', () => {
   it('stores the pending row and the original, and answers 202 with the id', async () => {
     await createRoll();
-    const file = bytes(fuji);
+    // No GPS block, so the original is stored byte for byte.
+    const file = bytes(iphone);
     const res = await upload(file, { 'X-Filename': encodeURIComponent('DSCF0042.JPG'), 'X-Featured': '1' });
     expect(res.status).toBe(202);
     const { id } = await res.json<{ id: string }>();
@@ -150,6 +152,21 @@ describe('upload', () => {
     });
     const original = await env.ORIGINALS.get(`originals/goa/${id}.jpg`);
     expect(new Uint8Array(await original!.arrayBuffer())).toEqual(file);
+  });
+
+  it('blanks the GPS block before storing the original, leaving the rest of the file alone', async () => {
+    await createRoll();
+    const file = bytes(fuji);
+    expect((await exifr.gps(file))?.latitude).toBeCloseTo(15.017, 3);
+    const { id } = await (await upload(file)).json<{ id: string }>();
+    expect(id).toBe((await sha256(file)).slice(0, 16));
+
+    const stored = new Uint8Array(await (await env.ORIGINALS.get(`originals/goa/${id}.jpg`))!.arrayBuffer());
+    expect(await exifr.gps(stored)).toBeUndefined();
+    expect(await exifr.parse(stored, ['Make', 'Model', 'DateTimeOriginal'])).toMatchObject({ Make: 'FUJIFILM', Model: 'X-T5' });
+    expect(stored.length).toBe(file.length);
+    const imageData = (b: Uint8Array) => b.subarray(b.findIndex((x, i) => x === 0xff && b[i + 1] === 0xdb));
+    expect(imageData(stored)).toEqual(imageData(file));
   });
 
   it('queues the ingest itself, without waiting on the R2 event notification', async () => {
