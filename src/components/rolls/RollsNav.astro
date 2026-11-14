@@ -1,0 +1,342 @@
+---
+/*
+  A year bar that stays at the top, and this page's sections as a rail of ticks in the left margin that preview
+  on hover. Where there is no margin or no hover, the sections become a chip row under the bar.
+*/
+import YearBar from './YearBar.astro';
+import { DAY_SPLIT, days, photoRange, type ArchiveIndex, type Month, type Photo, type Year } from '../../lib/rolls/archive';
+import { fmt, plural } from '../../lib/rolls/exif-format';
+
+interface Props {
+  index: ArchiveIndex;
+  // A year page passes its year; a month page passes its month.
+  year?: Year;
+  month?: Month;
+}
+
+const { index, year, month } = Astro.props;
+const y = (year?.year ?? month?.year)!;
+
+type Item = { id: string; title: string; chip: string; count: number; sub: string; thumbs: Photo[] };
+
+// Featured frames first, then an even spread, so the preview looks like the section rather than its first hour.
+const thumbs = (photos: Photo[], n = 4) => {
+  const flat = photos.filter((p) => !p.pano);
+  const pool = flat.length ? flat : photos;
+  const out = pool.filter((p) => p.featured).slice(0, n);
+  for (let i = 0; i < n && out.length < Math.min(n, pool.length); i++) {
+    const p = pool[Math.floor(((i + 0.5) * pool.length) / n)];
+    if (!out.includes(p)) out.push(p);
+  }
+  for (const p of pool) if (out.length < Math.min(n, pool.length) && !out.includes(p)) out.push(p);
+  return out;
+};
+
+// Sections are described by size and dates. On a month page a day belongs to exactly one roll, so it may name it.
+const items: Item[] = month
+  ? month.rolls.flatMap((r) =>
+      r.count > DAY_SPLIT
+        ? days(r.photos).map((d) => ({ id: `d-${d.iso}`, title: d.label, chip: d.short, count: d.photos.length, sub: r.title, thumbs: thumbs(d.photos) }))
+        : [{ id: `r-${r.slug}`, title: r.title, chip: r.title, count: r.count, sub: r.range ?? '', thumbs: thumbs(r.photos) }],
+    )
+  : [
+      ...(year!.featured.length ? [{ id: 'wl-featured', title: 'Featured', chip: 'Featured', count: year!.featured.length, sub: '', thumbs: year!.featured.slice(0, 4) }] : []),
+      ...year!.months.map((m) => ({ id: `m${m.mm}`, title: m.name, chip: m.short, count: m.count, sub: photoRange(m.photos) ?? '', thumbs: thumbs(m.photos) })),
+    ];
+
+const yearMonths = index.year(y)?.months ?? [];
+
+// Tick length follows photo count on a log scale, so a 1,100-photo month reads longer without dwarfing a 20-photo one.
+const max = Math.max(...items.map((i) => i.count));
+const scale = (n: number) => (max <= 1 ? 0.55 : 0.3 + 0.5 * (Math.log(n + 1) / Math.log(max + 1))).toFixed(3);
+const railLabel = month ? `Sections of ${month.label}` : `Sections of ${y}`;
+---
+
+<div class="tb" data-yearbar>
+  <YearBar index={index} year={y} where={month?.name} />
+  {month ? (
+    yearMonths.length > 1 && (
+      <nav class="wl-row tb-months" aria-label={`Months in ${y}`} data-scroll-current>
+        {yearMonths.map((m) => (
+          <a href={`/rolls/${y}/${m.mm}`} aria-current={m.month === month.month ? 'page' : undefined}>{m.short}</a>
+        ))}
+      </nav>
+    )
+  ) : (
+    items.length > 1 && (
+      <nav class="wl-row tb-months tb-months-spy" aria-label={railLabel} data-scroll-current>
+        {items.map((it) => <a href={`#${it.id}`} data-spy={it.id} data-name={it.title}>{it.chip}</a>)}
+      </nav>
+    )
+  )}
+</div>
+
+{items.length > 1 && (
+  <nav class="rl" aria-label={railLabel} data-rail style={`--n: ${items.length}`}>
+    <ol role="list">
+      {items.map((it) => (
+        <li>
+          <a href={`#${it.id}`} data-spy={it.id} data-name={it.title} style={`--c: ${scale(it.count)}`} aria-label={`${it.title}, ${plural(it.count, 'photo')}`}>
+            <span class="rl-tick"></span>
+          </a>
+          <template>
+            <p class="rl-card-title">{it.title}</p>
+            <p class="rl-card-meta"><span>{fmt(it.count)} {it.count === 1 ? 'photo' : 'photos'}{it.sub && !month && ` · ${it.sub}`}</span>{it.sub && month && <span>{it.sub}</span>}</p>
+            {it.thumbs.length > 0 && (
+              <div class="rl-card-thumbs">
+                {it.thumbs.map((p) => (
+                  <span class="lqip" style={`--ph: url(${p.placeholder});`}>
+                    <img src={p.src(640)} width={p.width} height={p.height} alt="" decoding="async" />
+                  </span>
+                ))}
+              </div>
+            )}
+          </template>
+        </li>
+      ))}
+    </ol>
+    <div class="rl-card" aria-hidden="true" data-rail-card></div>
+  </nav>
+)}
+
+<script>
+  import { hydrateImages } from './hydrate-images';
+
+  const stage = document.getElementById('stage')!;
+
+  // Long chip rows open scrolled to the current month instead of the start.
+  stage.querySelectorAll<HTMLElement>('[data-scroll-current]').forEach((row) => {
+    const cur = row.querySelector<HTMLElement>('[aria-current]');
+    if (!cur || row.scrollWidth <= row.clientWidth) return;
+    const r = row.getBoundingClientRect();
+    const c = cur.getBoundingClientRect();
+    row.scrollLeft += c.left - r.left - (r.width - c.width) / 2;
+  });
+
+  // Anchors land below the sticky bar, whatever height it wraps to.
+  const tb = stage.querySelector<HTMLElement>('.tb');
+  if (tb) new ResizeObserver(() => stage.style.setProperty('--tb-h', `${tb.offsetHeight}px`)).observe(tb);
+
+  // Scroll-spy: the section in the upper part of the viewport lights its rail tick and its chip.
+  const spyLinks = [...stage.querySelectorAll<HTMLAnchorElement>('[data-spy]')];
+  if (spyLinks.length) {
+    const ids = [...new Set(spyLinks.map((a) => a.dataset.spy!))];
+    const targets = ids.map((id) => document.getElementById(id)).filter((el): el is HTMLElement => !!el);
+    const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const spyLabel = stage.querySelector<HTMLElement>('[data-spy-label]');
+    let active = '';
+    let raf = 0;
+    const sync = () => {
+      raf = 0;
+      const top = tb?.offsetHeight ?? 0;
+      const line = top + (innerHeight - top) * 0.3;
+      let id = targets[0]?.id ?? '';
+      let passed = false;
+      for (const t of targets) {
+        if (t.getBoundingClientRect().top <= line) {
+          id = t.id;
+          passed = true;
+        } else break;
+      }
+      if (Math.ceil(scrollY + innerHeight) >= document.documentElement.scrollHeight - 2) {
+        id = targets.at(-1)?.id ?? id;
+        passed = true;
+      }
+      // The bar only names a section once you are in one; above the first, the year alone says where you are.
+      if (spyLabel) {
+        const name = passed ? (spyLinks.find((a) => a.dataset.spy === id)?.dataset.name ?? '') : '';
+        if (spyLabel.textContent !== name) spyLabel.textContent = name;
+      }
+      if (id === active) return;
+      const first = !active;
+      active = id;
+      spyLinks.forEach((a) => a.toggleAttribute('data-active', a.dataset.spy === id));
+      // Keep the lit chip in view in the phone row, without fighting the page scroll.
+      spyLinks.forEach((a) => {
+        const row = a.closest<HTMLElement>('[data-scroll-current]');
+        if (a.dataset.spy !== id || !row || !row.offsetParent || row.scrollWidth <= row.clientWidth) return;
+        const r = row.getBoundingClientRect();
+        const c = a.getBoundingClientRect();
+        row.scrollTo({ left: row.scrollLeft + c.left - r.left - (r.width - c.width) / 2, behavior: smooth && !first ? 'smooth' : 'instant' });
+      });
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(sync);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    sync();
+  }
+
+  // Rail preview: one card, filled from the hovered or focused tick's template, placed beside it.
+  const rail = stage.querySelector<HTMLElement>('[data-rail]');
+  const card = rail?.querySelector<HTMLElement>('[data-rail-card]');
+  if (rail && card) {
+    let shown: HTMLAnchorElement | null = null;
+    let hideTimer = 0;
+    const show = (a: HTMLAnchorElement) => {
+      clearTimeout(hideTimer);
+      if (shown !== a) {
+        const tpl = a.nextElementSibling as HTMLTemplateElement;
+        card.replaceChildren(tpl.content.cloneNode(true));
+        hydrateImages(card);
+        shown = a;
+      }
+      const railTop = rail.getBoundingClientRect().top;
+      const t = a.getBoundingClientRect();
+      const h = card.offsetHeight;
+      const y = Math.min(Math.max(t.top + t.height / 2 - 26, 12), innerHeight - h - 12);
+      card.style.top = `${y - railTop}px`;
+      card.setAttribute('data-open', '');
+    };
+    // A short grace period, so sliding between ticks or off the end and back doesn't flicker the card.
+    const hide = (wait = 120) => {
+      clearTimeout(hideTimer);
+      hideTimer = window.setTimeout(() => {
+        card.removeAttribute('data-open');
+        shown = null;
+      }, wait);
+    };
+    // Dock-style bulge: ticks near the pointer swell by proximity. The rail is fixed, so centres are read once
+    // per visit and each move only writes one number per tick.
+    const ticks = [...rail.querySelectorAll<HTMLAnchorElement>('a[data-spy]')];
+    const RADIUS = 60;
+    let centres: number[] = [];
+    let pointerY = -1;
+    let bulgeRaf = 0;
+    const paintBulge = () => {
+      bulgeRaf = 0;
+      ticks.forEach((a, i) => {
+        if (pointerY < 0) return a.style.removeProperty('--m');
+        const g = Math.max(0, 1 - Math.abs(centres[i] - pointerY) / RADIUS);
+        a.style.setProperty('--m', (g * g * (3 - 2 * g)).toFixed(3));
+      });
+    };
+    const bulgeAt = (y: number) => {
+      if (pointerY < 0 || !centres.length) {
+        centres = ticks.map((a) => {
+          const r = a.getBoundingClientRect();
+          return r.top + r.height / 2;
+        });
+      }
+      pointerY = y;
+      rail.setAttribute('data-hover', '');
+      if (!bulgeRaf) bulgeRaf = requestAnimationFrame(paintBulge);
+    };
+    const settle = () => {
+      pointerY = -1;
+      centres = [];
+      rail.removeAttribute('data-hover');
+      if (!bulgeRaf) bulgeRaf = requestAnimationFrame(paintBulge);
+    };
+    rail.addEventListener('pointerover', (e) => {
+      const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-spy]');
+      if (a) show(a);
+    });
+    rail.addEventListener('pointermove', (e) => bulgeAt(e.clientY));
+    rail.addEventListener('pointerleave', () => {
+      hide();
+      settle();
+    });
+    rail.addEventListener('focusin', (e) => {
+      const a = e.target as HTMLAnchorElement;
+      if (!a.matches('a[data-spy]:focus-visible')) return;
+      show(a);
+      const r = a.getBoundingClientRect();
+      bulgeAt(r.top + r.height / 2);
+    });
+    rail.addEventListener('focusout', () => {
+      hide(0);
+      if (!rail.matches(':hover')) settle();
+    });
+    rail.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') hide(0);
+    });
+  }
+
+  // When the reader last scrolled, clicked or typed, and the last wheel event, swallowed or not.
+  let lastWheel = -1e9;
+  let lastDelta = 0;
+  let lastInput = -1e9;
+  const delta = (e: WheelEvent) => Math.abs(e.deltaY) + Math.abs(e.deltaX);
+  addEventListener(
+    'wheel',
+    (e) => {
+      if (!e.defaultPrevented) lastInput = e.timeStamp;
+      lastWheel = e.timeStamp;
+      lastDelta = delta(e);
+    },
+    { passive: true },
+  );
+  for (const type of ['pointerdown', 'keydown', 'touchstart']) {
+    addEventListener(type, (e) => (lastInput = e.timeStamp), { passive: true, capture: true });
+  }
+
+  /*
+    A trackpad keeps sending wheel events for a second after the fingers lift. A jump that lands while that tail
+    is still arriving got carried straight past its month, so the tail is dropped: events that keep coming without
+    a pause and without growing. A new swipe (a pause, or a harder push) scrolls as normal. A cancelable wheel
+    listener makes scrolling wait on the main thread, so this one exists only for that moment.
+  */
+  function hushMomentum() {
+    const until = performance.now() + 1200;
+    const stop = () => {
+      clearTimeout(timer);
+      removeEventListener('wheel', onWheel, { capture: true });
+    };
+    const onWheel = (e: WheelEvent) => {
+      if (e.timeStamp < until && e.timeStamp - lastWheel < 120 && delta(e) <= lastDelta + 2) e.preventDefault();
+      else stop();
+    };
+    const timer = window.setTimeout(stop, 1200);
+    addEventListener('wheel', onWheel, { passive: false, capture: true });
+  }
+
+  /*
+    In-page jumps. Month heights are measured up front (setupMasonry), so the first scroll should land; a section
+    whose size still changes as the jump passes it is caught by correcting each frame until the target holds still
+    at its scroll margin.
+  */
+  function jumpTo(el: HTMLElement) {
+    const start = performance.now();
+    if (start - lastWheel < 120) hushMomentum();
+    let frames = 0;
+    let still = 0;
+    // Corrections stop the moment the reader scrolls, clicks or types: the jump never pulls them back.
+    const step = () => {
+      if (lastInput > start) return;
+      const off = el.getBoundingClientRect().top - (parseFloat(getComputedStyle(el).scrollMarginTop) || 0);
+      if (Math.abs(off) > 1) {
+        window.scrollBy(0, off);
+        still = 0;
+      } else still++;
+      if (still < 3 && ++frames < 60) requestAnimationFrame(step);
+    };
+    step();
+    const heading = el.matches('h2, h3') ? el : el.querySelector<HTMLElement>('h2, h3');
+    if (heading) {
+      heading.tabIndex = -1;
+      heading.focus({ preventScroll: true });
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('#stage a[href^="#"]');
+    const el = a && document.getElementById(decodeURIComponent(a.hash.slice(1)));
+    if (!el) return;
+    e.preventDefault();
+    history.pushState(null, '', a.hash);
+    jumpTo(el);
+  });
+
+  window.addEventListener('popstate', () => {
+    const el = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (el) jumpTo(el);
+  });
+
+  if (location.hash) {
+    const el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (el) requestAnimationFrame(() => jumpTo(el));
+  }
+</script>
