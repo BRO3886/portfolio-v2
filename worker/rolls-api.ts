@@ -1,4 +1,5 @@
 import type { IngestMessage } from './rolls-ingest';
+import { stripGps } from './strip-gps';
 
 export const MAX_UPLOAD_BYTES = 50 * 1024 * 1024;
 const CAPTION_MAX = 280;
@@ -144,7 +145,8 @@ async function uploadPhoto(request: Request, env: Env, url: URL) {
       .bind(id, sha, roll, key, filename, alt, caption, featured)
       .run();
   }
-  await env.ORIGINALS.put(key, body, { httpMetadata: { contentType: 'image/jpeg' } });
+  // The hash above is of the file as sent, so a second upload of the same photo is still caught.
+  await env.ORIGINALS.put(key, stripGps(body), { httpMetadata: { contentType: 'image/jpeg' } });
   // R2 event notifications dropped 4 of 5 uploads in a burst, so the upload queues its own ingest.
   // A second message from the notification is harmless: ingest skips a ready photo, and two runs write the same files.
   await env.ROLLS_INGEST.send({ key } satisfies IngestMessage);
