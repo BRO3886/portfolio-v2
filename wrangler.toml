@@ -15,6 +15,10 @@ binding = "ASSETS"
 # matching HTML asset is served. Everything else is served straight from assets.
 run_worker_first = ["/", "/blog", "/blog/*", "/resume", "/resume/"]
 
+# The deployed version keys the /rolls page cache, so a deploy starts with a fresh cache.
+[version_metadata]
+binding = "CF_VERSION_METADATA"
+
 [observability]
 enabled = true
 

@@ -48,7 +48,7 @@ export function createExports(manifest: SSRManifest) {
         const render = () => handle(manifest, app, request as unknown as WorkerRequest, env, ctx);
         const response =
           (await negotiateMarkdown(request, env.ASSETS)) ??
-          (isRollsPage(new URL(request.url).pathname) ? await cachedRollsPage(request, ctx, render) : await render());
+          (isRollsPage(new URL(request.url).pathname) ? await cachedRollsPage(request, ctx, env.CF_VERSION_METADATA.id, render) : await render());
 
         return withPagesSemantics(request, response);
       },

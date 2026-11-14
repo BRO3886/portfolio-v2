@@ -225,14 +225,24 @@ describe('the page cache', () => {
       return new Response(`page ${renders}`, { headers: { 'Content-Type': 'text/html' } });
     };
     const first = ctx();
-    const miss = await cachedRollsPage(new Request('https://sidv.dev/rolls/2031?utm_source=x'), first, render);
+    const miss = await cachedRollsPage(new Request('https://sidv.dev/rolls/2031?utm_source=x'), first, 'v1', render);
     expect(await miss.text()).toBe('page 1');
     expect(miss.headers.get('Cache-Control')).toBe('public, max-age=600');
     await first.settle();
 
-    const hit = await cachedRollsPage(new Request('https://sidv.dev/rolls/2031'), ctx(), render);
+    const hit = await cachedRollsPage(new Request('https://sidv.dev/rolls/2031'), ctx(), 'v1', render);
     expect(await hit.text()).toBe('page 1');
     expect(renders).toBe(1);
+  });
+
+  it('renders again after a deploy, so a cached page never names the old build’s scripts', async () => {
+    let renders = 0;
+    const render = async () => new Response(`page ${++renders}`, { headers: { 'Content-Type': 'text/html' } });
+    const first = ctx();
+    await cachedRollsPage(new Request('https://sidv.dev/rolls/2030'), first, 'v1', render);
+    await first.settle();
+    const after = await cachedRollsPage(new Request('https://sidv.dev/rolls/2030'), ctx(), 'v2', render);
+    expect(await after.text()).toBe('page 2');
   });
 
 });
