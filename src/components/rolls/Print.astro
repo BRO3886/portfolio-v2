@@ -8,6 +8,8 @@ interface Props {
 }
 
 const { photo, sizes, eager = false } = Astro.props;
+// A figure takes one figcaption: the caption when there is one, otherwise the EXIF lines.
+const Exif = photo.caption ? 'div' : 'figcaption';
 ---
 
 <figure class="print" style={`--r: ${photo.ratio};`} data-print={photo.id} data-pano={photo.pano ? '' : undefined}>
@@ -25,15 +27,12 @@ const { photo, sizes, eager = false } = Astro.props;
         decoding="async"
       />
     </span>
-    {photo.caption ? (
-      <figcaption class="print-foot print-foot-caption"><span class="print-caption">{photo.caption}</span></figcaption>
-    ) : (
-      <figcaption class="print-foot">
-        {photo.camera && <span class="print-camera">{photo.camera}</span>}
-        {photo.exposure.length > 0 && <span class="print-exp">{photo.exposure.map((x) => <span>{x}</span>)}</span>}
-        <span class="print-when"><time datetime={photo.datetime}>{photo.date}</time>{photo.time && <span>{photo.time}</span>}</span>
-      </figcaption>
-    )}
+    <Exif class="print-foot print-foot-exif">
+      {photo.camera && <span class="print-camera">{photo.camera}</span>}
+      {photo.exposure.length > 0 && <span class="print-exp">{photo.exposure.map((x) => <span>{x}</span>)}</span>}
+      <span class="print-when"><time datetime={photo.datetime}>{photo.date}</time>{photo.time && <span>{photo.time}</span>}</span>
+    </Exif>
+    {photo.caption && <figcaption class="print-foot print-foot-caption"><span class="print-caption">{photo.caption}</span></figcaption>}
   </div>
 </figure>
 
@@ -102,7 +101,14 @@ const { photo, sizes, eager = false } = Astro.props;
     color: var(--print-ink-2);
   }
 
-  /* The caption takes the place of the EXIF lines; the wall shows two lines, the lightbox all of it. */
+  /*
+    On the wall the caption takes the place of the EXIF lines, clamped to two. The lightbox moves the caption out
+    below the print, which brings the EXIF back.
+  */
+  .print-paper:has(> .print-foot-caption) > .print-foot-exif {
+    display: none;
+  }
+
   .print-foot-caption {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto;

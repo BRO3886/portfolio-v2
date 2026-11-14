@@ -521,11 +521,26 @@ a:focus-visible:is(.wl-continue, .wl-more, .wl-back),
   .wl-box-next { left: auto; right: 1.25rem; }
 }
 
-/* The wall clamps a caption to two lines; the lightbox is where it reads in full. */
-.wl-box-stage .print-caption {
+/* Below the print, on the dark backdrop, and in full: the wall clamps it to two lines. */
+.wl-box-stage .print > .print-foot-caption {
+  padding: 1rem 0.15em 0;
+  color: rgb(255 255 255 / 0.88);
+}
+
+.wl-box-stage .print > .print-foot-caption .print-caption {
   display: block;
   -webkit-line-clamp: none;
   line-clamp: none;
+  font-size: clamp(15px, 2.2cqw, 18px);
+}
+
+/* Room under the print for three lines of caption. Anything taller scrolls, from the top rather than clipped. */
+.wl-box-stage:has(.print-foot-caption) {
+  place-items: safe center;
+  overflow-y: auto;
+}
+.wl-box-stage .print:has(> .print-foot-caption):not([data-pano]) {
+  width: min(100%, 64rem, calc((100svh - 20rem) * var(--r) / (1 - var(--mat) * 0.02)));
 }
 
 @media (prefers-reduced-motion: reduce) {
