@@ -133,6 +133,91 @@ a:focus-visible:is(.wl-continue, .wl-more, .wl-back),
   font-variant-numeric: tabular-nums;
   text-wrap: pretty;
 }
+/* ---------- grid ---------- */
+
+/*
+  Masonry: every print is one column wide and drops into the shortest column, so portraits and landscapes pack
+  without ragged rows. The server renders the prints in shooting order; the layout script positions them.
+  Until it has (or without JavaScript) the same prints flow as CSS columns.
+*/
+.wl-grid {
+  --cols: 2;
+  --gap: 0.75rem;
+  margin-top: 1.5rem;
+  columns: var(--cols);
+  column-gap: var(--gap);
+}
+
+@media (min-width: 640px) {
+  .wl-grid { --cols: 3; --gap: 1.25rem; }
+}
+
+@media (min-width: 1024px) {
+  .wl-grid { --cols: 4; --gap: 1.5rem; }
+  .wl-grid-featured { --cols: 3; }
+}
+
+.wl-cell {
+  break-inside: avoid;
+  margin-bottom: var(--gap);
+}
+
+/* Hidden for the frame between first paint and placement, so the column flow never visibly reshuffles. */
+.rolls-js .wl-grid:not([data-laid]) {
+  visibility: hidden;
+}
+
+.wl-grid[data-laid] {
+  position: relative;
+  columns: auto;
+}
+
+.wl-grid[data-laid] > .wl-cell {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+}
+
+/* A panorama in one column is a sliver: it spans two or three columns (data-span), with the grid's mat and type. */
+.wl-grid:not([data-laid]) > .wl-cell-pano {
+  column-span: all;
+}
+
+.wl-cell-pano .print-paper {
+  --pad: calc(var(--mat) * 2.8px);
+}
+
+.wl-cell-pano .print-foot { font-size: 12px; }
+.wl-cell-pano .print-camera { font-size: 15px; }
+
+@media (max-width: 639px) {
+  .wl-cell-pano .print-paper { --pad: calc(var(--mat) * 1.7px); }
+}
+
+.wl-grid:not([data-laid]) > .wl-cell-more {
+  column-span: all;
+}
+
+.wl-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-size: 0.9375rem;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 150ms ease-out;
+}
+
+.wl-more span:last-child { color: var(--color-text-tertiary); }
+
 /* ---------- end of a year or month: keep going ---------- */
 
 .wl-end {
@@ -299,6 +384,7 @@ a:focus-visible:is(.wl-continue, .wl-more, .wl-back),
   .wl-back:hover { color: var(--color-text-primary); }
   .wl-continue:hover,
   .wl-missing-links a:hover { background: var(--color-surface); }
+  .wl-more:hover { background: var(--color-surface-hover); }
   .wl-month-title a:hover { text-decoration-line: underline; }
 }
 
@@ -308,6 +394,22 @@ a:focus-visible:is(.wl-continue, .wl-more, .wl-back),
   --rolls-blur: 20px;
   --rolls-fade: 500ms;
   --rolls-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --mat: 3.6;
+  --print-radius: 2px;
+  /* Dark page: paper dimmed to a warm grey so it doesn't glare against the charcoal. */
+  --print-bg: oklch(0.84 0.006 85);
+  --print-ink: oklch(0.2 0 0);
+  --print-ink-2: oklch(0.4 0.004 85);
+  --print-outline: rgb(0 0 0 / 0.08);
+  --print-shadow: none;
+}
+
+/* Light page: the page is already warm paper, so the print is a white card lifted by a soft shadow. */
+[data-theme='light'] #stage {
+  --print-bg: #fff;
+  --print-ink: oklch(0.22 0 0);
+  --print-ink-2: oklch(0.5 0 0);
+  --print-shadow: 0 0 0 1px rgb(0 0 0 / 0.05), 0 1px 3px rgb(0 0 0 / 0.06), 0 8px 20px -8px rgb(0 0 0 / 0.12);
 }
 
 /* The inline placeholder is painted blurred behind the real image, which fades in once decoded. */
@@ -334,4 +436,24 @@ a:focus-visible:is(.wl-continue, .wl-more, .wl-back),
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.rolls-js .lqip img {
+  opacity: 0;
+  transition: opacity var(--rolls-fade) var(--rolls-ease);
+}
+
+.rolls-js .lqip[data-loaded] img {
+  opacity: 1;
+}
+
+.lqip[data-loaded]::before {
+  visibility: hidden;
+  transition: visibility 0s linear var(--rolls-fade);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rolls-js .lqip img {
+    transition: none;
+  }
 }

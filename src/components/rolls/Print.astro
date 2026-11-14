@@ -11,17 +11,163 @@ const { photo, sizes, eager = false } = Astro.props;
 ---
 
 <figure class="print" style={`--r: ${photo.ratio};`} data-print={photo.id} data-pano={photo.pano ? '' : undefined}>
-  <span class="lqip" style={`--ph: url(${photo.placeholder}); aspect-ratio: ${photo.width} / ${photo.height};`}>
-    <img
-      src={photo.src(1280)}
-      srcset={photo.srcset}
-      sizes={sizes}
-      width={photo.width}
-      height={photo.height}
-      alt={photo.alt}
-      loading={eager ? 'eager' : 'lazy'}
-      fetchpriority={eager ? 'high' : undefined}
-      decoding="async"
-    />
-  </span>
+  <div class="print-paper">
+    <span class="lqip" style={`--ph: url(${photo.placeholder}); aspect-ratio: ${photo.width} / ${photo.height};`}>
+      <img
+        src={photo.src(1280)}
+        srcset={photo.srcset}
+        sizes={sizes}
+        width={photo.width}
+        height={photo.height}
+        alt={photo.alt}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : undefined}
+        decoding="async"
+      />
+    </span>
+    {photo.caption ? (
+      <figcaption class="print-foot print-foot-caption"><span class="print-caption">{photo.caption}</span></figcaption>
+    ) : (
+      <figcaption class="print-foot">
+        {photo.camera && <span class="print-camera">{photo.camera}</span>}
+        {photo.exposure.length > 0 && <span class="print-exp">{photo.exposure.map((x) => <span>{x}</span>)}</span>}
+        <span class="print-when"><time datetime={photo.datetime}>{photo.date}</time>{photo.time && <span>{photo.time}</span>}</span>
+      </figcaption>
+    )}
+  </div>
 </figure>
+
+<style is:global>
+  /*
+    The print is its own container so the mat and the footer type scale with the print's width,
+    the way the frame does when a camera bakes it into the file.
+  */
+  .print {
+    container-type: inline-size;
+    margin: 0;
+    min-width: 0;
+  }
+
+  .print-paper {
+    --pad: calc(var(--mat) * 1cqw);
+    padding: var(--pad) var(--pad) 0;
+    background: var(--print-bg);
+    color: var(--print-ink);
+    box-shadow: var(--print-shadow);
+    border-radius: var(--print-radius);
+  }
+
+  .print-paper .lqip img {
+    outline: 1px solid var(--print-outline);
+    outline-offset: -1px;
+  }
+
+  .print-foot {
+    display: grid;
+    grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 1.5em;
+    padding-block: calc(var(--pad) * 0.75) calc(var(--pad) * 1.15);
+    padding-inline: 0.15em;
+    font-size: clamp(11px, 1.75cqw, 15px);
+    line-height: 1.35;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .print-camera {
+    grid-row: 1 / span 2;
+    font-size: clamp(13px, 2.7cqw, 24px);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .print-exp,
+  .print-when {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    column-gap: 0.85em;
+    text-align: end;
+  }
+
+  .print-exp {
+    font-weight: 600;
+  }
+
+  .print-when {
+    color: var(--print-ink-2);
+  }
+
+  /* The caption takes the place of the EXIF lines; the wall shows two lines, the lightbox all of it. */
+  .print-foot-caption {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+
+  .print-caption {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    font-family: var(--font-serif);
+    font-size: clamp(13px, 2.4cqw, 19px);
+    line-height: 1.4;
+    text-wrap: pretty;
+    font-variant-numeric: normal;
+  }
+
+  /* Small prints: stack the footer instead of squeezing two columns. */
+  @container (max-width: 20rem) {
+    .print-foot {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 0.15em;
+      font-size: 11px;
+    }
+
+    .print-camera {
+      grid-row: auto;
+      font-size: 13px;
+    }
+
+    .print-exp,
+    .print-when {
+      justify-content: flex-start;
+      column-gap: 0.7em;
+      text-align: start;
+    }
+
+    .print-caption {
+      font-size: 13px;
+    }
+  }
+
+  /* Film scans carry no exposure: camera and date share one line. */
+  .print-foot:not(:has(.print-exp)) {
+    grid-template-rows: auto;
+  }
+
+  .print-foot:not(:has(.print-exp)) .print-camera {
+    grid-row: auto;
+  }
+
+  /* No camera either: the date is all there is, so it reads from the left like a caption. */
+  .print-foot:not(:has(.print-camera)) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .print-foot:not(:has(.print-camera)) .print-when {
+    justify-content: flex-start;
+    text-align: start;
+  }
+
+  @container (max-width: 13rem) {
+    .print-foot:has(.print-camera) .print-when {
+      display: none;
+    }
+  }
+</style>
