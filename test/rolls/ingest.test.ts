@@ -16,10 +16,6 @@ const derived = (id: string) =>
     .bind(id)
     .first<Row>();
 
-function r2Event(key: string) {
-  return { account: 'test', bucket: 'rolls-originals', action: 'PutObject', eventTime: '2026-11-14T00:00:00Z', object: { key, size: 1, eTag: 'x' } };
-}
-
 async function deliver(body: unknown, attempts = 1) {
   const batch = createMessageBatch('rolls-ingest', [{ id: crypto.randomUUID(), timestamp: new Date(), attempts, body }]);
   const ctx = createExecutionContext();
@@ -29,7 +25,7 @@ async function deliver(body: unknown, attempts = 1) {
 
 async function uploadAndIngest(file: string, headers: Record<string, string> = {}, roll = 'goa') {
   const { id } = await (await upload(bytes(file), headers, roll)).json<{ id: string }>();
-  const result = await deliver(r2Event(`originals/${roll}/${id}.jpg`));
+  const result = await deliver({ key: `originals/${roll}/${id}.jpg` });
   return { id, result };
 }
 
@@ -91,7 +87,7 @@ describe('ingest', () => {
     await createRoll();
     const { id } = await (await upload(bytes(bare))).json<{ id: string }>();
     await env.DB.prepare("UPDATE photos SET uploaded_at = '2026-10-31T20:00:00Z' WHERE id = ?").bind(id).run();
-    await deliver(r2Event(`originals/goa/${id}.jpg`));
+    await deliver({ key: `originals/goa/${id}.jpg` });
     expect(await derived(id)).toMatchObject({ taken_at: '2026-11-01T00:00:00+05:30', taken_month: '2026-11', date_source: 'upload', date_precision: 'day', camera_raw: null });
   });
 
@@ -124,24 +120,15 @@ describe('ingest', () => {
     await createRoll();
     const { id } = await uploadAndIngest(fuji);
     const first = await derived(id);
-    const again = await deliver(r2Event(`originals/goa/${id}.jpg`));
+    const again = await deliver({ key: `originals/goa/${id}.jpg` });
     expect(again.explicitAcks).toHaveLength(1);
     expect(await env.DB.prepare('SELECT COUNT(*) AS n FROM photos').first('n')).toBe(1);
     expect(await publicKeys()).toHaveLength(3);
     expect((await derived(id))?.ingested_at).toBe(first?.ingested_at);
   });
 
-  it('creates the row for an original that skipped the route', async () => {
-    await createRoll();
-    const file = bytes(fuji);
-    await env.ORIGINALS.put('originals/goa/0123456789abcdef.jpg', file);
-    await deliver(r2Event('originals/goa/0123456789abcdef.jpg'));
-    const row = await env.DB.prepare('SELECT id, roll, caption, alt, status FROM photos').first();
-    expect(row).toEqual({ id: '0123456789abcdef', roll: 'goa', caption: null, alt: null, status: 'ready' });
-  });
-
   it('acks and skips objects outside originals/', async () => {
-    const result = await deliver(r2Event('elsewhere/file.jpg'));
+    const result = await deliver({ key: 'elsewhere/file.jpg' });
     expect(result.explicitAcks).toHaveLength(1);
     expect(await env.DB.prepare('SELECT COUNT(*) AS n FROM photos').first('n')).toBe(0);
   });
@@ -150,7 +137,7 @@ describe('ingest', () => {
     await createRoll();
     const { id } = await (await upload(bytes(fuji))).json<{ id: string }>();
     await env.ORIGINALS.put(`originals/goa/${id}.jpg`, new Uint8Array([0xff, 0xd8, 0xff, 0x00]));
-    const result = await deliver(r2Event(`originals/goa/${id}.jpg`));
+    const result = await deliver({ key: `originals/goa/${id}.jpg` });
     expect(result.retryMessages).toHaveLength(1);
     expect(await derived(id)).toMatchObject({ status: 'pending', error: expect.any(String) });
   });
@@ -159,7 +146,7 @@ describe('ingest', () => {
     await createRoll();
     const { id } = await (await upload(bytes(fuji))).json<{ id: string }>();
     await env.ORIGINALS.delete(`originals/goa/${id}.jpg`);
-    const result = await deliver(r2Event(`originals/goa/${id}.jpg`), 4);
+    const result = await deliver({ key: `originals/goa/${id}.jpg` }, 4);
     expect(result.retryMessages).toHaveLength(1);
     expect(await derived(id)).toMatchObject({ status: 'failed', error: expect.stringMatching(/original/) });
   });

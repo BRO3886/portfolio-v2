@@ -152,7 +152,7 @@ describe('upload', () => {
     expect(new Uint8Array(await original!.arrayBuffer())).toEqual(file);
   });
 
-  it('queues the ingest itself, without waiting on the R2 event notification', async () => {
+  it('queues the ingest for the stored original', async () => {
     await createRoll();
     const send = vi.spyOn(env.ROLLS_INGEST, 'send');
     const { id } = await (await upload(bytes(fuji))).json<{ id: string }>();

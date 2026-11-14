@@ -145,8 +145,7 @@ async function uploadPhoto(request: Request, env: Env, url: URL) {
       .run();
   }
   await env.ORIGINALS.put(key, body, { httpMetadata: { contentType: 'image/jpeg' } });
-  // R2 event notifications dropped 4 of 5 uploads in a burst, so the upload queues its own ingest.
-  // A second message from the notification is harmless: ingest skips a ready photo, and two runs write the same files.
+  // Queue messages are capped at 128 KB, so the message names the original and the consumer reads it from R2.
   await env.ROLLS_INGEST.send({ key } satisfies IngestMessage);
   return reply(202, { id });
 }
