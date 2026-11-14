@@ -13,7 +13,93 @@ const imgOrigin = new URL(Astro.locals.runtime.env.ROLLS_IMG_BASE).origin;
 
 <BaseLayout title={title} description={description}>
   <link slot="head" rel="preconnect" href={imgOrigin} />
+  <script is:inline>
+    document.documentElement.classList.add('rolls-js');
+  </script>
   <div id="stage">
     <slot />
   </div>
 </BaseLayout>
+
+<script>
+  const stage = document.getElementById('stage')!;
+
+  // Blur-up: the real image fades in over its placeholder once decoded.
+  function hydrateImages(root: ParentNode) {
+    root.querySelectorAll<HTMLImageElement>('.lqip:not([data-loaded]) img').forEach((img) => {
+      const box = img.parentElement!;
+      const reveal = () => box.setAttribute('data-loaded', '');
+      if (img.complete && img.naturalWidth) img.decode().then(reveal, reveal);
+      else {
+        img.addEventListener('load', () => img.decode().then(reveal, reveal), { once: true });
+        img.addEventListener('error', reveal, { once: true });
+      }
+    });
+  }
+
+  /*
+    Masonry: each print goes into the shortest column, in shooting order, so the DOM (tab order, lightbox order)
+    stays chronological. Heights come from layout, not image loads: every photo box already has its aspect ratio.
+    Writes, then one read pass, then writes, so a 1,100-print month costs one layout.
+  */
+  function layoutGrid(ul: HTMLElement) {
+    const cs = getComputedStyle(ul);
+    const n = Math.max(1, parseInt(cs.getPropertyValue('--cols'), 10) || 2);
+    const g = parseFloat(cs.columnGap) || 0;
+    const full = ul.clientWidth;
+    const w = (full - (n - 1) * g) / n;
+    const items = [...ul.children] as HTMLElement[];
+    const spans = items.map((li) => (li.dataset.span === 'all' ? n : Math.min(n, Number(li.dataset.span ?? 1))));
+    ul.setAttribute('data-laid', '');
+    items.forEach((li, i) => (li.style.width = `${spans[i] * w + (spans[i] - 1) * g}px`));
+    const heights = items.map((li) => li.offsetHeight);
+    const cols = new Array(n).fill(0);
+    items.forEach((li, i) => {
+      const s = spans[i];
+      let best = 0;
+      let top = Infinity;
+      for (let c = 0; c + s <= n; c++) {
+        const y = Math.max(...cols.slice(c, c + s));
+        if (y < top - 0.5) {
+          top = y;
+          best = c;
+        }
+      }
+      li.style.transform = `translate(${best * (w + g)}px, ${top}px)`;
+      for (let c = best; c < best + s; c++) cols[c] = top + heights[i] + g;
+    });
+    ul.style.height = `${Math.max(0, Math.max(...cols) - g)}px`;
+  }
+
+  /*
+    Months the browser skips (content-visibility) stand in at a placeholder height, and a 1,100-print month is
+    ten times the guess: the page grew as you scrolled. So every grid is laid out with every month rendered,
+    and each month's real height becomes its placeholder. One layout at load and per resize; painting
+    off-screen months is still skipped.
+  */
+  function setupMasonry() {
+    const grids = [...stage.querySelectorAll<HTMLElement>('.wl-grid')];
+    const hosts = [...stage.querySelectorAll<HTMLElement>('.wl-month, .mp-day')];
+    const invalidate = () => {
+      stage.setAttribute('data-measuring', '');
+      grids.forEach(layoutGrid);
+      const heights = hosts.map((h) => h.offsetHeight);
+      hosts.forEach((h, i) => h.style.setProperty('contain-intrinsic-height', `${heights[i]}px`));
+      stage.removeAttribute('data-measuring');
+    };
+    invalidate();
+    let raf = 0;
+    let lastWidth = innerWidth;
+    window.addEventListener('resize', () => {
+      if (innerWidth === lastWidth) return;
+      lastWidth = innerWidth;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(invalidate);
+    });
+    // The caption font changes print heights when it lands.
+    document.fonts?.ready.then(invalidate);
+  }
+
+  hydrateImages(stage);
+  setupMasonry();
+</script>
