@@ -1,5 +1,5 @@
 import { env } from 'cloudflare:workers';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { bare, fuji, iphone } from '../fixtures/images';
 import { api, bytes, createRoll, json, photo, upload } from './helpers';
 
@@ -150,6 +150,13 @@ describe('upload', () => {
     });
     const original = await env.ORIGINALS.get(`originals/goa/${id}.jpg`);
     expect(new Uint8Array(await original!.arrayBuffer())).toEqual(file);
+  });
+
+  it('queues the ingest itself, without waiting on the R2 event notification', async () => {
+    await createRoll();
+    const send = vi.spyOn(env.ROLLS_INGEST, 'send');
+    const { id } = await (await upload(bytes(fuji))).json<{ id: string }>();
+    expect(send).toHaveBeenCalledWith({ key: `originals/goa/${id}.jpg` });
   });
 
   it('round-trips a caption with an emoji, curly quotes and Hindi byte for byte', async () => {
