@@ -106,9 +106,8 @@ async function ingest(env: Env, key: string) {
   const exif = await readExif(original.slice(0, EXIF_HEAD_BYTES));
   const info = await env.IMAGES.info(bytesStream(original));
   if (!('width' in info)) throw new Error(`original ${key} has no pixel size`);
-  // info() reports the stored pixels; orientations 5 to 8 are displayed rotated a quarter turn.
-  const rotated = Number(exif.Orientation) >= 5;
-  const [width, height] = rotated ? [info.height, info.width] : [info.width, info.height];
+  // info() has already applied the EXIF orientation, like the derivatives: swapping again turned portraits landscape.
+  const { width, height } = info;
 
   const placeholder = `data:image/webp;base64,${base64(await webp(env, original, 24, 40))}`;
   for (const size of SIZES) {
