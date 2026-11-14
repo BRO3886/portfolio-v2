@@ -9,11 +9,12 @@ export default defineConfig(async () => {
       cloudflareTest({
         main: './test/worker.ts',
         wrangler: { configPath: './wrangler.toml' },
-        miniflare: { bindings: { TEST_MIGRATIONS: migrations } },
+        miniflare: { bindings: { TEST_MIGRATIONS: migrations, ROLLS_UPLOAD_TOKEN: 'test-token' } },
       }),
     ],
     test: {
       include: ['test/**/*.test.ts'],
+      exclude: ['test/remote/**'],
       setupFiles: ['./test/apply-migrations.ts'],
     },
   };

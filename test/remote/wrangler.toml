@@ -1,0 +1,8 @@
+# Only for `npm run test:remote`: the Images binding runs on Cloudflare, everything else is absent.
+name = "portfolio-v2-remote-images-check"
+compatibility_date = "2026-11-11"
+compatibility_flags = ["nodejs_compat"]
+
+[images]
+binding = "IMAGES"
+remote = true

@@ -42,6 +42,7 @@ queue = "rolls-ingest"
 [[queues.consumers]]
 queue = "rolls-ingest"
 max_batch_size = 1
+max_retries = 3
 dead_letter_queue = "rolls-ingest-dlq"
 
 [images]
