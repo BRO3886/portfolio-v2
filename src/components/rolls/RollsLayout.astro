@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import './rolls.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Photos by Siddhartha Varma, one page per year, newest first.' } = Astro.props;
+const imgOrigin = new URL(Astro.locals.runtime.env.ROLLS_IMG_BASE).origin;
+---
+
+<BaseLayout title={title} description={description}>
+  <link slot="head" rel="preconnect" href={imgOrigin} />
+  <div id="stage">
+    <slot />
+  </div>
+</BaseLayout>

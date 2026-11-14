@@ -1,0 +1,41 @@
+---
+// The end of a year or month: what comes next going back in time, and the way back up.
+import type { Photo } from '../../lib/rolls/archive';
+
+interface Props {
+  next?: { href: string; label: string; title: string; meta: string; cover?: Photo | null };
+  note?: string;
+  start?: { text: string; href?: string; label?: string };
+  back?: { href: string; label: string };
+}
+
+const { next, note, start, back } = Astro.props;
+---
+
+{(next || note || start || back) && (
+  <nav class="wl-end" aria-label="Keep going">
+    {note && <p class="wl-note">{note}</p>}
+    {next && (
+      <a class="wl-continue" href={next.href}>
+        <span>
+          <span class="wl-continue-label">{next.label}</span>
+          <span class="wl-continue-title">{next.title}</span>
+          <span class="wl-continue-meta">{next.meta}</span>
+        </span>
+        {next.cover && (
+          <span class="wl-continue-cover">
+            <span class="lqip" style={`--ph: url(${next.cover.placeholder});`}>
+              <img src={next.cover.src(640)} srcset={next.cover.srcset} sizes="144px" width={next.cover.width} height={next.cover.height} alt="" loading="lazy" decoding="async" />
+            </span>
+          </span>
+        )}
+      </a>
+    )}
+    {start && (
+      <p class="wl-note">
+        {start.text} {start.href && <a href={start.href}>{start.label}</a>}
+      </p>
+    )}
+    {back && <a class="wl-back" href={back.href}>{back.label}</a>}
+  </nav>
+)}

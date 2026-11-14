@@ -1,0 +1,25 @@
+---
+// /rolls/2031: one year. Holes in the archive and years outside it are real 404s with a way out.
+import RollsLayout from '../../../components/rolls/RollsLayout.astro';
+import YearPage from '../../../components/rolls/YearPage.astro';
+import Missing from '../../../components/rolls/Missing.astro';
+import { loadYear } from '../../../lib/rolls/db';
+import { buildIndex, groupYear, shape } from '../../../lib/rolls/archive';
+
+export const prerender = false;
+
+const { env } = Astro.locals.runtime;
+const raw = Astro.params.year ?? '';
+const valid = /^\d{4}$/.test(raw);
+const data = valid ? await loadYear(env.DB, raw) : null;
+const index = data ? buildIndex(data.months) : undefined;
+const n = Number(raw);
+const year = data && index?.has(n) ? groupYear(n, data.photos.map((r) => shape(r, env.ROLLS_IMG_BASE))) : undefined;
+const cover = data?.cover ? shape(data.cover, env.ROLLS_IMG_BASE) : null;
+const kind = !valid ? 'bad' : index && !index.empty && n >= index.first! && n <= index.last! ? 'gap' : 'range';
+if (!year) Astro.response.status = 404;
+---
+
+<RollsLayout title={year ? `Rolls from ${year.year}` : 'Not found'}>
+  {year && index ? <YearPage year={year} index={index} cover={cover} /> : <Missing kind={kind} index={index} year={n} />}
+</RollsLayout>

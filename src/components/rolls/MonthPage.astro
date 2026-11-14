@@ -1,0 +1,61 @@
+---
+import Tile from './Tile.astro';
+import Continue from './Continue.astro';
+import { DAY_SPLIT, days, withRange, type ArchiveIndex, type Month, type Photo } from '../../lib/rolls/archive';
+import { plural } from '../../lib/rolls/exif-format';
+
+interface Props {
+  month: Month;
+  index: ArchiveIndex;
+  // The next earlier month's cover, for "Continue to".
+  cover: Photo | null;
+}
+
+const { month, index, cover } = Astro.props;
+const earlier = index.earlierMonth(month.key);
+const later = index.laterMonth(month.key);
+const tileSizes = '(min-width: 1024px) 280px, (min-width: 640px) 33vw, 50vw';
+---
+
+<div class="wl" data-gallery>
+  <header>
+    <p class="wl-crumbs"><a href="/rolls">Rolls</a><span aria-hidden="true">/</span><a href={`/rolls/${month.year}`}>{month.year}</a></p>
+    <h1 class="wl-title">{month.label}</h1>
+    <p class="wl-meta">{plural(month.count, 'photo')} · {plural(month.rolls.length, 'roll')}</p>
+  </header>
+
+  {month.rolls.map((r) => (
+    <section class="mp-roll" id={`r-${r.slug}`} aria-labelledby={`r-${r.slug}-h`}>
+      <h2 id={`r-${r.slug}-h`} class="mp-roll-title" tabindex="-1">
+        {r.title}
+        <span class="wl-month-meta">{withRange(plural(r.count, 'photo'), r.range)}</span>
+      </h2>
+      {r.count > DAY_SPLIT ? (
+        days(r.photos).map((d) => (
+          <section class="mp-day" id={`d-${d.iso}`} aria-label={d.label}>
+            <h3 class="mp-day-title">{d.label} · {plural(d.photos.length, 'photo')}</h3>
+            <ul class="wl-grid" role="list">
+              {d.photos.map((p) => <Tile photo={p} sizes={tileSizes} />)}
+            </ul>
+          </section>
+        ))
+      ) : (
+        <ul class="wl-grid" role="list">
+          {r.photos.map((p) => <Tile photo={p} sizes={tileSizes} />)}
+        </ul>
+      )}
+    </section>
+  ))}
+
+  <Continue
+    next={earlier && {
+      href: `/rolls/${earlier.year}/${earlier.mm}`,
+      label: 'Continue to',
+      title: earlier.label,
+      meta: withRange(plural(earlier.count, 'photo'), earlier.range),
+      cover,
+    }}
+    start={!earlier ? { text: 'That’s the first roll.', href: '/rolls', label: 'Back to the latest' } : undefined}
+    back={later && { href: `/rolls/${later.year}/${later.mm}`, label: `← ${later.label}` }}
+  />
+</div>

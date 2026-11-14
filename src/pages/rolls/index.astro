@@ -1,0 +1,21 @@
+---
+// /rolls: the newest year with photos, rendered as its year page, so an empty current year never shows an empty page.
+import RollsLayout from '../../components/rolls/RollsLayout.astro';
+import YearPage from '../../components/rolls/YearPage.astro';
+import Missing from '../../components/rolls/Missing.astro';
+import { loadYear } from '../../lib/rolls/db';
+import { buildIndex, groupYear, shape } from '../../lib/rolls/archive';
+
+export const prerender = false;
+
+const { env } = Astro.locals.runtime;
+const data = await loadYear(env.DB, null);
+const index = buildIndex(data.months);
+const year = index.last === null ? undefined : groupYear(index.last, data.photos.map((r) => shape(r, env.ROLLS_IMG_BASE)));
+const cover = data.cover && shape(data.cover, env.ROLLS_IMG_BASE);
+if (!year) Astro.response.status = 404;
+---
+
+<RollsLayout title="Rolls">
+  {year ? <YearPage year={year} index={index} cover={cover} landing /> : <Missing kind="empty" />}
+</RollsLayout>
