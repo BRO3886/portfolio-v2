@@ -121,6 +121,15 @@ const markdownPath = currentPath === '/'
           >
             Blog
           </a>
+          <a
+            href="/rolls"
+            class:list={[
+              'transition-colors',
+              currentPath.startsWith('/rolls') ? 'text-text-primary font-medium' : 'text-text-secondary hover:text-text-primary',
+            ]}
+          >
+            Rolls
+          </a>
           <button
             id="theme-toggle"
             type="button"
@@ -176,6 +185,7 @@ const markdownPath = currentPath === '/'
             <ul class="footer-list">
               <li><a href="/">Home</a></li>
               <li><a href="/blog">Blog</a></li>
+              <li><a href="/rolls">Rolls</a></li>
               <li><a href="/resume">Resume</a></li>
               <li><a href="/rss.xml">RSS</a></li>
             </ul>
