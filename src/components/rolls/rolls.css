@@ -377,6 +377,164 @@ a:focus-visible:is(.wl-continue, .wl-more, .wl-back),
   outline-offset: 2px;
 }
 
+.wl-tile {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: zoom-in;
+  border-radius: var(--print-radius);
+  transition: translate 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.wl-tile .print { width: 100%; }
+
+.wl-tile:focus-visible {
+  outline: 2px solid var(--color-text-secondary);
+  outline-offset: 4px;
+}
+
+.wl-tile:active { scale: 0.98; }
+
+/* ---------- lightbox ---------- */
+
+.wl-box {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  opacity: 0;
+  transition: opacity 160ms ease-in;
+}
+
+.wl-box::backdrop {
+  background: rgb(0 0 0 / 0.86);
+  opacity: 0;
+  transition: opacity 160ms ease-in;
+}
+
+.wl-box[data-open],
+.wl-box[data-open]::backdrop {
+  opacity: 1;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.wl-box-stage {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 4rem 1rem;
+}
+
+@media (min-width: 768px) {
+  .wl-box-stage { padding: 3rem 5.5rem; }
+}
+
+.wl-box-stage .print {
+  width: min(100%, 64rem, calc((100svh - 13rem) * var(--r) / (1 - var(--mat) * 0.02)));
+  scale: 0.985;
+  transition: scale 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Panoramas get the full width on large screens. */
+.wl-box-stage .print[data-pano] {
+  width: min(100%, 96rem);
+}
+
+/*
+  On a narrow screen a panorama at screen width is a thin strip. Instead it keeps a readable height and pans
+  sideways, like holding a long print and walking along it.
+*/
+@media (max-width: 767px) {
+  .wl-box-stage:has(.print[data-pano]) {
+    place-items: center start;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .wl-box-stage .print[data-pano] {
+    width: calc(min(46svh, 22rem) * var(--r));
+    max-width: none;
+  }
+}
+
+.wl-box[data-open] .wl-box-stage .print { scale: 1; }
+
+.wl-box-pos {
+  position: absolute;
+  top: 1.25rem;
+  left: 50%;
+  translate: -50% 0;
+  max-width: calc(100% - 8rem);
+  margin: 0;
+  overflow: hidden;
+  font-size: 0.8125rem;
+  color: rgb(255 255 255 / 0.7);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wl-box-btn {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.1);
+  color: #fff;
+  font: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition-property: background-color, opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.wl-box-btn:active:not(:disabled) { scale: 0.96; }
+.wl-box-btn:disabled { opacity: 0.25; cursor: default; }
+.wl-box-btn:focus-visible { outline: 2px solid rgb(255 255 255 / 0.6); outline-offset: 2px; }
+
+.wl-box-close { top: 0.75rem; right: 0.75rem; }
+.wl-box-prev,
+.wl-box-next { bottom: 0.75rem; }
+.wl-box-prev { left: calc(50% - 52px); }
+.wl-box-next { left: calc(50% + 8px); }
+
+@media (min-width: 768px) {
+  .wl-box-prev,
+  .wl-box-next { bottom: auto; top: 50%; translate: 0 -50%; }
+  .wl-box-prev { left: 1.25rem; }
+  .wl-box-next { left: auto; right: 1.25rem; }
+}
+
+/* The wall clamps a caption to two lines; the lightbox is where it reads in full. */
+.wl-box-stage .print-caption {
+  display: block;
+  -webkit-line-clamp: none;
+  line-clamp: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-tile,
+  .wl-box,
+  .wl-box::backdrop,
+  .wl-box-stage .print { transition: none; }
+}
+
 /* ---------- hover, only where hover exists ---------- */
 
 @media (hover: hover) and (pointer: fine) {
@@ -386,6 +544,8 @@ a:focus-visible:is(.wl-continue, .wl-more, .wl-back),
   .wl-missing-links a:hover { background: var(--color-surface); }
   .wl-more:hover { background: var(--color-surface-hover); }
   .wl-month-title a:hover { text-decoration-line: underline; }
+  .wl-tile:hover { translate: 0 -4px; }
+  .wl-box-btn:hover:not(:disabled) { background: rgb(255 255 255 / 0.18); }
 }
 
 /* ---------- blur-up ---------- */
