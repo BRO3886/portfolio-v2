@@ -6,17 +6,19 @@ type WaitUntil = { waitUntil(promise: Promise<unknown>): void };
 
 export const isRollsPage = (pathname: string) => pathname === '/rolls' || pathname.startsWith('/rolls/');
 
-// Keyed on the URL without its query, so ?utm_source=… doesn't split the cache or bypass it.
-function cacheKey(url: string) {
+// Keyed on the URL without its query, so ?utm_source=… doesn't split the cache or bypass it. The Worker version is
+// part of the key: a deploy doesn't purge caches.default, and an old page names script files the deploy replaced.
+function cacheKey(url: string, version: string) {
   const key = new URL(url);
   key.search = '';
   key.hash = '';
+  key.searchParams.set('version', version);
   return new Request(key.toString(), { method: 'GET' });
 }
 
-export async function cachedRollsPage(request: Request, ctx: WaitUntil, render: () => Promise<Response>): Promise<Response> {
+export async function cachedRollsPage(request: Request, ctx: WaitUntil, version: string, render: () => Promise<Response>): Promise<Response> {
   if (request.method !== 'GET') return render();
-  const key = cacheKey(request.url);
+  const key = cacheKey(request.url, version);
   const hit = await caches.default.match(key);
   if (hit) return hit;
 
