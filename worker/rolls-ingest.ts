@@ -1,7 +1,6 @@
 import exifr from 'exifr';
 
 export type IngestMessage = { key: string };
-type R2EventMessage = { bucket: string; action: string; object: { key: string } };
 
 // Bump when parsing or normalising changes, so each row records which version read it.
 const INGEST_VERSION = 1;
@@ -84,32 +83,20 @@ function base64(buf: ArrayBuffer) {
   return btoa(s);
 }
 
-async function sha256(buf: ArrayBuffer) {
-  return [...new Uint8Array(await crypto.subtle.digest('SHA-256', buf))].map((b) => b.toString(16).padStart(2, '0')).join('');
-}
-
 const statusOf = (env: Env, key: string) => env.DB.prepare('SELECT status FROM photos WHERE original_key = ?').bind(key).first<string>('status');
 
 async function ingest(env: Env, key: string) {
-  let row = await env.DB.prepare('SELECT id, status, uploaded_at FROM photos WHERE original_key = ?').bind(key).first<PhotoRow>();
-  if (row?.status === 'ready') return;
+  const row = await env.DB.prepare('SELECT id, status, uploaded_at FROM photos WHERE original_key = ?').bind(key).first<PhotoRow>();
+  if (!row) throw new Error(`no photo row for ${key}`);
+  if (row.status === 'ready') return;
 
   const object = await env.ORIGINALS.get(key);
   if (!object) {
-    // Upload and the R2 notification both queue a message; the other one may have finished and deleted the original.
+    // Queues deliver at least once: a duplicate may have finished first and deleted the original.
     if ((await statusOf(env, key)) === 'ready') return;
     throw new Error(`original ${key} is missing`);
   }
   const original = await object.arrayBuffer();
-
-  if (!row) {
-    const [, roll, id] = /^originals\/([^/]+)\/([0-9a-f]{16})\.jpg$/.exec(key) ?? [];
-    if (!roll) throw new Error(`original ${key} is not at originals/<roll>/<id>.jpg`);
-    row = await env.DB.prepare('INSERT INTO photos (id, sha256, roll, original_key) VALUES (?, ?, ?, ?) RETURNING id, status, uploaded_at')
-      .bind(id, await sha256(original), roll, key)
-      .first<PhotoRow>();
-    if (!row) throw new Error(`could not create a row for ${key}`);
-  }
 
   const roll = await env.DB.prepare('SELECT r.camera, r.film, r.date, r.ignore_exif FROM rolls r JOIN photos p ON p.roll = r.slug WHERE p.id = ?')
     .bind(row.id)
@@ -157,10 +144,8 @@ async function ingest(env: Env, key: string) {
 }
 
 function keyOf(body: unknown): IngestMessage | null {
-  if (typeof body !== 'object' || body === null) return null;
-  if ('object' in body) return { key: (body as R2EventMessage).object.key };
-  if ('key' in body && typeof body.key === 'string') return body as IngestMessage;
-  return null;
+  if (typeof body !== 'object' || body === null || !('key' in body) || typeof body.key !== 'string') return null;
+  return { key: body.key };
 }
 
 export async function handleIngestBatch(batch: MessageBatch, env: Env) {
