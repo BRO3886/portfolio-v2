@@ -1,5 +1,4 @@
 import type { IngestMessage } from './rolls-ingest';
-import { stripGps } from './strip-gps';
 
 export const MAX_UPLOAD_BYTES = 50 * 1024 * 1024;
 const CAPTION_MAX = 280;
@@ -145,8 +144,7 @@ async function uploadPhoto(request: Request, env: Env, url: URL) {
       .bind(id, sha, roll, key, filename, alt, caption, featured)
       .run();
   }
-  // The hash above is of the file as sent, so a second upload of the same photo is still caught.
-  await env.ORIGINALS.put(key, stripGps(body), { httpMetadata: { contentType: 'image/jpeg' } });
+  await env.ORIGINALS.put(key, body, { httpMetadata: { contentType: 'image/jpeg' } });
   // R2 event notifications dropped 4 of 5 uploads in a burst, so the upload queues its own ingest.
   // A second message from the notification is harmless: ingest skips a ready photo, and two runs write the same files.
   await env.ROLLS_INGEST.send({ key } satisfies IngestMessage);
@@ -171,12 +169,6 @@ async function patchPhoto(request: Request, env: Env, id: string) {
   return reply(200, row);
 }
 
-async function reingestPhoto(env: Env, id: string) {
-  const row = await env.DB.prepare('SELECT original_key FROM photos WHERE id = ?').bind(id).first<{ original_key: string }>();
-  if (!row) throw new HttpError(404, 'no such photo');
-  await env.ROLLS_INGEST.send({ key: row.original_key, reingest: true } satisfies IngestMessage);
-  return reply(202, { id });
-}
 
 type Route = { pattern: RegExp; method: string; run: (request: Request, env: Env, url: URL, match: RegExpExecArray) => Promise<Response> };
 
@@ -185,7 +177,6 @@ const routes: Route[] = [
   { pattern: /^\/api\/rolls\/rolls\/([^/]+)$/, method: 'PUT', run: (req, env, _, m) => putRoll(req, env, m[1]) },
   { pattern: /^\/api\/rolls\/upload$/, method: 'PUT', run: (req, env, url) => uploadPhoto(req, env, url) },
   { pattern: /^\/api\/rolls\/photos\/([^/]+)$/, method: 'PATCH', run: (req, env, _, m) => patchPhoto(req, env, m[1]) },
-  { pattern: /^\/api\/rolls\/photos\/([^/]+)\/reingest$/, method: 'POST', run: (_, env, __, m) => reingestPhoto(env, m[1]) },
 ];
 
 export async function handleRollsApi(request: Request, env: Env): Promise<Response> {

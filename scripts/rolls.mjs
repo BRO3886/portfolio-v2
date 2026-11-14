@@ -2,7 +2,6 @@
 //
 //   node scripts/rolls.mjs upload <folder>
 //   node scripts/rolls.mjs edit <file or id> [--caption "…"] [--alt "…"] [--feature|--unfeature] [--hide|--show]
-//   node scripts/rolls.mjs reingest <id>
 //
 // ROLLS_UPLOAD_TOKEN is required. ROLLS_API overrides the origin (default https://sidv.dev), e.g.
 // http://localhost:8787 for wrangler dev. `--caption ""` clears a caption.
@@ -109,15 +108,9 @@ async function edit(target, args) {
   console.log(res.body);
 }
 
-async function reingest(id) {
-  const res = await call('POST', `/photos/${id}/reingest`);
-  if (!res.ok) fail(`${id}: ${res.status} ${res.body.error}`);
-  console.log(`${id}: queued for re-ingest`);
-}
 
 const [command, target, ...rest] = process.argv.slice(2);
 if (!TOKEN) fail('Set ROLLS_UPLOAD_TOKEN.');
 if (command === 'upload' && target) await upload(target);
 else if (command === 'edit' && target) await edit(target, rest);
-else if (command === 'reingest' && target) await reingest(target);
-else fail('Usage: node scripts/rolls.mjs upload <folder> | edit <file or id> [options] | reingest <id>');
+else fail('Usage: node scripts/rolls.mjs upload <folder> | edit <file or id> [options]');
