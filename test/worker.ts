@@ -1,3 +1,9 @@
-// The real entry (dist/_worker.js) only exists after an Astro build. Tests run against
-// this stand-in so they don't depend on a build; it grows as worker routes are added.
-export default {} satisfies ExportedHandler<Env>;
+import { handleRollsApi } from '../worker/rolls-api';
+import { handleIngestBatch } from '../worker/rolls-ingest';
+
+// The real entry (dist/_worker.js) only exists after an Astro build, so tests run against
+// the rolls handlers directly. worker/entry.ts routes to the same functions.
+export default {
+  fetch: (request, env) => handleRollsApi(request, env),
+  queue: (batch, env) => handleIngestBatch(batch, env),
+} satisfies ExportedHandler<Env>;

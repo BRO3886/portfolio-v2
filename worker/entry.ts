@@ -3,8 +3,10 @@ import { App } from 'astro/app';
 import { handle } from '@astrojs/cloudflare/handler';
 import type { ExecutionContext } from '@cloudflare/workers-types';
 import { negotiateMarkdown } from './markdown-negotiation';
+import { handleRollsApi } from './rolls-api';
+import { handleIngestBatch } from './rolls-ingest';
 
-type Env = Parameters<typeof handle>[3];
+type AstroEnv = Parameters<typeof handle>[3];
 type WorkerRequest = Parameters<typeof handle>[2];
 
 // Workers static assets answer trailing-slash redirects with 307 and cache 404s;
@@ -32,7 +34,9 @@ export function createExports(manifest: SSRManifest) {
 
   return {
     default: {
-      async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+      async fetch(request: Request, env: AstroEnv & Env, ctx: ExecutionContext): Promise<Response> {
+        if (new URL(request.url).pathname.startsWith('/api/rolls/')) return handleRollsApi(request, env);
+
         const isReadRequest = request.method === 'GET' || request.method === 'HEAD';
         if (!isReadRequest && !app.match(request)) {
           return new Response(null, { status: 405, headers: { Allow: 'GET, HEAD' } });
@@ -45,6 +49,9 @@ export function createExports(manifest: SSRManifest) {
           (await handle(manifest, app, request as unknown as WorkerRequest, env, ctx));
 
         return withPagesSemantics(request, response);
+      },
+      async queue(batch: MessageBatch, env: Env): Promise<void> {
+        await handleIngestBatch(batch, env);
       },
     },
   };
